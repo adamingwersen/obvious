@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { timestamp, uuid } from "drizzle-orm/pg-core";
+import { serial, timestamp } from "drizzle-orm/pg-core";
 
 export const createdUpdatedTime = {
   createdAt: timestamp("created_at")
@@ -9,6 +9,6 @@ export const createdUpdatedTime = {
 };
 
 export const defaultRows = {
-  id: uuid("id").notNull().primaryKey(),
+  id: serial("id").notNull().primaryKey(),
   ...createdUpdatedTime,
 } as const;

@@ -19,6 +19,7 @@ export const userRouter = createTRPCRouter({
         where: eq(schema.user.email, input.email),
       });
     }),
+
   updateByEmail: procedures.protected
     .input(updateSchema)
     .mutation(async ({ ctx, input }) => {

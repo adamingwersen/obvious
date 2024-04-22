@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, uuid } from "drizzle-orm/pg-core";
 
 import { defaultRows } from "./shared";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -9,10 +9,12 @@ import { question } from "@/server/db/schema/question.schema";
 
 export const survey = pgTable("survey", {
   ...defaultRows,
-  createdById: uuid("created_by_id")
+  createdById: integer("created_by_id")
     .notNull()
     .references(() => user.id),
   title: varchar("title", { length: 256 }).notNull(),
+  uuid: uuid("uuid").notNull().defaultRandom().unique(),
+  parentInstanceId: integer("parent_instance_id"),
 });
 
 export const surveyRelations = relations(survey, ({ one, many }) => ({
@@ -21,6 +23,10 @@ export const surveyRelations = relations(survey, ({ one, many }) => ({
     references: [user.id],
   }),
   questions: many(question),
+  parentInstanceId: one(survey, {
+    fields: [survey.parentInstanceId],
+    references: [survey.id],
+  }),
 }));
 
 export const surveyInsertSchema = createInsertSchema(survey);
