@@ -1,4 +1,4 @@
-import { pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { integer, pgTable, text } from "drizzle-orm/pg-core";
 
 import { defaultRows } from "./shared";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -11,10 +11,10 @@ export const answer = pgTable("answer", {
   ...defaultRows,
   content: text("content").notNull(),
   documentIds: text("document_ids").array(),
-  questionId: uuid("question_id")
+  questionId: integer("question_id")
     .notNull()
     .references(() => question.id),
-  createdById: uuid("created_by_id")
+  createdById: integer("created_by_id")
     .notNull()
     .references(() => user.id),
 });

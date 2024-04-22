@@ -7,7 +7,7 @@ import type { z } from "zod";
 
 export const user = pgTable("user", {
   ...defaultRows,
-  authId: uuid("auth_id"), // null = user hasn't signed up from email link
+  authId: uuid("auth_id").notNull(), // null = user hasn't signed up from email link
   email: varchar("email", { length: 256 }).notNull(),
   firstName: varchar("first_name", { length: 256 }),
   lastName: varchar("last_name", { length: 256 }),

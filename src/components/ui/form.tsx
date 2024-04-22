@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Input, InputProps } from "@/components/ui/input";
+import { Textarea, TextareaProps } from "@/components/ui/textarea";
 
 const Form = FormProvider;
 
@@ -135,7 +136,7 @@ const FormDescription = React.forwardRef<
     <p
       ref={ref}
       id={formDescriptionId}
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
   );
@@ -157,7 +158,7 @@ const FormMessage = React.forwardRef<
     <p
       ref={ref}
       id={formMessageId}
-      className={cn("text-destructive text-sm font-medium", className)}
+      className={cn("text-sm font-medium text-destructive", className)}
       {...props}
     >
       {body}
@@ -177,6 +178,17 @@ const FormFieldInput = (props: InputProps) => {
   );
 };
 
+const FormFieldTextArea = (props: TextareaProps) => {
+  return (
+    <FormItem>
+      <FormControl>
+        <Textarea {...props} />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  );
+};
+
 export {
   useFormField,
   Form,
@@ -187,4 +199,5 @@ export {
   FormMessage,
   FormField,
   FormFieldInput,
+  FormFieldTextArea,
 };

@@ -8,7 +8,7 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login");
-  return <div className="relative h-full">{children}</div>;
+  return <div className="relative h-screen">{children}</div>;
 };
 
 export default ProtectedLayout;
