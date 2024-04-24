@@ -1,11 +1,11 @@
 ## Tasklist: Cascading Multilingual Surveys:
 
-- [ ] Navbar
-  - [ ] -> Survey Page
-  - [ ] -> Dashboard Page
-  - [ ] -> Settings Page
-- [ ] survey/page.tsx
-  - [ ] Nice way to display all existing surveys in list/table
+- [x] Navbar
+  - [x] -> Survey Page
+  - [x] -> Dashboard Page
+  - [x] -> Settings Page
+- [x] survey/page.tsx
+  - [x] Nice way to display all existing surveys in list/table
 - [ ] dashboard/page.tsx
   - [ ] ??
 - [ ] settings/page.tsx
