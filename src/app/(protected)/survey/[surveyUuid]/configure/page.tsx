@@ -15,7 +15,7 @@ const ConfigureSurveyPage = async ({
   const questions = survey.questions;
 
   return (
-    <div className="flex h-full flex-row items-stretch justify-between px-6 pb-6">
+    <div className="flex h-full">
       <ScrollArea className="absolute h-full w-[18vw] rounded-md border p-4">
         <h4 className="text-m mb-4 font-medium leading-none ">Questions</h4>
         {questions.map((question) => (

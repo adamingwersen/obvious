@@ -12,7 +12,9 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex h-[100vh] flex-col">
       <Navigation />
-      {children}
+      <div className="flex h-full w-full flex-row items-stretch justify-start p-6">
+        {children}
+      </div>
     </div>
   );
 };

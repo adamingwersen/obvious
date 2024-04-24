@@ -34,7 +34,7 @@ const SurveyCreatePage = () => {
   };
 
   return (
-    <div className="mx-auto flex flex-col items-center justify-center gap-6">
+    <div className="flex h-full w-full flex-col items-center justify-start space-y-6">
       <h1 className="mt-10 text-3xl font-extrabold tracking-tight">
         Create survey
       </h1>
