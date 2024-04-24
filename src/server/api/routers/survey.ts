@@ -46,6 +46,21 @@ export const surveyRouter = createTRPCRouter({
     });
   }),
 
+  findAllByCurrentUserWithRelations: procedures.protected.query(
+    async ({ ctx }) => {
+      const authUserId = ctx.user.id;
+      const user = await ctx.db.query.user.findFirst({
+        where: eq(schema.user.authId, authUserId),
+      });
+      if (!user) throw new Error("No user found");
+
+      return ctx.db.query.survey.findMany({
+        where: eq(schema.survey.createdById, user.id),
+        with: { questions: true, user: true },
+      });
+    },
+  ),
+
   findById: procedures.protected
     .input(surveyFindByIdSchema)
     .query(async ({ ctx, input }) => {

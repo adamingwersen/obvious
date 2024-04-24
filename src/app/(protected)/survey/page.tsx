@@ -1,28 +1,26 @@
+import { DataTable } from "./_table/DataTable";
+import { DataTableColumns } from "./_table/DataTableColumns";
 import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/server";
 import Link from "next/link";
 
 const SurveyPage = async () => {
-  const surveys = await api.survey.findAllByCurrentUser();
+  const surveys = await api.survey.findAllByCurrentUserWithRelations();
 
   return (
     <div>
-      <h1 className="text-lg font-bold">Survey Page</h1>
-      <div className="ml-10 mt-6 flex flex-col space-y-2">
-        {surveys.map((survey) => (
-          <Link
-            href={`/survey/${survey.uuid}/configure`}
-            key={survey.id}
-            className="max-w-52 rounded border border-primary p-4"
-          >
-            {survey.id} {survey.title}
+      <div className="pt-10"></div>
+      <div className="flex flex-row justify-end">
+        <div className="px-80">
+          <Link href="/survey/create">
+            <Button>Create new survey</Button>
           </Link>
-        ))}
+        </div>
       </div>
-      <div className="justify-end pt-3"></div>
-      <Link href="/survey/create">
-        <Button>Create survey</Button>
-      </Link>
+
+      <div className="px-80">
+        <DataTable columns={DataTableColumns} data={surveys} />
+      </div>
     </div>
   );
 };
