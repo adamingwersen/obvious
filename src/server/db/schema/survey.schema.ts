@@ -3,9 +3,9 @@ import { integer, pgTable, varchar, uuid } from "drizzle-orm/pg-core";
 import { defaultRows } from "./shared";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import type { z } from "zod";
-import { user } from "@/server/db/schema/user.schema";
+import { user, UserModel } from "@/server/db/schema/user.schema";
 import { relations } from "drizzle-orm";
-import { question } from "@/server/db/schema/question.schema";
+import { question, QuestionModel } from "@/server/db/schema/question.schema";
 
 export const survey = pgTable("survey", {
   ...defaultRows,
@@ -15,6 +15,11 @@ export const survey = pgTable("survey", {
   title: varchar("title", { length: 256 }).notNull(),
   uuid: uuid("uuid").notNull().defaultRandom().unique(),
   parentInstanceId: integer("parent_instance_id"),
+  // TODO:
+  // status
+  // dueDate
+  // description
+  // keywords
 });
 
 export const surveyRelations = relations(survey, ({ one, many }) => ({
@@ -32,3 +37,7 @@ export const surveyRelations = relations(survey, ({ one, many }) => ({
 export const surveyInsertSchema = createInsertSchema(survey);
 export const surveySelectSchema = createSelectSchema(survey);
 export type SurveyModel = z.infer<typeof surveySelectSchema>;
+export type SurveyWithRelationsModel = SurveyModel & {
+  user: UserModel;
+  questions: QuestionModel[];
+};

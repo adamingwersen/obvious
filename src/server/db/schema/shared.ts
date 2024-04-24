@@ -6,6 +6,7 @@ export const createdUpdatedTime = {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  // archivedAt
 };
 
 export const defaultRows = {
