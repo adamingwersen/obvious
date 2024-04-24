@@ -15,14 +15,14 @@ const ConfigureSurveyPage = async ({
   const questions = survey.questions;
 
   return (
-    <div className="flex h-full flex-row px-6 pb-6">
-      <ScrollArea className="absolute h-full w-[18vw] rounded-md border p-4">
+    <div className="flex flex-row px-6 pb-6 ">
+      <ScrollArea className="absolute w-[18vw] rounded-md border p-4">
         <h4 className="text-m mb-4 font-medium leading-none ">Questions</h4>
         {questions.map((question) => (
           <ExistingQuestionRow question={question} key={question.id} />
         ))}
       </ScrollArea>
-      <div className="-ml-[18vw] flex h-full w-full flex-col justify-between pb-6">
+      <div className="-ml-[18vw] flex w-full flex-col justify-between pb-6">
         <div className="mb-auto pt-10">
           <CreateQuestion surveyId={survey.id} surveyUuid={survey.uuid} />
         </div>

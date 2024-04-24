@@ -1,4 +1,4 @@
-import { Separator } from "@/components/ui/separator";
+
 import { api } from "@/trpc/server";
 
 const ConfigureSurveyLayout = async ({
@@ -10,12 +10,13 @@ const ConfigureSurveyLayout = async ({
 }) => {
   const survey = await api.survey.findById({ uuid: params.surveyUuid });
   return (
-    <div className="relative h-full">
-      <div className="flex items-center justify-center">
-        <p className="text-lg font-bold">{survey.title}</p>
+    <div className="relative h-auto">
+      <div className="flex justify-center ">
+        <h1>Survey Name: {survey.title}</h1>
       </div>
-      <Separator />
-      <div className="mx-auto h-full py-6">{children}</div>
+      <div className="mx-auto">
+        {children}
+      </div>
     </div>
   );
 };
