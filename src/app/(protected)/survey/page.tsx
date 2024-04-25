@@ -8,17 +8,12 @@ const SurveyPage = async () => {
   const surveys = await api.survey.findAllByCurrentUserWithRelations();
 
   return (
-    <div>
-      <div className="pt-10"></div>
-      <div className="flex flex-row justify-end">
-        <div className="px-80">
-          <Link href="/survey/create">
-            <Button>Create new survey</Button>
-          </Link>
-        </div>
-      </div>
+    <div className="flex h-full w-full flex-col pt-10">
+      <div className="mx-auto flex w-full max-w-7xl flex-col">
+        <Link href="/survey/create" className="self-end">
+          <Button>Create new survey</Button>
+        </Link>
 
-      <div className="px-80">
         <DataTable columns={DataTableColumns} data={surveys} />
       </div>
     </div>

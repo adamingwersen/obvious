@@ -15,8 +15,8 @@ const ConfigureSurveyPage = async ({
   const questions = survey.questions;
 
   return (
-    <div className="flex flex-row px-6 pb-6 ">
-      <ScrollArea className="absolute w-[18vw] rounded-md border p-4">
+    <div className="flex h-full">
+      <ScrollArea className="absolute h-full w-[18vw] rounded-md border p-4">
         <h4 className="text-m mb-4 font-medium leading-none ">Questions</h4>
         {questions.map((question) => (
           <ExistingQuestionRow question={question} key={question.id} />
