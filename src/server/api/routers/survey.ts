@@ -1,12 +1,18 @@
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
-import { eq, schema } from "@/server/db";
+import { and, eq, isNull, schema } from "@/server/db";
 import { surveySelectSchema } from "@/server/db/schema";
 
 const surveyCreateSchema = surveySelectSchema.pick({
   title: true,
+  description: true,
+  dueAt: true,
 });
 const surveyFindByIdSchema = surveySelectSchema.pick({
   uuid: true,
+});
+
+const surveyArchiveByIdSchema = surveySelectSchema.pick({
+  id: true,
 });
 
 export const surveyRouter = createTRPCRouter({
@@ -24,6 +30,8 @@ export const surveyRouter = createTRPCRouter({
         .values({
           title: input.title,
           createdById: user?.id,
+          description: input.description,
+          dueAt: input?.dueAt,
         })
         .returning();
       if (!newSurveys || newSurveys.length === 0)
@@ -42,7 +50,10 @@ export const surveyRouter = createTRPCRouter({
     if (!user) throw new Error("No user found");
 
     return ctx.db.query.survey.findMany({
-      where: eq(schema.survey.createdById, user.id),
+      where: and(
+        eq(schema.survey.createdById, user.id),
+        isNull(schema.survey.deletedAt),
+      ),
     });
   }),
 
@@ -55,7 +66,10 @@ export const surveyRouter = createTRPCRouter({
       if (!user) throw new Error("No user found");
 
       return ctx.db.query.survey.findMany({
-        where: eq(schema.survey.createdById, user.id),
+        where: and(
+          eq(schema.survey.createdById, user.id),
+          isNull(schema.survey.deletedAt),
+        ),
         with: { questions: true, user: true },
       });
     },
@@ -65,10 +79,33 @@ export const surveyRouter = createTRPCRouter({
     .input(surveyFindByIdSchema)
     .query(async ({ ctx, input }) => {
       const survey = await ctx.db.query.survey.findFirst({
-        where: eq(schema.survey.uuid, input.uuid),
+        where: and(
+          eq(schema.survey.uuid, input.uuid),
+          isNull(schema.survey.deletedAt),
+        ),
         with: { questions: true },
       });
       if (!survey) throw new Error("No survey found");
       return survey;
+    }),
+
+  // update on deleted_at
+  archiveById: procedures.protected
+    .input(surveyArchiveByIdSchema)
+    .mutation(async ({ ctx, input }) => {
+      const authUserId = ctx.user.id;
+      const user = await ctx.db.query.user.findFirst({
+        where: eq(schema.user.authId, authUserId),
+      });
+      if (!user) throw new Error("No user found");
+      const targetSurvey = await ctx.db.query.survey.findFirst({
+        where: eq(schema.survey.id, input.id),
+      });
+      if (targetSurvey?.createdById !== user.id)
+        throw new Error("Not posssible to archive a survey you did not create");
+      return ctx.db
+        .update(schema.survey)
+        .set({ deletedAt: new Date(), surveyStatus: "ARCHIVED" })
+        .where(eq(schema.survey.id, input.id));
     }),
 });

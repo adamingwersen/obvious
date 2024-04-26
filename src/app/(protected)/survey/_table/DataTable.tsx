@@ -110,7 +110,7 @@ export function DataTable<TData, TValue>({
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id.toString().toUpperCase()}
+                    {column.id.toString()}
                   </DropdownMenuCheckboxItem>
                 );
               })}

@@ -1,5 +1,7 @@
 "use client";
 
+import { handleArchiveSurvey } from "@/app/(protected)/survey/actions";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -43,46 +45,72 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
     header: "Survey title",
     cell: ({ row }) => {
       const surveyTitle = row.original.title;
-      return <div className="flex -space-x-2 font-bold">{surveyTitle}</div>;
+      return <div className="flex font-medium">{surveyTitle}</div>;
     },
   },
-  // TODO:
-  // New survey fields
   {
     accessorKey: "createdBy",
     header: "Created by",
     cell: ({ row }) => {
       const createdBy = row.original.user.firstName;
-      return <div className="flex -space-x-2">{createdBy}</div>;
+      return <div className="flex ">{createdBy}</div>;
+    },
+  },
+  {
+    accessorKey: "surveyStatus",
+    header: "Status",
+    // TODO: Fix filtering and actions based on STATUS
+    cell: ({ row }) => {
+      if (row.original.surveyStatus === "DRAFT")
+        return <Badge variant="yellow">Draft</Badge>;
+      if (row.original.surveyStatus === "PAUSED") {
+        return <Badge variant="outline">Paused</Badge>;
+      }
+      if (row.original.surveyStatus === "ACTIVE") {
+        return <Badge variant="green">Active</Badge>;
+      }
+      if (row.original.surveyStatus === "ARCHIVED") {
+        return <Badge variant="secondary">Archived</Badge>;
+      }
     },
   },
 
   {
     accessorKey: "questions",
-    header: "Number of questions",
+    header: "# Questions",
     cell: ({ row }) => {
       const nQuestions = row.original.questions.length;
-      return <div className="flex -space-x-2">{nQuestions}</div>;
+      return <div className="flex">{nQuestions}</div>;
     },
   },
   {
-    accessorKey: "createdAt",
+    accessorKey: "dueAt",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Created date
+          Due date
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => {
+      const dueAtDate = row.original.dueAt;
+      const dueAtDateString = dueAtDate ? dueAtDate.toDateString() : "Not set";
+      if (dueAtDateString === "Not set") {
+        return <Badge variant="red">{dueAtDateString}</Badge>;
+      }
+      return <div className="flex">{dueAtDateString}</div>;
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Created date",
+    cell: ({ row }) => {
       const createdDate = row.original.createdAt;
-      return (
-        <div className="flex -space-x-2">{createdDate.toDateString()}</div>
-      );
+      return <div className="flex">{createdDate.toDateString()}</div>;
     },
   },
   {
@@ -107,7 +135,15 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
 
             <DropdownMenuSeparator />
             <DropdownMenuItem>Share</DropdownMenuItem>
-            <DropdownMenuItem>Disable</DropdownMenuItem>
+            <DropdownMenuItem>Pause</DropdownMenuItem>
+
+            <DropdownMenuItem
+              className="text-red-500"
+              // TODO: Figure out a way to handleArchiveSurvey for selectedRows in table model
+              onClick={() => handleArchiveSurvey(row.original.id)}
+            >
+              Archive
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
