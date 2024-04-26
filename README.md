@@ -6,12 +6,17 @@
   - [x] -> Settings Page
 - [x] survey/page.tsx
   - [x] Nice way to display all existing surveys in list/table
+  - [x] Make surveys deletable
+  - [x] Fix routers/survey to handle new logic
+  - [x] Add status & due date to table
 - [ ] dashboard/page.tsx
   - [ ] ??
 - [ ] settings/page.tsx
   - [ ] ??
-- [ ] survey/create/page.tsx
-  - [ ] Add description
+- [x] survey/create/page.tsx
+  - [x] Add description
+  - [x] Add dueAt Date
+  - [x] Router-based back button
   - [ ] Add keywords (maybe from ESRS json file)
 - [ ] Email + Signup + Login flows (user setup)
 - [ ] survey/.../configure/page.tsx
