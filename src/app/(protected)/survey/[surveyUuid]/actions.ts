@@ -21,3 +21,8 @@ export const handleRemoveQuestion = async (questionId: number) => {
 
   // TODO: Add Toaster here
 };
+
+export const handleFindManyQuestionsBySurveyId = async (surveyId: number) => {
+  await api.question.findManyBySurveyId({ surveyId: surveyId });
+  revalidatePath(`/(protected)/survey/[surveyUuid]/answer`, "page");
+};
