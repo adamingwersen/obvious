@@ -9,15 +9,16 @@
   - [x] Make surveys deletable
   - [x] Fix routers/survey to handle new logic
   - [x] Add status & due date to table
-- [ ] dashboard/page.tsx
-  - [ ] ??
-- [ ] settings/page.tsx
-  - [ ] ??
 - [x] survey/create/page.tsx
   - [x] Add description
   - [x] Add dueAt Date
   - [x] Router-based back button
   - [ ] Add keywords (maybe from ESRS json file)
+- [ ] Answers:
+  - [ ] Routing pattern for answers?
+  - [ ] Display Q -> Receive answer
+  - [ ] Translate Q/A
+  - [ ] Forward Survey instance
 - [ ] Email + Signup + Login flows (user setup)
 - [ ] survey/.../configure/page.tsx
   - [ ] Add some polish
@@ -27,11 +28,10 @@
   - [ ] Order questions?
   - [ ] How should 'sharing' work?
     - [ ] By copy link & send to email address
-- [ ] Answers:
-  - [ ] Routing pattern for answers?
-  - [ ] Display Q -> Receive answer
-  - [ ] Translate Q/A
-  - [ ] Forward Survey instance
+- [ ] dashboard/page.tsx
+  - [ ] ??
+- [ ] settings/page.tsx
+  - [ ] ??
 
 #### Create T3 App
 

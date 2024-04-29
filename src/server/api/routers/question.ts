@@ -22,6 +22,10 @@ const questionFindByIdSchema = questionSelectSchema.pick({
   id: true,
 });
 
+const findManyBySurveyIdSchema = questionSelectSchema.pick({
+  surveyId: true,
+});
+
 export const questionRouter = createTRPCRouter({
   create: procedures.protected
     .input(questionCreateSchema)
@@ -64,6 +68,16 @@ export const questionRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const question = await ctx.db.query.question.findFirst({
         where: eq(schema.question.id, input.id),
+      });
+      if (!question) throw new Error("No questions found");
+      return question;
+    }),
+
+  findManyBySurveyId: procedures.protected
+    .input(findManyBySurveyIdSchema)
+    .query(async ({ ctx, input }) => {
+      const question = await ctx.db.query.question.findMany({
+        where: eq(schema.question.surveyId, input.surveyId),
       });
       if (!question) throw new Error("No questions found");
       return question;
