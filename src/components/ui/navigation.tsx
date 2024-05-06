@@ -55,7 +55,12 @@ const Navigation = () => {
               href="/home"
               className="flex items-center gap-2 text-lg font-semibold"
             >
-              <Blend className="size-6" />
+              <Image
+                src="/obvious-logo.svg"
+                alt="logo"
+                width={85}
+                height={85}
+              />
             </Link>
             {NavLinks}
           </nav>
