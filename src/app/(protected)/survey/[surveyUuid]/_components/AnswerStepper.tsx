@@ -20,30 +20,50 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type AnswerStepperProps = {
   questions: QuestionModel[];
 };
 
-const AnswerStepper = ({ questions }: AnswerStepperProps) => {
-  const questionsLength = questions.length;
-  console.log(questionsLength);
-  const [answerIndex, setAnswerIndex] = useState(0);
+const formSchema = z.object({
+  title: z.string().min(5),
+  content: z.string().min(10),
+});
 
-  const onClickNext = async () => {
+export type CreateAnswerFormFields = z.infer<typeof formSchema>;
+
+const AnswerStepper = ({ questions }: AnswerStepperProps) => {
+  const [answerIndex, setAnswerIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const questionsLength = questions.length;
+
+  const form = useForm<CreateAnswerFormFields>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      content: "",
+    },
+  });
+
+  const onClickNext = async (data: CreateAnswerFormFields) => {
     if (answerIndex <= questionsLength) {
+      setIsLoading(true);
       setAnswerIndex(answerIndex + 1);
+      await handleUpserAnswerFormSubmit(data, questionId);
+      form.reset();
+      setIsLoading(false);
     }
-    console.log("NEXT", answerIndex);
   };
 
   const onClickBack = async () => {
     if (answerIndex > 0) {
+      setIsLoading(true);
       setAnswerIndex(answerIndex - 1);
+      setIsLoading(false);
     }
-
-    console.log("BACK", answerIndex);
   };
 
   return (
