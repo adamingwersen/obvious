@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Blend, CircleUser, Menu, Search } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 const navItems = [
@@ -37,7 +38,7 @@ const Navigation = () => {
           href="/home"
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
         >
-          <Blend className="size-6" />
+          <Image src="/obvious-logo.svg" alt="logo" width={150} height={150} />
         </Link>
         {NavLinks}
       </nav>
@@ -54,7 +55,12 @@ const Navigation = () => {
               href="/home"
               className="flex items-center gap-2 text-lg font-semibold"
             >
-              <Blend className="size-6" />
+              <Image
+                src="/obvious-logo.svg"
+                alt="logo"
+                width={85}
+                height={85}
+              />
             </Link>
             {NavLinks}
           </nav>

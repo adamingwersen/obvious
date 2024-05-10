@@ -1,0 +1,204 @@
+"use client";
+import { Button } from "@/components/ui/button";
+import { SURVEY_METADATA_TYPES } from "@/server/db/schema/enums";
+import { z } from "zod";
+import { useFieldArray, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ArrowRight, Plus, Trash } from "lucide-react";
+
+import { useEffect, useState } from "react";
+import { handleCreateManySurveyMetadata } from "../metadata/actions";
+import { useToast } from "@/components/ui/use-toast";
+import { SurveyMetadataModel } from "@/server/db/schema";
+
+const formSchema = z.object({
+  surveyMetadataFields: z.array(
+    z.object({
+      title: z.string().min(5),
+      metadataType: z.enum(SURVEY_METADATA_TYPES),
+    }),
+  ),
+});
+
+export type CreateSurveyMetadataFormFields = z.infer<typeof formSchema>;
+
+type MetadataDynamicFormProps = {
+  surveyUuid: string;
+  formFieldsFromServer: SurveyMetadataModel[];
+};
+
+const MetadataDynamicForm = ({
+  surveyUuid,
+  formFieldsFromServer,
+}: MetadataDynamicFormProps) => {
+  console.log({ formFieldsFromServer });
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const form = useForm<CreateSurveyMetadataFormFields>({
+    resolver: zodResolver(formSchema),
+    mode: "onBlur",
+    defaultValues: {
+      surveyMetadataFields: [
+        {
+          title: "Company Name",
+          metadataType: "TEXT",
+        },
+      ],
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    name: "surveyMetadataFields",
+    control: form.control,
+  });
+
+  const onDelete = (index: number) => {
+    remove(index);
+    toast({
+      title: "Deleted field",
+      description: new Date().toLocaleString(),
+    });
+  };
+
+  const onSubmit = async (values: CreateSurveyMetadataFormFields) => {
+    setIsLoading(true);
+    await handleCreateManySurveyMetadata(values, surveyUuid);
+    setIsLoading(false);
+    toast({
+      title: "Saved metadata for survey",
+      description: new Date().toLocaleString(),
+    });
+    form.reset();
+  };
+
+  // TODO: Fix fetching of existing fields
+  // useEffect(() => {
+  //   if (formFieldsFromServer.length === 0) {
+  //     append({
+  //       title: "Company Name",
+  //       metadataType: "TEXT",
+  //     });
+  //   } else append(formFieldsFromServer);
+  // }, [formFieldsFromServer, append]);
+
+  return (
+    <Form {...form}>
+      <form
+        action=""
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex w-full flex-col space-y-5  px-10"
+      >
+        <div className="metadataFields w-full ">
+          <FormField
+            control={form.control}
+            name="surveyMetadataFields"
+            render={() => (
+              <div>
+                {fields.map((field, index) => {
+                  return (
+                    <div key={index} className="">
+                      <div className="flex gap-x-4 py-1">
+                        <FormField
+                          control={form.control}
+                          key={field.id}
+                          name={`surveyMetadataFields.${index}.title`}
+                          render={({ field }) => (
+                            <FormItem className="w-3/5">
+                              <FormControl>
+                                <Input {...field} />
+                              </FormControl>
+                              <FormMessage className="capitalize text-red-500" />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          key={index + 1}
+                          name={`surveyMetadataFields.${index}.metadataType`}
+                          render={({ field }) => (
+                            <FormItem className="w-1/5">
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select a Type" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {SURVEY_METADATA_TYPES.map(
+                                    (metadataType, index) => (
+                                      <SelectItem
+                                        key={index}
+                                        value={metadataType}
+                                      >
+                                        {metadataType.charAt(0).toUpperCase() +
+                                          metadataType.slice(1).toLowerCase()}
+                                      </SelectItem>
+                                    ),
+                                  )}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage className="capitalize text-red-500" />
+                            </FormItem>
+                          )}
+                        />
+                        {index > 0 && (
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            onClick={() => onDelete(index)}
+                          >
+                            <Trash className="size-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          />
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="mt-2 w-1/2 gap-2"
+          onClick={() => append({ title: "", metadataType: "TEXT" })}
+        >
+          <Plus className="size-4" />
+          Add Field
+        </Button>
+        <div className="absolute bottom-6 right-6">
+          <Button
+            className="gap-2 bg-lilla-700"
+            type="submit"
+            isLoading={isLoading}
+          >
+            Submit
+            <ArrowRight className="size-4" />
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+};
+
+export default MetadataDynamicForm;

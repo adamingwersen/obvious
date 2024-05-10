@@ -9,5 +9,5 @@ export const handleCreateSurveyFormSubmit = async (
 ) => {
   const newSurvey = await api.survey.create(data);
 
-  redirect(`/survey/${newSurvey.uuid}/configure`);
+  redirect(`/survey/${newSurvey.uuid}/metadata`);
 };
