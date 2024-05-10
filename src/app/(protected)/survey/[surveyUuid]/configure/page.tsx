@@ -22,13 +22,13 @@ const ConfigureSurveyPage = async ({
           <ExistingQuestionRow question={question} key={question.id} />
         ))}
       </ScrollArea>
-      <div className="-ml-[18vw] flex w-full flex-col justify-between pb-6">
+      <div className="-ml-[18vw] flex w-full flex-col justify-between  pb-6">
         <div className="mb-auto pt-10">
           <CreateQuestion surveyId={survey.id} surveyUuid={survey.uuid} />
         </div>
         <Link
           href={`/survey/${params.surveyUuid}/validate`}
-          className="self-end "
+          className="self-end"
         >
           <Button variant="outline" className="flex flex-row space-x-2">
             <p>Finish</p> <ArrowRight className="h-4 w-4" />
