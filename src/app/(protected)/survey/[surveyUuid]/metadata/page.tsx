@@ -5,6 +5,7 @@ const MetadataPage = async ({ params }: { params: { surveyUuid: string } }) => {
   const formFieldsFromServer = await api.surveyMetadata.findManyBySurveyUuid({
     surveyUuid: params.surveyUuid,
   });
+
   return (
     <div className="flex h-full flex-col space-y-4 pt-10">
       <div className="relative h-full w-1/3 self-center rounded-md border p-4">
