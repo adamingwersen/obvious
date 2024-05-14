@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { ArrowRight, Plus, Trash } from "lucide-react";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { handleCreateManySurveyMetadata } from "../metadata/actions";
 import { useToast } from "@/components/ui/use-toast";
 import { SurveyMetadataModel } from "@/server/db/schema";
@@ -31,6 +31,7 @@ const formSchema = z.object({
     z.object({
       title: z.string().min(5),
       metadataType: z.enum(SURVEY_METADATA_TYPES),
+      id: z.number().optional(),
     }),
   ),
 });
@@ -46,20 +47,34 @@ const MetadataDynamicForm = ({
   surveyUuid,
   formFieldsFromServer,
 }: MetadataDynamicFormProps) => {
-  console.log({ formFieldsFromServer });
+  const mapped = formFieldsFromServer.map(({ id, title, metadataType }) => ({
+    id,
+    title,
+    metadataType,
+  }));
+
+  const data = {
+    surveyMetadataFields: mapped,
+  };
+
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<CreateSurveyMetadataFormFields>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
-    defaultValues: {
-      surveyMetadataFields: [
-        {
-          title: "Company Name",
-          metadataType: "TEXT",
-        },
-      ],
-    },
+    values: data,
+    // This behaves weirdly if just provided directly
+    defaultValues:
+      mapped.length > 0
+        ? undefined
+        : {
+            surveyMetadataFields: [
+              {
+                title: "Company Name",
+                metadataType: "TEXT",
+              },
+            ],
+          },
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -85,16 +100,6 @@ const MetadataDynamicForm = ({
     });
     form.reset();
   };
-
-  // TODO: Fix fetching of existing fields
-  // useEffect(() => {
-  //   if (formFieldsFromServer.length === 0) {
-  //     append({
-  //       title: "Company Name",
-  //       metadataType: "TEXT",
-  //     });
-  //   } else append(formFieldsFromServer);
-  // }, [formFieldsFromServer, append]);
 
   return (
     <Form {...form}>
