@@ -2,7 +2,7 @@ import MetadataDynamicForm from "../_components/MetadataDynamicForm";
 import { api } from "@/trpc/server";
 
 const MetadataPage = async ({ params }: { params: { surveyUuid: string } }) => {
-  const formFieldsFromServer = await api.surveyMetadata.findManyBySurveyUuid({
+  const formFieldsFromServer = await api.metadataQuestion.findManyBySurveyUuid({
     surveyUuid: params.surveyUuid,
   });
 

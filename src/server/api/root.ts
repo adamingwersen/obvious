@@ -2,9 +2,10 @@ import { answerRouter } from "@/server/api/routers/answer";
 import { questionRouter } from "@/server/api/routers/question";
 import { surveyRouter } from "@/server/api/routers/survey";
 import { surveyInstanceRouter } from "@/server/api/routers/surveyInstance";
-import { surveyMetadataRouter } from "@/server/api/routers/surveyMetadata";
+import { metadataQuestionRouter } from "@/server/api/routers/metadataQuestion";
 import { userRouter } from "@/server/api/routers/user";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
+import { respondentRouter } from "@/server/api/routers/respondent";
 
 /**
  * This is the primary router for your server.
@@ -17,7 +18,8 @@ export const appRouter = createTRPCRouter({
   surveyInstance: surveyInstanceRouter,
   answer: answerRouter,
   question: questionRouter,
-  surveyMetadata: surveyMetadataRouter,
+  metadataQuestion: metadataQuestionRouter,
+  respondent: respondentRouter,
 });
 
 // export type definition of API

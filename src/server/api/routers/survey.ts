@@ -83,7 +83,7 @@ export const surveyRouter = createTRPCRouter({
           eq(schema.survey.uuid, input.uuid),
           isNull(schema.survey.deletedAt),
         ),
-        with: { questions: true },
+        with: { questions: true, user: true },
       });
       if (!survey) throw new Error("No survey found");
       return survey;

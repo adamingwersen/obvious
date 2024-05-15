@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { SURVEY_METADATA_TYPES } from "@/server/db/schema/enums";
+import { METADATA_TYPES } from "@/server/db/schema/enums";
 import { z } from "zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,23 +24,23 @@ import { ArrowRight, Plus, Trash } from "lucide-react";
 import { useState } from "react";
 import { handleCreateManySurveyMetadata } from "../metadata/actions";
 import { useToast } from "@/components/ui/use-toast";
-import { SurveyMetadataModel } from "@/server/db/schema";
+import { MetadataQuestionModel } from "@/server/db/schema";
 
 const formSchema = z.object({
-  surveyMetadataFields: z.array(
+  metadataQuestionFields: z.array(
     z.object({
       title: z.string().min(5),
-      metadataType: z.enum(SURVEY_METADATA_TYPES),
+      metadataType: z.enum(METADATA_TYPES),
       id: z.number().optional(),
     }),
   ),
 });
 
-export type CreateSurveyMetadataFormFields = z.infer<typeof formSchema>;
+export type CreateMetadataQuestionFormFields = z.infer<typeof formSchema>;
 
 type MetadataDynamicFormProps = {
   surveyUuid: string;
-  formFieldsFromServer: SurveyMetadataModel[];
+  formFieldsFromServer: MetadataQuestionModel[];
 };
 
 const MetadataDynamicForm = ({
@@ -54,12 +54,12 @@ const MetadataDynamicForm = ({
   }));
 
   const data = {
-    surveyMetadataFields: mapped,
+    metadataQuestionFields: mapped,
   };
 
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<CreateSurveyMetadataFormFields>({
+  const form = useForm<CreateMetadataQuestionFormFields>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
     values: data,
@@ -68,7 +68,7 @@ const MetadataDynamicForm = ({
       mapped.length > 0
         ? undefined
         : {
-            surveyMetadataFields: [
+            metadataQuestionFields: [
               {
                 title: "Company Name",
                 metadataType: "TEXT",
@@ -78,7 +78,7 @@ const MetadataDynamicForm = ({
   });
 
   const { fields, append, remove } = useFieldArray({
-    name: "surveyMetadataFields",
+    name: "metadataQuestionFields",
     control: form.control,
   });
 
@@ -90,7 +90,7 @@ const MetadataDynamicForm = ({
     });
   };
 
-  const onSubmit = async (values: CreateSurveyMetadataFormFields) => {
+  const onSubmit = async (values: CreateMetadataQuestionFormFields) => {
     setIsLoading(true);
     await handleCreateManySurveyMetadata(values, surveyUuid);
     setIsLoading(false);
@@ -110,7 +110,7 @@ const MetadataDynamicForm = ({
         <div className="metadataFields w-full ">
           <FormField
             control={form.control}
-            name="surveyMetadataFields"
+            name="metadataQuestionFields"
             render={() => (
               <div>
                 {fields.map((field, index) => {
@@ -120,7 +120,7 @@ const MetadataDynamicForm = ({
                         <FormField
                           control={form.control}
                           key={field.id}
-                          name={`surveyMetadataFields.${index}.title`}
+                          name={`metadataQuestionFields.${index}.title`}
                           render={({ field }) => (
                             <FormItem className="w-3/5">
                               <FormControl>
@@ -133,7 +133,7 @@ const MetadataDynamicForm = ({
                         <FormField
                           control={form.control}
                           key={index + 1}
-                          name={`surveyMetadataFields.${index}.metadataType`}
+                          name={`metadataQuestionFields.${index}.metadataType`}
                           render={({ field }) => (
                             <FormItem className="w-1/5">
                               <Select
@@ -146,17 +146,15 @@ const MetadataDynamicForm = ({
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  {SURVEY_METADATA_TYPES.map(
-                                    (metadataType, index) => (
-                                      <SelectItem
-                                        key={index}
-                                        value={metadataType}
-                                      >
-                                        {metadataType.charAt(0).toUpperCase() +
-                                          metadataType.slice(1).toLowerCase()}
-                                      </SelectItem>
-                                    ),
-                                  )}
+                                  {METADATA_TYPES.map((metadataType, index) => (
+                                    <SelectItem
+                                      key={index}
+                                      value={metadataType}
+                                    >
+                                      {metadataType.charAt(0).toUpperCase() +
+                                        metadataType.slice(1).toLowerCase()}
+                                    </SelectItem>
+                                  ))}
                                 </SelectContent>
                               </Select>
                               <FormMessage className="capitalize text-red-500" />
