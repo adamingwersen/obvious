@@ -2,24 +2,24 @@
 
 import { api } from "@/trpc/server";
 import { revalidatePath } from "next/cache";
-import { type CreateSurveyMetadataFormFields } from "../_components/MetadataDynamicForm";
+import { CreateMetadataQuestionFormFields } from "../_components/MetadataDynamicForm";
 import { redirect } from "next/navigation";
 
 export const handleCreateManySurveyMetadata = async (
-  data: CreateSurveyMetadataFormFields,
+  data: CreateMetadataQuestionFormFields,
   surveyUuid: string,
 ) => {
   const surveyId = await api.survey.findById({ uuid: surveyUuid });
-  const modifiedData = data.surveyMetadataFields.map((surveyMetadata) => {
+  const modifiedData = data.metadataQuestionFields.map((metadata) => {
     return {
-      id: surveyMetadata.id,
-      title: surveyMetadata.title,
-      metadataType: surveyMetadata.metadataType,
+      id: metadata.id,
+      title: metadata.title,
+      metadataType: metadata.metadataType,
       surveyId: surveyId.id,
     };
   });
 
-  await api.surveyMetadata.createMany(modifiedData);
+  await api.metadataQuestion.createMany(modifiedData);
   revalidatePath(`/(protected)/survey/[surveyUuid]/metadata`, "page");
   redirect(`/survey/${surveyUuid}/configure`);
 };

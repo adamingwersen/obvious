@@ -11,16 +11,16 @@ export const USER_PRIVILEGE_SCHEMA = pgEnum("user_privilege", USER_PRIVILEGE);
 const UserPrivilegeZodType = z.enum(USER_PRIVILEGE);
 export type UserPrivilegeType = z.infer<typeof UserPrivilegeZodType>;
 
-export const SURVEY_METADATA_TYPES = [
+export const METADATA_TYPES = [
   "NUMBER",
   "RANGE",
   "TEXT",
   "URL",
   "EMAIL",
 ] as const;
-export const SURVEY_METADATA_TYPES_SCHEMA = pgEnum(
+export const METADATA_TYPES_SCHEMA = pgEnum(
   "survey_metadata_types",
-  SURVEY_METADATA_TYPES,
+  METADATA_TYPES,
 );
-const SurveyMetadataTypesZodType = z.enum(SURVEY_METADATA_TYPES);
-export type SurveyMetadataType = z.infer<typeof SurveyMetadataTypesZodType>;
+const MetadataTypesZodType = z.enum(METADATA_TYPES);
+export type MetadataType = z.infer<typeof MetadataTypesZodType>;

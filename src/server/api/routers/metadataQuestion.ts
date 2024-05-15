@@ -2,43 +2,43 @@ import { createTRPCRouter, procedures } from "@/server/api/trpc";
 import { asc, sql } from "drizzle-orm";
 import { eq, inArray, schema } from "@/server/db";
 import {
-  surveyMetadataInsertSchema,
-  surveyMetadataSelectSchema,
+  metadataQuestionInsertSchema,
+  metadataQuestionSelectSchema,
 } from "@/server/db/schema";
 import { z } from "zod";
 
-const surveyMetadataCreateSchema = surveyMetadataInsertSchema.pick({
+const metadataQuestionCreateSchema = metadataQuestionInsertSchema.pick({
   id: true,
   title: true,
   metadataType: true,
   surveyId: true,
 });
 
-const surveyMetadataCreateManySchema = z.array(surveyMetadataCreateSchema);
+const metadataQuestionCreateManySchema = z.array(metadataQuestionCreateSchema);
 
-const surveyMetadataDeleteSchema = surveyMetadataSelectSchema.pick({
+const metadataQuestionDeleteSchema = metadataQuestionSelectSchema.pick({
   id: true,
 });
 
 const findManyBySurveyUuidSchema = z.object({ surveyUuid: z.string() });
 
-export const surveyMetadataRouter = createTRPCRouter({
+export const metadataQuestionRouter = createTRPCRouter({
   create: procedures.protected
-    .input(surveyMetadataCreateSchema)
+    .input(metadataQuestionCreateSchema)
     .mutation(async ({ ctx, input }) => {
       const authUserId = ctx.user.id;
       const user = await ctx.db.query.user.findFirst({
         where: eq(schema.user.authId, authUserId),
       });
       if (!user) throw new Error("No user found");
-      return ctx.db.insert(schema.surveyMetadata).values({
+      return ctx.db.insert(schema.metadataQuestion).values({
         ...input,
         createdById: user.id,
       });
     }),
 
   createMany: procedures.protected
-    .input(surveyMetadataCreateManySchema)
+    .input(metadataQuestionCreateManySchema)
     .mutation(async ({ ctx, input }) => {
       const authUserId = ctx.user.id;
       const user = await ctx.db.query.user.findFirst({
@@ -52,21 +52,21 @@ export const surveyMetadataRouter = createTRPCRouter({
         throw new Error("No data found for survey metadata creation");
       }
       // Fetch current survey metadata fields
-      const currentFields = await ctx.db.query.surveyMetadata.findMany({
-        where: eq(schema.surveyMetadata.surveyId, data[0].surveyId),
+      const currentFields = await ctx.db.query.metadataQuestion.findMany({
+        where: eq(schema.metadataQuestion.surveyId, data[0].surveyId),
       });
 
       // Upsert new survey metadata fields
       const newFieldIds = await ctx.db
-        .insert(schema.surveyMetadata)
+        .insert(schema.metadataQuestion)
         .values(data)
         .onConflictDoUpdate({
-          target: schema.surveyMetadata.id,
+          target: schema.metadataQuestion.id,
           set: {
-            title: sql.raw(`excluded.${schema.surveyMetadata.title.name}`),
+            title: sql.raw(`excluded.${schema.metadataQuestion.title.name}`),
           },
         })
-        .returning({ id: schema.surveyMetadata.id });
+        .returning({ id: schema.metadataQuestion.id });
 
       // Delete fields that are not in the new set
       const toDelete = currentFields
@@ -74,19 +74,19 @@ export const surveyMetadataRouter = createTRPCRouter({
         .map((x) => x.id);
       if (toDelete.length > 0) {
         await ctx.db
-          .delete(schema.surveyMetadata)
-          .where(inArray(schema.surveyMetadata.id, toDelete));
+          .delete(schema.metadataQuestion)
+          .where(inArray(schema.metadataQuestion.id, toDelete));
       }
     }),
 
   deleteById: procedures.protected
-    .input(surveyMetadataDeleteSchema)
+    .input(metadataQuestionDeleteSchema)
     .query(async ({ ctx, input }) => {
-      const surveyMetadata = await ctx.db.query.surveyMetadata.findFirst({
-        where: eq(schema.surveyMetadata.id, input.id),
+      const metadataQuestion = await ctx.db.query.metadataQuestion.findFirst({
+        where: eq(schema.metadataQuestion.id, input.id),
       });
-      if (!surveyMetadata) throw new Error("No survey metadata found");
-      return surveyMetadata;
+      if (!metadataQuestion) throw new Error("No survey metadata found");
+      return metadataQuestion;
     }),
 
   findManyBySurveyUuid: procedures.protected
@@ -96,11 +96,11 @@ export const surveyMetadataRouter = createTRPCRouter({
         where: eq(schema.survey.uuid, input.surveyUuid),
       });
       if (!survey) throw new Error("No survey found");
-      const surveyMetadatas = await ctx.db.query.surveyMetadata.findMany({
-        where: eq(schema.surveyMetadata.surveyId, survey.id),
-        orderBy: asc(schema.surveyMetadata.createdAt),
+      const metadataQuestions = await ctx.db.query.metadataQuestion.findMany({
+        where: eq(schema.metadataQuestion.surveyId, survey.id),
+        orderBy: asc(schema.metadataQuestion.createdAt),
       });
-      if (!surveyMetadatas) return [];
-      return surveyMetadatas;
+      if (!metadataQuestions) return [];
+      return metadataQuestions;
     }),
 });
