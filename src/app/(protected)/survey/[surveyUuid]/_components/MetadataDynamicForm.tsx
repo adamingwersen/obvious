@@ -98,7 +98,6 @@ const MetadataDynamicForm = ({
       title: "Saved metadata for survey",
       description: new Date().toLocaleString(),
     });
-    form.reset();
   };
 
   return (
