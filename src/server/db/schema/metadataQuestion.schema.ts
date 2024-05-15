@@ -1,4 +1,3 @@
-import { MetadataQuestionModel } from "@/server/db/schema";
 import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
 import { defaultRows } from "./shared";
