@@ -138,6 +138,25 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
             </Link>
 
             <DropdownMenuSeparator />
+            {/* TODO: Fix URL with env or somehting */}
+            <DropdownMenuItem
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  `localhost:3000/respond/${row.original.uuid}`,
+                )
+              }
+            >
+              Copy link to survey
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  `SurveyID: ${row.original.id} // CreatedByID: ${row.original.createdById}`,
+                )
+              }
+            >
+              Copy data fields for sharing
+            </DropdownMenuItem>
             <DropdownMenuItem>Share</DropdownMenuItem>
             <DropdownMenuItem>Pause</DropdownMenuItem>
 

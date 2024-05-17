@@ -6,6 +6,7 @@ import { metadataQuestionRouter } from "@/server/api/routers/metadataQuestion";
 import { userRouter } from "@/server/api/routers/user";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 import { respondentRouter } from "@/server/api/routers/respondent";
+import { metadataAnswerRouter } from "@/server/api/routers/metadataAnswer";
 
 /**
  * This is the primary router for your server.
@@ -19,6 +20,7 @@ export const appRouter = createTRPCRouter({
   answer: answerRouter,
   question: questionRouter,
   metadataQuestion: metadataQuestionRouter,
+  metadataAnswer: metadataAnswerRouter,
   respondent: respondentRouter,
 });
 
