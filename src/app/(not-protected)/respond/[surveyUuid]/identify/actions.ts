@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { api } from "@/trpc/server";
 import { type ValidateRespondentFormFields } from "./page";
+import { cookies } from "next/headers";
 
 export const handleValidateRespondent = async (
   surveyUuid: string,
@@ -21,5 +22,6 @@ export const handleValidateRespondent = async (
     surveyId: respondent.surveyId,
   });
   if (!updated) redirect(`/respond/${surveyUuid}/rejected`);
+  cookies().set("respondent-identifier", respondent.uuid, { secure: true });
   redirect(`/respond/${surveyUuid}/identified`);
 };

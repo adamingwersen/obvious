@@ -11,6 +11,10 @@ const respondentCreateSchema = respondentInsertSchema.pick({
   email: true,
 });
 
+const respondentFindByUuuidSchema = respondentSelectSchema.pick({
+  uuid: true,
+});
+
 const respondentCreateManySchema = z.array(respondentCreateSchema);
 
 const respondentValidateSchema = respondentSelectSchema.pick({
@@ -97,5 +101,15 @@ export const respondentRouter = createTRPCRouter({
             eq(input.id, schema.respondent.id),
           ),
         );
+    }),
+
+  findByUuid: procedures.public
+    .input(respondentFindByUuuidSchema)
+    .query(async ({ ctx, input }) => {
+      const respondent = await ctx.db.query.respondent.findFirst({
+        where: and(eq(schema.respondent.uuid, input.uuid)),
+      });
+      if (!respondent) return null;
+      return respondent;
     }),
 });

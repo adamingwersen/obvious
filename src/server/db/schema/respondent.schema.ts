@@ -19,6 +19,7 @@ export const respondent = pgTable("respondent", {
   email: varchar("email", { length: 256 }).notNull(),
   invitedById: integer("invited_by_id").notNull(),
   surveyId: integer("survey_id").notNull(),
+  uuid: uuid("uuid").notNull().defaultRandom().unique(),
 });
 
 export const respondentRelations = relations(respondent, ({ one }) => ({
