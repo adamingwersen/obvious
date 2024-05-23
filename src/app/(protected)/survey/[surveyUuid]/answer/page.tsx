@@ -1,5 +1,4 @@
 import AnswerStepper from "@/app/(protected)/survey/[surveyUuid]/_components/AnswerStepper";
-import { Card } from "@/components/ui/card";
 import { api } from "@/trpc/server";
 
 const AnswerSurveyIdPage = async ({

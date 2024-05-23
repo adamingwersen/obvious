@@ -37,17 +37,6 @@ const AnswerStepper = ({ questions }: AnswerStepperProps) => {
     } else if (newIdx == questionsLength) {
       router.push("/survey");
     }
-
-    // setAnswerIndex((prev) => {
-    //   const newIdx = prev + 1;
-    //   console.log(newIdx, questionsLength);
-    //   if (newIdx <= questionsLength) {
-    //     return newIdx;
-    //   } else if (newIdx == questionsLength) {
-    //     // TODO: Take to some review page
-    //           }
-    //   return newIdx;
-    // });
   };
 
   return (
