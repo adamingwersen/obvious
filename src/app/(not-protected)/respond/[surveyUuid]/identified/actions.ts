@@ -26,7 +26,6 @@ export const handleSubmitMetadataForm = async (
       metadataType: response.metadataType,
     } as MetadataAnswerModel;
   });
-  // console.log({ formattedData });
   const metadataAnswers = await api.metadataAnswer.createMany(formattedData);
   if (!metadataAnswers) throw new Error("Whoops. That went wrong");
   redirect(`/respond/${surveyUuid}/identified/questionnaire`);

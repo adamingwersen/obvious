@@ -8,11 +8,13 @@ const questionCreateSchema = questionInsertSchema.pick({
   surveyId: true,
 });
 
-const questionUpdateSchema = questionInsertSchema.pick({
-  title: true,
-  content: true,
-  id: true,
-});
+const questionUpdateSchema = questionInsertSchema
+  .pick({
+    title: true,
+    content: true,
+    id: true,
+  })
+  .partial({ content: true });
 
 const questionDeleteByIdSchema = questionSelectSchema.pick({
   id: true,
@@ -48,11 +50,19 @@ export const questionRouter = createTRPCRouter({
         where: eq(schema.user.authId, authUserId),
       });
       if (!user) throw new Error("No user found");
-      return ctx.db
+      const updatedQuestion = ctx.db
         .update(schema.question)
         .set(input)
         .where(eq(schema.question.id, input.id!))
         .returning();
+      // If content is set we assume its new content
+      // We remove previous translations for question
+      if (input.content !== undefined) {
+        const hest = await ctx.db
+          .delete(schema.translation)
+          .where(eq(schema.translation.questionId, input.id!));
+      }
+      return updatedQuestion;
     }),
 
   deleteById: procedures.protected

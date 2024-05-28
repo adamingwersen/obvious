@@ -12,6 +12,8 @@ import { ArrowRight, File, Trash } from "lucide-react";
 
 import FilePicker from "./FilePicker";
 import Spinner from "@/components/ui/spinner";
+import Translator from "@/components/ui/translator";
+import { Question } from "./AnswerStepper";
 
 const formSchema = z.object({
   content: z.string().min(10),
@@ -19,15 +21,7 @@ const formSchema = z.object({
 
 type AnswerStepProps = {
   stepIndex: number;
-  question: {
-    id: number;
-    content: string;
-    existingAnswer: {
-      id: number;
-      content: string;
-      filePaths: string[];
-    } | null;
-  };
+  question: Question;
   nextFunc: () => void;
   backFunc: () => void;
 };
@@ -107,8 +101,18 @@ const AnswerStep = ({
     <div className="w-full">
       <div className="p-5">
         <h1 className="text-center text-xl font-extrabold tracking-tight">
-          {question.content}
+          {question.title}
         </h1>
+        <Translator
+          translations={question.translations}
+          content={question.content}
+          answerId={undefined}
+          questionId={question.id}
+        >
+          <p className="w-1/3 text-center text-lg font-semibold tracking-tight">
+            {question.content}
+          </p>
+        </Translator>
       </div>
       <div className="mx-auto flex flex-col items-center gap-6">
         <Form {...form}>

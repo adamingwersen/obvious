@@ -9,3 +9,4 @@ export * from "./surveyinstance.schema";
 export * from "./metadataQuestion.schema";
 export * from "./metadataAnswer.schema";
 export * from "./respondent.schema";
+export * from "./translation.schema";
