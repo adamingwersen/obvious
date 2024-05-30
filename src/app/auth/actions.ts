@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { USER_PRIVILEGE, type UserPrivilegeType } from "@/server/db/schema";
 import { createClient } from "@/server/supabase/server";
-import { api } from "@/trpc/server";
 
 export const signInWithPassword = async (email: string, password: string) => {
   const supabase = createClient();

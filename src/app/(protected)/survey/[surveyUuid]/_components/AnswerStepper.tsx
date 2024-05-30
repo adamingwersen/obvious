@@ -20,7 +20,7 @@ type AnswerStepperProps = {
 const AnswerStepper = ({ questions }: AnswerStepperProps) => {
   const [answerIndex, setAnswerIndex] = useState(0);
   const router = useRouter();
-  const currentQuestion = questions[answerIndex] || null;
+  const currentQuestion = questions[answerIndex] ?? null;
 
   const questionsLength = questions.length;
 

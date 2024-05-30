@@ -24,7 +24,7 @@ import { ArrowRight, Plus, Trash } from "lucide-react";
 import { useState } from "react";
 import { handleCreateManySurveyMetadata } from "../metadata/actions";
 import { useToast } from "@/components/ui/use-toast";
-import { MetadataQuestionModel } from "@/server/db/schema";
+import { type MetadataQuestionModel } from "@/server/db/schema";
 
 const formSchema = z.object({
   metadataQuestionFields: z.array(

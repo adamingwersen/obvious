@@ -27,10 +27,9 @@ export type CreateQuestionFormFields = z.infer<typeof formSchema>;
 
 type CreateQuestionProps = {
   surveyId: number;
-  surveyUuid: string;
 };
 
-const CreateQuestion = ({ surveyId, surveyUuid }: CreateQuestionProps) => {
+const CreateQuestion = ({ surveyId }: CreateQuestionProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { removeQueryParam } = useUrlHelpers();

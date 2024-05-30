@@ -1,6 +1,5 @@
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
-import { asc, sql } from "drizzle-orm";
-import { eq, inArray, schema } from "@/server/db";
+import { eq, schema } from "@/server/db";
 import { metadataAnswerInsertSchema } from "@/server/db/schema";
 import { z } from "zod";
 
