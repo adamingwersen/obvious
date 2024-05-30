@@ -1,8 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { api } from "@/trpc/server";
 import { ArrowRight } from "lucide-react";
 import { z } from "zod";
 import Image from "next/image";

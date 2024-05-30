@@ -5,7 +5,7 @@ import { type CreateQuestionFormFields } from "./_components/CreateQuestion";
 import { revalidatePath } from "next/cache";
 import { DeleteFiles, UploadFiles } from "@/server/supabase/server";
 
-import { CreateAnswerFormFields } from "./_components/AnswerStep";
+import { type CreateAnswerFormFields } from "./_components/AnswerStep";
 
 export const handleUpsertQuestionFormSubmit = async (
   data: CreateQuestionFormFields,
@@ -115,7 +115,7 @@ export async function deleteFilesFromAnswer(
   answerId: number,
 ) {
   // Remove file from Supabase
-  DeleteFiles(answerId, filePaths);
+  await DeleteFiles(answerId, filePaths);
 
   // Fetch answer from db
   const answer = await api.answer.findById({ id: answerId });

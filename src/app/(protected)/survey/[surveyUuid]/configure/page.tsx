@@ -24,7 +24,7 @@ const ConfigureSurveyPage = async ({
       </ScrollArea>
       <div className="-ml-[18vw] flex w-full flex-col justify-between  pb-6">
         <div className="mb-auto pt-10">
-          <CreateQuestion surveyId={survey.id} surveyUuid={survey.uuid} />
+          <CreateQuestion surveyId={survey.id} />
         </div>
         <Link
           href={`/survey/${params.surveyUuid}/validate`}
