@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type DragEvent, type ChangeEvent } from "react";
+import { useState, DragEvent, ChangeEvent, useRef, useEffect } from "react";
+
 
 type setFiles = (files: File[]) => void;
 
@@ -11,7 +12,7 @@ interface FilerPickerProps {
 
 export default function FilePicker({ files, setFiles }: FilerPickerProps) {
   const [isDragging, setIsDragging] = useState(false);
-
+  const inputRef = useRef<HTMLInputElement>(null);
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFiles([...files, ...Array.from(e.target.files)]);
@@ -36,9 +37,19 @@ export default function FilePicker({ files, setFiles }: FilerPickerProps) {
     }
   };
 
-  const onClear = async () => {
+  const onClear = () => {
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
     setFiles([]);
   };
+  useEffect(() => {
+    if (files.length === 0) {
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
+    }
+  }, [files]);
 
   return (
     <div className="mx-auto mt-10 max-w-md p-4">
@@ -56,6 +67,7 @@ export default function FilePicker({ files, setFiles }: FilerPickerProps) {
           <input
             type="file"
             multiple
+            ref={inputRef}
             onChange={handleFileChange}
             className="hidden"
             id="fileInput"

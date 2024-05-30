@@ -4,17 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import AnswerStep from "./AnswerStep";
+import { Question } from "../answer/page";
 
 type AnswerStepperProps = {
-  questions: {
-    id: number;
-    content: string;
-    existingAnswer: {
-      id: number;
-      content: string;
-      filePaths: string[];
-    } | null;
-  }[];
+  questions: Question[];
 };
 
 const AnswerStepper = ({ questions }: AnswerStepperProps) => {
