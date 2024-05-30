@@ -22,10 +22,12 @@ const respondentValidateSchema = respondentSelectSchema.pick({
   surveyId: true,
 });
 
-const respondentUpdateFirstSeenAtSchema = respondentInsertSchema.pick({
-  id: true,
-  surveyId: true,
-});
+const respondentUpdateFirstSeenAtSchema = respondentInsertSchema
+  .pick({
+    id: true,
+    surveyId: true,
+  })
+  .required({ id: true });
 
 export const respondentRouter = createTRPCRouter({
   create: procedures.protected
@@ -98,7 +100,7 @@ export const respondentRouter = createTRPCRouter({
         .where(
           and(
             eq(schema.respondent.surveyId, input.surveyId),
-            eq(input.id, schema.respondent.id),
+            eq(schema.respondent.id, input.id),
           ),
         );
     }),

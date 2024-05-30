@@ -35,7 +35,7 @@ const formSchema = z.object({
     })
     .max(255, { message: "Max 255 characters" }),
   description: z.string(),
-  dueAt: z.date().nullable().optional(),
+  dueAt: z.date().nullable(),
 });
 
 export type CreateSurveyFormFields = z.infer<typeof formSchema>;
@@ -116,7 +116,7 @@ const SurveyCreatePage = () => {
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
-                      selected={field.value}
+                      selected={field.value!}
                       onSelect={field.onChange}
                       disabled={(date) => date < new Date()}
                       initialFocus

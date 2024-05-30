@@ -1,11 +1,20 @@
-import { integer, pgTable, varchar, uuid, timestamp } from "drizzle-orm/pg-core";
+import {
+  integer,
+  pgTable,
+  varchar,
+  uuid,
+  timestamp,
+} from "drizzle-orm/pg-core";
 
 import { defaultRows } from "./shared";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import type { z } from "zod";
-import { user, UserModel } from "@/server/db/schema/user.schema";
+import { user, type UserModel } from "@/server/db/schema/user.schema";
 import { relations, sql } from "drizzle-orm";
-import { question, QuestionModel } from "@/server/db/schema/question.schema";
+import {
+  question,
+  type QuestionModel,
+} from "@/server/db/schema/question.schema";
 import { SURVEY_STATUS_SCHEMA } from "@/server/db/schema/enums";
 
 export const survey = pgTable("survey", {
@@ -16,10 +25,10 @@ export const survey = pgTable("survey", {
   title: varchar("title", { length: 256 }).notNull(),
   uuid: uuid("uuid").notNull().defaultRandom().unique(),
   parentInstanceId: integer("parent_instance_id"),
-  description: varchar("description", {length: 1028}),
+  description: varchar("description", { length: 1028 }),
   surveyStatus: SURVEY_STATUS_SCHEMA("survey_status")
-      .notNull()
-      .default("DRAFT"),
+    .notNull()
+    .default("DRAFT"),
   dueAt: timestamp("due_at").default(sql`null`),
   // TODO:
   // keywords

@@ -72,7 +72,7 @@ export const UploadFiles = async (answerId: number, files: File[]) => {
 export const DeleteFiles = async (answerId: number, filePaths: string[]) => {
   const client = createClient();
   const _filePaths = filePaths.map((f) => getRemoteFilePath(f, answerId));
-  const { data, error } = await client.storage
+  const { error } = await client.storage
     .from(SUPABASE_BUCKET_PATH)
     .remove(_filePaths);
   if (error) {

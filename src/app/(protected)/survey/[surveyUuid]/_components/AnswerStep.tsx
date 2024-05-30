@@ -38,15 +38,13 @@ const AnswerStep = ({
 
   // File states
   const [answerFiles, setAnswerFiles] = useState<File[]>([]);
-  const [loadingFiles, setLoadingFiles] = useState<{ [key: number]: boolean }>(
-    {},
-  );
+  const [loadingFiles, setLoadingFiles] = useState<Record<number, boolean>>({});
 
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<CreateAnswerFormFields>({
     resolver: zodResolver(formSchema),
     values: {
-      content: question.existingAnswer?.content || "",
+      content: question.existingAnswer?.content ?? "",
     },
   });
 
@@ -65,7 +63,7 @@ const AnswerStep = ({
     const fd = new FormData();
     fd.append("content", data.content);
     fd.append("questionId", question.id.toString());
-    fd.append("answerId", existingAnswer?.id?.toString() || "");
+    fd.append("answerId", existingAnswer?.id?.toString() ?? "");
     answerFiles.forEach((file) => fd.append("files", file));
 
     await upsertAnswerFromForm(fd);
@@ -144,8 +142,8 @@ const AnswerStep = ({
                         </div>
                         <button
                           className="flex h-10 w-10 items-center justify-center"
-                          onClick={() => {
-                            handleDeleteFile(index);
+                          onClick={async () => {
+                            await handleDeleteFile(index);
                           }}
                           type="button"
                         >
