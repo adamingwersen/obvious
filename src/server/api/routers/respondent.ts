@@ -1,8 +1,9 @@
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
-import { and, eq, schema } from "@/server/db";
+import { and, eq, inArray, isNull, schema } from "@/server/db";
 import {
   respondentInsertSchema,
   respondentSelectSchema,
+  surveySelectSchema,
 } from "@/server/db/schema";
 import { z } from "zod";
 
@@ -28,6 +29,10 @@ const respondentUpdateFirstSeenAtSchema = respondentInsertSchema
     surveyId: true,
   })
   .required({ id: true });
+
+const respondentFindBySurveyUuidSchema = surveySelectSchema.pick({
+  uuid: true,
+});
 
 export const respondentRouter = createTRPCRouter({
   create: procedures.protected
@@ -60,6 +65,25 @@ export const respondentRouter = createTRPCRouter({
         (val, i, arr) => val.surveyId === arr[0]?.surveyId,
       );
       if (!isSurveyIdsEqual) throw new Error("Multiple survey IDs in input");
+      // const surveyId = input[0]?.surveyId;
+      // if (!surveyId) {
+      //   const data = input.map((respondent) => {
+      //     return {
+      //       surveyId: respondent.surveyId,
+      //       email: respondent.email,
+      //       invitedById: user.id,
+      //     };
+      //   });
+      //   return ctx.db.insert(schema.respondent).values(data);
+      // }
+      // const emails = input.map((item) => item.email);
+      // const respondents = ctx.db.query.respondent.findMany({
+      //   where: and(
+      //     eq(schema.respondent.surveyId, surveyId),
+      //     inArray(schema.respondent.email, emails),
+      //   ),
+      // });
+
       const data = input.map((respondent) => {
         return {
           surveyId: respondent.surveyId,
@@ -103,6 +127,23 @@ export const respondentRouter = createTRPCRouter({
             eq(schema.respondent.id, input.id),
           ),
         );
+    }),
+
+  findBySurveyUuid: procedures.protected
+    .input(respondentFindBySurveyUuidSchema)
+    .query(async ({ ctx, input }) => {
+      const survey = await ctx.db.query.survey.findFirst({
+        where: and(
+          eq(schema.survey.uuid, input.uuid),
+          isNull(schema.survey.deletedAt),
+        ),
+      });
+      if (!survey) throw new Error("No survey found");
+      const respondents = await ctx.db.query.respondent.findMany({
+        where: eq(schema.respondent.surveyId, survey.id),
+      });
+      if (!respondents) throw new Error("No respondents found for survey");
+      return respondents;
     }),
 
   findByUuid: procedures.public

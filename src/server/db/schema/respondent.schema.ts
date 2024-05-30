@@ -4,6 +4,7 @@ import {
   timestamp,
   uuid,
   varchar,
+  unique,
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
@@ -12,15 +13,24 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import type { z } from "zod";
 import { survey, user } from "@/server/db/schema";
 
-export const respondent = pgTable("respondent", {
-  ...defaultRows,
-  authId: uuid("auth_id"), // null = user hasn't signed up from email link
-  firstSeenAt: timestamp("first_seen_at").default(sql`null`),
-  email: varchar("email", { length: 256 }).notNull(),
-  invitedById: integer("invited_by_id").notNull(),
-  surveyId: integer("survey_id").notNull(),
-  uuid: uuid("uuid").notNull().defaultRandom().unique(),
-});
+export const respondent = pgTable(
+  "respondent",
+  {
+    ...defaultRows,
+    authId: uuid("auth_id"), // null = user hasn't signed up from email link
+    firstSeenAt: timestamp("first_seen_at").default(sql`null`),
+    email: varchar("email", { length: 256 }).notNull(),
+    invitedById: integer("invited_by_id").notNull(),
+    surveyId: integer("survey_id").notNull(),
+    uuid: uuid("uuid").notNull().defaultRandom().unique(),
+  },
+  (t) => ({
+    emailSurveyIdUniqueConstraint: unique("email_survey_unq").on(
+      t.surveyId,
+      t.email,
+    ),
+  }),
+);
 
 export const respondentRelations = relations(respondent, ({ one }) => ({
   invitedById: one(user, {
