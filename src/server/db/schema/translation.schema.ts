@@ -20,7 +20,7 @@ export const translation = pgTable("translation", {
 
 // TODO: I dont know what this is for, seems like relations are already defined in the above
 // Also dont know how to do the optional relationship
-export const translationRelations = relations(translation, ({ one, many }) => ({
+export const translationRelations = relations(translation, ({ one }) => ({
   user: one(user, {
     fields: [translation.createdById],
     references: [user.id],

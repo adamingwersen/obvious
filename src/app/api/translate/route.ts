@@ -1,13 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
-export async function GET(request: NextRequest) {
-  return NextResponse.json({ data: "all good" });
-}
+type TranslationRequestBodyType = {
+  text: string;
+  targetLangName: string;
+};
 
 export async function POST(request: NextRequest) {
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  const body = await request.json();
+  const body = (await request.json()) as TranslationRequestBodyType;
 
   const completion = await openai.chat.completions.create({
     messages: [
@@ -24,6 +25,3 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({ translation: data?.message.content });
 }
-
-async function main() {}
-main();

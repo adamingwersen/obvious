@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Copy, Link } from "lucide-react";
+import { Copy } from "lucide-react";
 
 type CopyToClipboardButtonProps = {
   text: string;

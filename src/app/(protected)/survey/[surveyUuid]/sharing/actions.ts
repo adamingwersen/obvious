@@ -2,7 +2,7 @@
 
 import { api } from "@/trpc/server";
 import { revalidatePath } from "next/cache";
-import { ShareDynamicFormFields } from "../_components/ShareDynamicForm";
+import { type ShareDynamicFormFields } from "../_components/ShareDynamicForm";
 
 export const handleCreateManyRespondents = async (
   data: ShareDynamicFormFields,

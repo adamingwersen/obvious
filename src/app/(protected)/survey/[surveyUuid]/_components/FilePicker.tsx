@@ -1,7 +1,12 @@
 "use client";
 
-import { useState, DragEvent, ChangeEvent, useRef, useEffect } from "react";
-
+import {
+  useState,
+  type DragEvent,
+  type ChangeEvent,
+  useRef,
+  useEffect,
+} from "react";
 
 type setFiles = (files: File[]) => void;
 
