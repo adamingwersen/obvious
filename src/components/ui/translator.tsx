@@ -22,8 +22,8 @@ import {
 } from "@/components/ui/popover";
 import { Bell, Check, ChevronsUpDown, Languages } from "lucide-react";
 import Spinner from "./spinner";
-import { Translation } from "@/app/(protected)/survey/[surveyUuid]/_components/AnswerStepper";
 import { createTranslationInDb } from "@/app/actions";
+import { type Translation } from "@/app/(protected)/survey/[surveyUuid]/answer/page";
 
 type TranslatorProps = {
   children: ReactNode;
@@ -40,17 +40,25 @@ const Translator = ({
   answerId,
   questionId,
 }: TranslatorProps) => {
-  const [isLoading, setIsLoading] = useState<Boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [language, setLanguage] = useState<string>("");
 
-  const [translations, setTranslations] = useState<{ [key: string]: string }>(
+  // const [translations, setTranslations] = useState<Record<string, string>>(
+  //   existingTranslations.reduce((acc, obj) => {
+
+  //     acc[obj.language] = obj.translatedContent;
+  //     return acc;
+  //   }, {}),
+  // );
+
+  const [translations, setTranslations] = useState<Record<string, string>>(
     existingTranslations.reduce(
-      (acc, obj) => {
+      (acc: Record<string, string>, obj) => {
         acc[obj.language] = obj.translatedContent;
         return acc;
       },
-      {} as { [key: string]: string },
+      {} as Record<string, string>,
     ),
   );
 

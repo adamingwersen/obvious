@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import AnswerStep from "./AnswerStep";
-import { Question } from "../answer/page";
+import { type Question } from "../answer/page";
 
 type AnswerStepperProps = {
   questions: Question[];
