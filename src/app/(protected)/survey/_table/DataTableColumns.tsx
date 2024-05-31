@@ -157,7 +157,10 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
             >
               Copy data fields for sharing
             </DropdownMenuItem>
-            <DropdownMenuItem>Share</DropdownMenuItem>
+            <Link href={`/survey/${row.original.uuid}/sharing`}>
+              <DropdownMenuItem>Share</DropdownMenuItem>
+            </Link>
+
             <DropdownMenuItem>Pause</DropdownMenuItem>
 
             <DropdownMenuItem

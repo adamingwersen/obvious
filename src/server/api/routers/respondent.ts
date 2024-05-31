@@ -1,8 +1,9 @@
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
-import { and, eq, schema } from "@/server/db";
+import { and, asc, eq, inArray, isNull, schema } from "@/server/db";
 import {
   respondentInsertSchema,
   respondentSelectSchema,
+  surveySelectSchema,
 } from "@/server/db/schema";
 import { z } from "zod";
 
@@ -29,7 +30,33 @@ const respondentUpdateFirstSeenAtSchema = respondentInsertSchema
   })
   .required({ id: true });
 
+const respondentFindBySurveyUuidSchema = surveySelectSchema.pick({
+  uuid: true,
+});
+
 export const respondentRouter = createTRPCRouter({
+  delete: procedures.protected
+    .input(respondentValidateSchema)
+    .mutation(async ({ ctx, input }) => {
+      const authUserId = ctx.user.id;
+      const user = await ctx.db.query.user.findFirst({
+        where: eq(schema.user.authId, authUserId),
+      });
+      if (!user) throw new Error("No user found");
+      const survey = await ctx.db.query.survey.findFirst({
+        where: eq(schema.survey.id, input.surveyId),
+      });
+      if (!survey) throw new Error("No survey found");
+      return ctx.db
+        .delete(schema.respondent)
+        .where(
+          and(
+            eq(schema.respondent.email, input.email),
+            eq(schema.respondent.surveyId, survey.id),
+          ),
+        );
+    }),
+
   create: procedures.protected
     .input(respondentCreateSchema)
     .mutation(async ({ ctx, input }) => {
@@ -60,6 +87,7 @@ export const respondentRouter = createTRPCRouter({
         (val, i, arr) => val.surveyId === arr[0]?.surveyId,
       );
       if (!isSurveyIdsEqual) throw new Error("Multiple survey IDs in input");
+
       const data = input.map((respondent) => {
         return {
           surveyId: respondent.surveyId,
@@ -103,6 +131,24 @@ export const respondentRouter = createTRPCRouter({
             eq(schema.respondent.id, input.id),
           ),
         );
+    }),
+
+  findBySurveyUuid: procedures.protected
+    .input(respondentFindBySurveyUuidSchema)
+    .query(async ({ ctx, input }) => {
+      const survey = await ctx.db.query.survey.findFirst({
+        where: and(
+          eq(schema.survey.uuid, input.uuid),
+          isNull(schema.survey.deletedAt),
+        ),
+      });
+      if (!survey) throw new Error("No survey found");
+      const respondents = await ctx.db.query.respondent.findMany({
+        where: eq(schema.respondent.surveyId, survey.id),
+        orderBy: [asc(schema.respondent.createdAt)],
+      });
+      if (!respondents) throw new Error("No respondents found for survey");
+      return respondents;
     }),
 
   findByUuid: procedures.public
