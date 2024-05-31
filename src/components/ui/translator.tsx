@@ -33,6 +33,10 @@ type TranslatorProps = {
   questionId: number | undefined;
 };
 
+type TranslatorResponseBodyType = {
+  translation: string;
+};
+
 const Translator = ({
   children,
   content,
@@ -43,14 +47,6 @@ const Translator = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [language, setLanguage] = useState<string>("");
-
-  // const [translations, setTranslations] = useState<Record<string, string>>(
-  //   existingTranslations.reduce((acc, obj) => {
-
-  //     acc[obj.language] = obj.translatedContent;
-  //     return acc;
-  //   }, {}),
-  // );
 
   const [translations, setTranslations] = useState<Record<string, string>>(
     existingTranslations.reduce(
@@ -80,8 +76,8 @@ const Translator = ({
         throw new Error("Translation response was not ok");
       }
 
-      const data = await response.json();
-      return data.translation as string;
+      const data = (await response.json()) as TranslatorResponseBodyType;
+      return data.translation;
     } catch (error) {
       console.error("Error fetching translation:", error);
     }
@@ -144,7 +140,6 @@ const Translator = ({
                 Translate {questionId !== null ? "question" : "answer"}
               </p>
               <LanguageSelect
-                language={null}
                 languageSelected={handleLanguageChanged}
               ></LanguageSelect>
             </div>
@@ -175,11 +170,10 @@ const Translator = ({
 export default Translator;
 
 type LanguageSelectProps = {
-  language: string | null;
   languageSelected: (language: string) => void;
 };
 
-function LanguageSelect({ language, languageSelected }: LanguageSelectProps) {
+function LanguageSelect({ languageSelected }: LanguageSelectProps) {
   const languages = [
     {
       value: "danish",
