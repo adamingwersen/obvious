@@ -10,3 +10,11 @@ export const handleCreateManyRespondents = async (
   await api.respondent.createMany(data.emails);
   revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
 };
+
+export const handleDeleteRespondent = async (
+  email: string,
+  surveyId: number,
+) => {
+  await api.respondent.delete({ email: email, surveyId: surveyId });
+  revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
+};

@@ -16,16 +16,28 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Send, Trash } from "lucide-react";
 import { type RespondentModel } from "@/server/db/schema";
-import { handleCreateManyRespondents } from "@/app/(protected)/survey/[surveyUuid]/sharing/actions";
+import {
+  handleCreateManyRespondents,
+  handleDeleteRespondent,
+} from "@/app/(protected)/survey/[surveyUuid]/sharing/actions";
 
-const formSchema = z.object({
-  emails: z.array(
-    z.object({
-      email: z.string().email(),
-      surveyId: z.number(),
-    }),
-  ),
-});
+const formSchema = z
+  .object({
+    emails: z.array(
+      z.object({
+        email: z.string().email(),
+        surveyId: z.number(),
+      }),
+    ),
+  })
+  .refine(
+    (data) => {
+      return data.emails.length !== 0;
+    },
+    {
+      message: `No existing emails found`,
+    },
+  );
 
 export type ShareDynamicFormFields = z.infer<typeof formSchema>;
 
@@ -56,7 +68,7 @@ const ShareDynamicForm = ({
     values: data,
     defaultValues:
       mapped.length > 0
-        ? undefined
+        ? data
         : {
             emails: [{ email: "kate@acme.co", surveyId: surveyId }],
           },
@@ -67,9 +79,9 @@ const ShareDynamicForm = ({
     control: form.control,
   });
 
-  const onDelete = (index: number) => {
+  const onDelete = async (index: number, email: string, surveyId: number) => {
     remove(index);
-    // drop from respondents
+    await handleDeleteRespondent(email, surveyId);
     toast({
       title: "Removed email from list",
       description: new Date().toLocaleString(),
@@ -77,10 +89,12 @@ const ShareDynamicForm = ({
   };
 
   const onSubmit = async (values: ShareDynamicFormFields) => {
-    console.log("onSubmit");
-    console.log({ values });
     setIsLoading(true);
-    await handleCreateManyRespondents(values);
+    const existingEmails = formFieldsFromServer.map((field) => field.email);
+    const newEmails = values.emails.filter(
+      (email) => !existingEmails.includes(email.email),
+    );
+    await handleCreateManyRespondents({ emails: newEmails });
     setIsLoading(false);
     toast({
       title: "Sending emails...",
@@ -91,8 +105,8 @@ const ShareDynamicForm = ({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((data) => onSubmit(data))}
-        className="flex w-full flex-col space-y-5 px-10"
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex w-full flex-col space-y-2 px-10"
       >
         <FormField
           control={form.control}
@@ -121,7 +135,9 @@ const ShareDynamicForm = ({
                       <Button
                         type="button"
                         variant="destructive"
-                        onClick={() => onDelete(index)}
+                        onClick={() =>
+                          onDelete(index, field.email, field.surveyId)
+                        }
                       >
                         <Trash className="size-4" />
                       </Button>

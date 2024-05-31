@@ -1,5 +1,5 @@
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
-import { and, eq, inArray, isNull, schema } from "@/server/db";
+import { and, asc, eq, inArray, isNull, schema } from "@/server/db";
 import {
   respondentInsertSchema,
   respondentSelectSchema,
@@ -35,6 +35,28 @@ const respondentFindBySurveyUuidSchema = surveySelectSchema.pick({
 });
 
 export const respondentRouter = createTRPCRouter({
+  delete: procedures.protected
+    .input(respondentValidateSchema)
+    .mutation(async ({ ctx, input }) => {
+      const authUserId = ctx.user.id;
+      const user = await ctx.db.query.user.findFirst({
+        where: eq(schema.user.authId, authUserId),
+      });
+      if (!user) throw new Error("No user found");
+      const survey = await ctx.db.query.survey.findFirst({
+        where: eq(schema.survey.id, input.surveyId),
+      });
+      if (!survey) throw new Error("No survey found");
+      return ctx.db
+        .delete(schema.respondent)
+        .where(
+          and(
+            eq(schema.respondent.email, input.email),
+            eq(schema.respondent.surveyId, survey.id),
+          ),
+        );
+    }),
+
   create: procedures.protected
     .input(respondentCreateSchema)
     .mutation(async ({ ctx, input }) => {
@@ -65,24 +87,6 @@ export const respondentRouter = createTRPCRouter({
         (val, i, arr) => val.surveyId === arr[0]?.surveyId,
       );
       if (!isSurveyIdsEqual) throw new Error("Multiple survey IDs in input");
-      // const surveyId = input[0]?.surveyId;
-      // if (!surveyId) {
-      //   const data = input.map((respondent) => {
-      //     return {
-      //       surveyId: respondent.surveyId,
-      //       email: respondent.email,
-      //       invitedById: user.id,
-      //     };
-      //   });
-      //   return ctx.db.insert(schema.respondent).values(data);
-      // }
-      // const emails = input.map((item) => item.email);
-      // const respondents = ctx.db.query.respondent.findMany({
-      //   where: and(
-      //     eq(schema.respondent.surveyId, surveyId),
-      //     inArray(schema.respondent.email, emails),
-      //   ),
-      // });
 
       const data = input.map((respondent) => {
         return {
@@ -141,6 +145,7 @@ export const respondentRouter = createTRPCRouter({
       if (!survey) throw new Error("No survey found");
       const respondents = await ctx.db.query.respondent.findMany({
         where: eq(schema.respondent.surveyId, survey.id),
+        orderBy: [asc(schema.respondent.createdAt)],
       });
       if (!respondents) throw new Error("No respondents found for survey");
       return respondents;

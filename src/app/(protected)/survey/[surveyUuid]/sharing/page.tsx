@@ -13,7 +13,7 @@ const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
 
   return (
     <div className="flex h-full flex-col space-y-4 pt-10">
-      <div className="relative h-full w-1/3 self-center rounded-md border p-4">
+      <div className="relative h-full w-2/5 items-center self-center rounded-md border p-4">
         <p className="flex justify-center py-5">Send to email</p>
         <ShareDynamicForm
           surveyId={survey.id}
