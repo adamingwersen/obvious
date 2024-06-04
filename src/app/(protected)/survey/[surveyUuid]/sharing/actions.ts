@@ -8,14 +8,13 @@ import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { Resend } from "resend";
 import { InviteRespondentEmailTemplate } from "@/components/email/invite-respondent";
 
-const supabase = createServerActionClient(
-  { cookies },
-  { supabaseKey: process.env.SUPABASE_SERVICE_ROLE },
-);
-
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const generateMagicLinkAsAdmin = async (email: string, surveyUuid: string) => {
+  const supabase = createServerActionClient(
+    { cookies },
+    { supabaseKey: process.env.SUPABASE_SERVICE_ROLE },
+  );
   // Maybe move to lib/utils?
   const { data, error } = await supabase.auth.admin.generateLink({
     type: "magiclink",
