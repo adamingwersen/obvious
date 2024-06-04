@@ -9,7 +9,7 @@ import CreateQuestionForm from "@/components/forms/create-question-form";
 
 import { handleUpsertQuestion, handleDeleteQuestion } from "./actions";
 
-const CreateQuestionPage = async ({
+const CreateSurveyIdPage = async ({
   params,
 }: {
   params: { surveyUuid: string };
@@ -49,4 +49,4 @@ const CreateQuestionPage = async ({
   );
 };
 
-export default CreateQuestionPage;
+export default CreateSurveyIdPage;

@@ -16,7 +16,7 @@ const formSchema = z.object({
 
 export type ValidateRespondentFormFields = z.infer<typeof formSchema>;
 
-const IdentifyRespondentPage = ({
+const RespondentIdentifyPage = ({
   params,
 }: {
   params: { surveyUuid: string };
@@ -97,4 +97,4 @@ const IdentifyRespondentPage = ({
   );
 };
 
-export default IdentifyRespondentPage;
+export default RespondentIdentifyPage;

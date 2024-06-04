@@ -4,7 +4,7 @@ import { handleUpsertAnswer, handleDeleteFilesFromAnswer } from "./actions";
 import { handleTranslate } from "@/app/actions";
 // Answer page data types
 
-const RespondentQuestionnairePage = async ({
+const RespondentSurveyPage = async ({
   params,
 }: {
   params: { surveyUuid: string };
@@ -60,4 +60,4 @@ const RespondentQuestionnairePage = async ({
   );
 };
 
-export default RespondentQuestionnairePage;
+export default RespondentSurveyPage;

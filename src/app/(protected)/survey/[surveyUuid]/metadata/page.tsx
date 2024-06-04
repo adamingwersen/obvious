@@ -2,7 +2,11 @@ import MetadataQuestionForm from "@/components/forms/metadata-question-form";
 import { api } from "@/trpc/server";
 import { handleCreateManySurveyMetadata } from "./actions";
 
-const MetadataPage = async ({ params }: { params: { surveyUuid: string } }) => {
+const MetadataQuestionPage = async ({
+  params,
+}: {
+  params: { surveyUuid: string };
+}) => {
   const formFieldsFromServer = await api.metadataQuestion.findManyBySurveyUuid({
     surveyUuid: params.surveyUuid,
   });
@@ -23,4 +27,4 @@ const MetadataPage = async ({ params }: { params: { surveyUuid: string } }) => {
   );
 };
 
-export default MetadataPage;
+export default MetadataQuestionPage;
