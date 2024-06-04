@@ -13,12 +13,17 @@ type AnswerStepperProps = {
     answerId: number,
   ) => Promise<void>;
   handleUpsertFileFunc: (formData: FormData) => Promise<void>;
+  handleTranslateFunc: (
+    content: string,
+    targetLangName: string,
+  ) => Promise<{ translation: string }>;
 };
 
 const AnswerStepper = ({
   questions,
   handleDeleteFileFunc,
   handleUpsertFileFunc,
+  handleTranslateFunc,
 }: AnswerStepperProps) => {
   const [answerIndex, setAnswerIndex] = useState(0);
   const router = useRouter();
@@ -52,6 +57,7 @@ const AnswerStepper = ({
             backFunc={Back}
             handleDeleteFileFunc={handleDeleteFileFunc}
             handleUpsertFileFunc={handleUpsertFileFunc}
+            handleTranslateFunc={handleTranslateFunc}
           ></AnswerStepForm>
         </div>
       )}

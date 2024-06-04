@@ -31,10 +31,10 @@ type TranslatorProps = {
   translations: Translation[];
   answerId: number | undefined;
   questionId: number | undefined;
-};
-
-type TranslatorResponseBodyType = {
-  translation: string;
+  handleTranslateFunc: (
+    content: string,
+    targetLangName: string,
+  ) => Promise<{ translation: string }>;
 };
 
 const Translator = ({
@@ -43,6 +43,7 @@ const Translator = ({
   translations: existingTranslations,
   answerId,
   questionId,
+  handleTranslateFunc,
 }: TranslatorProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -59,29 +60,6 @@ const Translator = ({
   );
 
   const currentTranslation = translations[language] ?? null;
-  const fetchTranslation = async (languageCode: string) => {
-    try {
-      const response = await fetch("/api/translate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          text: content,
-          targetLangName: languageCode,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Translation response was not ok");
-      }
-
-      const data = (await response.json()) as TranslatorResponseBodyType;
-      return data.translation;
-    } catch (error) {
-      console.error("Error fetching translation:", error);
-    }
-  };
 
   const saveTranslationToDb = async (
     language: string,
@@ -100,17 +78,17 @@ const Translator = ({
 
     if (existingTranslation === null) {
       setIsLoading(true);
-      const translation = await fetchTranslation(lang);
+      const translation = await handleTranslateFunc(content, lang);
       if (translation === undefined) {
         setIsLoading(false);
         return;
       }
       setTranslations((prev) => ({
         ...prev,
-        [lang]: translation,
+        [lang]: translation.translation,
       }));
       setLanguage(lang);
-      await saveTranslationToDb(lang, translation);
+      await saveTranslationToDb(lang, translation.translation);
       setIsLoading(false);
     } else {
       setLanguage(lang);
