@@ -3,7 +3,7 @@ import { api } from "@/trpc/server";
 import Link from "next/link";
 import { daysFromToday } from "@/lib/utils";
 
-const RespondHome = async ({ params }: { params: { surveyUuid: string } }) => {
+const RespondPage = async ({ params }: { params: { surveyUuid: string } }) => {
   const survey = await api.survey.findById({ uuid: params.surveyUuid });
   const originator = survey.user;
   const nQuestions = survey.questions.length;
@@ -50,4 +50,4 @@ const RespondHome = async ({ params }: { params: { surveyUuid: string } }) => {
   );
 };
 
-export default RespondHome;
+export default RespondPage;
