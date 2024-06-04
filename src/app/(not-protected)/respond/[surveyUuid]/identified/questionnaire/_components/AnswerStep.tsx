@@ -13,7 +13,7 @@ import { ArrowRight, File, Trash } from "lucide-react";
 import FilePicker from "./FilePicker";
 import Spinner from "@/components/ui/spinner";
 import Translator from "@/components/ui/translator";
-import { Question } from "../page";
+import { type Question } from "../page";
 
 const formSchema = z.object({
   content: z.string().min(10),

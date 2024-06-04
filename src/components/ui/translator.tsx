@@ -23,7 +23,7 @@ import {
 import { Bell, Check, ChevronsUpDown, Languages } from "lucide-react";
 import Spinner from "./spinner";
 import { createTranslationInDb } from "@/app/actions";
-import { type Translation } from "@/app/(protected)/survey/[surveyUuid]/answer/page";
+import { type Translation } from "@/app/(not-protected)/respond/[surveyUuid]/identified/questionnaire/page";
 
 type TranslatorProps = {
   children: ReactNode;

@@ -38,12 +38,12 @@ const AnswerSurveyIdPage = async ({
       <Accordion type="multiple" className="w-full">
         {mappedQuestions.map((question, i) => {
           return (
-            <AccordionItem value={`item-${i}`}>
+            <AccordionItem value={`item-${i}`} key={`item-${i}`}>
               <AccordionTrigger>{question.content}</AccordionTrigger>
               <AccordionContent>
                 {question.answers.map((a, j) => {
                   return (
-                    <div className="flex justify-between">
+                    <div className="flex justify-between" key={j}>
                       <div className="flex">
                         <p className="font-semibold">Answer:</p>
                         <p>{a.content}</p>

@@ -4,19 +4,7 @@ import { api } from "@/trpc/server";
 
 import { revalidatePath } from "next/cache";
 import { DeleteFiles, UploadFiles } from "@/server/supabase/server";
-import { CreateAnswerFormFields } from "./_components/AnswerStep";
-import { CreateQuestionFormFields } from "@/app/(protected)/survey/[surveyUuid]/_components/CreateQuestion";
-
-export const handleUpsertQuestionFormSubmit = async (
-  data: CreateQuestionFormFields,
-  surveyId: number,
-  questionId?: number,
-) => {
-  if (!questionId) await api.question.create({ ...data, surveyId });
-  if (questionId) await api.question.update({ ...data, id: questionId });
-
-  revalidatePath(`/(protected)/survey/[surveyUuid]/configure`, "page");
-};
+import { type CreateAnswerFormFields } from "./_components/AnswerStep";
 
 export const handleUpsertAnswerFormSubmit = async (
   data: CreateAnswerFormFields,
