@@ -19,7 +19,8 @@ import { type RespondentModel } from "@/server/db/schema";
 import {
   handleCreateManyRespondents,
   handleDeleteRespondent,
-} from "@/app/(protected)/survey/[surveyUuid]/sharing/actions";
+  handleSendManyInviteEmailsWithResend,
+} from "../sharing/actions";
 
 const formSchema = z
   .object({
@@ -43,11 +44,13 @@ export type ShareDynamicFormFields = z.infer<typeof formSchema>;
 
 type ShareDynamicFormProps = {
   surveyId: number;
+  surveyUuid: string;
   formFieldsFromServer: RespondentModel[];
 };
 
 const ShareDynamicForm = ({
   surveyId,
+  surveyUuid,
   formFieldsFromServer,
 }: ShareDynamicFormProps) => {
   const { toast } = useToast();
@@ -70,7 +73,7 @@ const ShareDynamicForm = ({
       mapped.length > 0
         ? data
         : {
-            emails: [{ email: "kate@acme.co", surveyId: surveyId }],
+            emails: [{ email: "", surveyId: surveyId }],
           },
   });
 
@@ -94,11 +97,13 @@ const ShareDynamicForm = ({
     const newEmails = values.emails.filter(
       (email) => !existingEmails.includes(email.email),
     );
+    const onlyNewEmails = newEmails.map((item) => item.email);
     await handleCreateManyRespondents({ emails: newEmails });
+    await handleSendManyInviteEmailsWithResend(onlyNewEmails, surveyUuid);
     setIsLoading(false);
     toast({
       title: "Sending emails...",
-      description: new Date().toLocaleString(),
+      description: `${new Date().toLocaleString()} - it may take a few minutes for the recipient to recieve the email invitation`,
     });
   };
 

@@ -17,6 +17,7 @@ const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
         <p className="flex justify-center py-5">Send to email</p>
         <ShareDynamicForm
           surveyId={survey.id}
+          surveyUuid={params.surveyUuid}
           formFieldsFromServer={respondents}
         />
         <div className="flex justify-center pt-5">
