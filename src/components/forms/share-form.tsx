@@ -52,16 +52,15 @@ const ShareForm = ({
     emails: mapped,
   };
 
+  const inputToZod =
+    data.emails.length > 0
+      ? data
+      : { emails: [{ email: "", surveyId: surveyId }] };
+
   const form = useForm<ShareFormFields>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
-    values: data,
-    defaultValues:
-      mapped.length > 0
-        ? data
-        : {
-            emails: [{ email: "", surveyId: surveyId }],
-          },
+    values: inputToZod,
   });
 
   const { fields, append, remove } = useFieldArray({
