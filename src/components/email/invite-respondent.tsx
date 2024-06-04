@@ -19,7 +19,6 @@ interface InviteRespondentEmailTemplateProps {
   actionLink: string;
 }
 export const InviteRespondentEmailTemplate = ({
-  email,
   actionLink,
 }: InviteRespondentEmailTemplateProps) => (
   <Html>
@@ -56,17 +55,17 @@ export const InviteRespondentEmailTemplate = ({
             or reach out directly to <b>info@obvious.earth</b>
           </Text>
           <Text style={paragraph}>
-            Once you've completed the questionnaire, you'll be able to save your
-            answers and respond to other such questionnaires from other partners
-            on the
+            Once you&apos;ve completed the questionnaire, you&apos;ll be able to
+            save your answers and respond to other such questionnaires from
+            other partners on the
             <Link style={anchor} href="https://obvious.earth">
               {" "}
               Obvious platform.
             </Link>
           </Text>
           <Text style={paragraph}>
-            We'll be here to help you with any step along the way. You can find
-            answers to most questions and get in touch with us on our{" "}
+            We&apos;ll be here to help you with any step along the way. You can
+            find answers to most questions and get in touch with us on our{" "}
             <Link style={anchor} href="https://support.obvious.earth/">
               support site
             </Link>

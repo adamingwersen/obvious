@@ -1,5 +1,5 @@
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
-import { and, asc, eq, inArray, isNull, schema } from "@/server/db";
+import { and, asc, eq, isNull, schema } from "@/server/db";
 import {
   respondentInsertSchema,
   respondentSelectSchema,
