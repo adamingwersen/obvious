@@ -21,7 +21,7 @@ const generateMagicLinkAsAdmin = async (email: string, surveyUuid: string) => {
     type: "magiclink",
     email: email,
     options: {
-      redirectTo: `localhost:3000/respond/${surveyUuid}`,
+      redirectTo: `/respond/${surveyUuid}`,
     },
   });
   return { data, error };
@@ -64,6 +64,7 @@ export const handleSendInviteEmailWithResend = async (
   } catch (error) {
     throw new Error(`Resend: Error while sending email to ${email}`);
   }
+  revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
 };
 
 export const handleSendManyInviteEmailsWithResend = async (
