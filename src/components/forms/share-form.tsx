@@ -1,6 +1,5 @@
 "use client";
 
-import { z } from "zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
@@ -17,42 +16,30 @@ import { Button } from "@/components/ui/button";
 import { Plus, Send, Trash } from "lucide-react";
 import { type RespondentModel } from "@/server/db/schema";
 import {
-  handleCreateManyRespondents,
-  handleDeleteRespondent,
-  handleSendManyInviteEmailsWithResend,
-} from "../sharing/actions";
+  type ShareFormFields,
+  formSchema,
+} from "@/components/forms/schemas/share-form";
 
-const formSchema = z
-  .object({
-    emails: z.array(
-      z.object({
-        email: z.string().email(),
-        surveyId: z.number(),
-      }),
-    ),
-  })
-  .refine(
-    (data) => {
-      return data.emails.length !== 0;
-    },
-    {
-      message: `No existing emails found`,
-    },
-  );
-
-export type ShareDynamicFormFields = z.infer<typeof formSchema>;
-
-type ShareDynamicFormProps = {
+type ShareFormProps = {
   surveyId: number;
   surveyUuid: string;
   formFieldsFromServer: RespondentModel[];
+  handleCreateManyRespondents: (data: ShareFormFields) => Promise<void>;
+  handleDeleteRespondent: (email: string, surveyId: number) => Promise<void>;
+  handleSendManyInviteEmailsWithResend: (
+    emails: string[],
+    surveyUuid: string,
+  ) => Promise<void>;
 };
 
-const ShareDynamicForm = ({
+const ShareForm = ({
   surveyId,
   surveyUuid,
   formFieldsFromServer,
-}: ShareDynamicFormProps) => {
+  handleCreateManyRespondents,
+  handleDeleteRespondent,
+  handleSendManyInviteEmailsWithResend,
+}: ShareFormProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -65,7 +52,7 @@ const ShareDynamicForm = ({
     emails: mapped,
   };
 
-  const form = useForm<ShareDynamicFormFields>({
+  const form = useForm<ShareFormFields>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
     values: data,
@@ -91,7 +78,7 @@ const ShareDynamicForm = ({
     });
   };
 
-  const onSubmit = async (values: ShareDynamicFormFields) => {
+  const onSubmit = async (values: ShareFormFields) => {
     setIsLoading(true);
     const existingEmails = formFieldsFromServer.map((field) => field.email);
     const newEmails = values.emails.filter(
@@ -175,4 +162,4 @@ const ShareDynamicForm = ({
   );
 };
 
-export default ShareDynamicForm;
+export default ShareForm;

@@ -1,12 +1,15 @@
 import { Button } from "@/components/ui/button";
-import CreateQuestion from "../_components/CreateQuestion";
 import { api } from "@/trpc/server";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import ExistingQuestionRow from "../_components/ExistingQuestionRow";
 
-const ConfigureSurveyPage = async ({
+import QuestionRow from "@/components/question/question-row";
+import CreateQuestionForm from "@/components/forms/create-question-form";
+
+import { handleUpsertQuestion, handleDeleteQuestion } from "./actions";
+
+const CreateQuestionPage = async ({
   params,
 }: {
   params: { surveyUuid: string };
@@ -19,12 +22,19 @@ const ConfigureSurveyPage = async ({
       <ScrollArea className="absolute h-full w-[18vw] rounded-md border p-4">
         <h4 className="text-m mb-4 font-medium leading-none ">Questions</h4>
         {questions.map((question) => (
-          <ExistingQuestionRow question={question} key={question.id} />
+          <QuestionRow
+            question={question}
+            key={question.id}
+            handleDeleteQuestion={handleDeleteQuestion}
+          />
         ))}
       </ScrollArea>
       <div className="-ml-[18vw] flex w-full flex-col justify-between  pb-6">
         <div className="mb-auto pt-10">
-          <CreateQuestion surveyId={survey.id} />
+          <CreateQuestionForm
+            surveyId={survey.id}
+            handleUpsertQuestion={handleUpsertQuestion}
+          />
         </div>
         <Link
           href={`/survey/${params.surveyUuid}/validate`}
@@ -39,4 +49,4 @@ const ConfigureSurveyPage = async ({
   );
 };
 
-export default ConfigureSurveyPage;
+export default CreateQuestionPage;

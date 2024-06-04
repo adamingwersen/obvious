@@ -1,17 +1,17 @@
 "use client";
 
-import { handleRemoveQuestion } from "@/app/(protected)/survey/[surveyUuid]/actions";
 import { Separator } from "@/components/ui/separator";
 import useUrlHelpers from "@/hooks/useUrlHelpers";
 import { type QuestionModel } from "@/server/db/schema";
 import { PencilIcon, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-type ExistingQuestionRowProps = {
+type QuestionRowProps = {
   question: QuestionModel;
+  handleDeleteQuestion: (questionId: number) => Promise<void>;
 };
 
-const ExistingQuestionRow = ({ question }: ExistingQuestionRowProps) => {
+const QuestionRow = ({ question, handleDeleteQuestion }: QuestionRowProps) => {
   const router = useRouter();
   const { getNewUrlParams } = useUrlHelpers();
   return (
@@ -31,7 +31,7 @@ const ExistingQuestionRow = ({ question }: ExistingQuestionRowProps) => {
           <X
             className="size-4"
             onClick={() => {
-              void handleRemoveQuestion(question.id);
+              void handleDeleteQuestion(question.id);
             }}
           />
         </div>
@@ -41,4 +41,4 @@ const ExistingQuestionRow = ({ question }: ExistingQuestionRowProps) => {
   );
 };
 
-export default ExistingQuestionRow;
+export default QuestionRow;

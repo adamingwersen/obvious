@@ -1,5 +1,6 @@
-import MetadataForm from "./metadata";
+import MetadataAnswerForm from "@/components/forms/metadata-answer-form";
 import { api } from "@/trpc/server";
+import { handleSubmitMetadataAnswer } from "./actions";
 
 const RespondentIdentifiedPage = async ({
   params,
@@ -22,9 +23,10 @@ const RespondentIdentifiedPage = async ({
             your company
           </p>
         </div>
-        <MetadataForm
+        <MetadataAnswerForm
           metadataQuestions={metadataQuestions}
           surveyUuid={params.surveyUuid}
+          handleSubmitMetadataAnswer={handleSubmitMetadataAnswer}
         />
       </div>
     </div>

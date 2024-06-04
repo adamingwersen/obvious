@@ -1,6 +1,9 @@
 "use client";
 
-import { handleSubmitMetadataForm } from "./actions";
+import {
+  metadataAnswerFormSchema,
+  type CreateMetadataAnswerFormFields,
+} from "@/components/forms/schemas/metadata-answer";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -21,30 +24,22 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { METADATA_TYPES } from "@/server/db/schema";
-import { z } from "zod";
-
 // TODO: Restrict on types and render form fields accordingly
-const fieldSchema = z.object({
-  response: z.string().min(1, { message: "Field is required" }),
-  questionId: z.number().optional(),
-  metadataType: z.enum(METADATA_TYPES),
-});
 
-export const metadataAnswerFormSchema = z.object({
-  isTocChecked: z.boolean().default(false),
-  data: z.array(fieldSchema),
-});
-export type CreateMetadataAnswerFormFields = z.infer<
-  typeof metadataAnswerFormSchema
->;
-
-type MetadataFormProps = {
+type MetadataAnswerFormProps = {
   surveyUuid: string;
   metadataQuestions: MetadataQuestionModel[];
+  handleSubmitMetadataAnswer: (
+    surveyUuid: string,
+    data: CreateMetadataAnswerFormFields,
+  ) => Promise<void>;
 };
 
-const MetadataForm = ({ metadataQuestions, surveyUuid }: MetadataFormProps) => {
+const MetadataAnswerForm = ({
+  metadataQuestions,
+  surveyUuid,
+  handleSubmitMetadataAnswer,
+}: MetadataAnswerFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<CreateMetadataAnswerFormFields>({
     resolver: zodResolver(metadataAnswerFormSchema),
@@ -52,7 +47,7 @@ const MetadataForm = ({ metadataQuestions, surveyUuid }: MetadataFormProps) => {
 
   const onSubmit = async (data: CreateMetadataAnswerFormFields) => {
     setIsLoading(true);
-    await handleSubmitMetadataForm(surveyUuid, data);
+    await handleSubmitMetadataAnswer(surveyUuid, data);
     setIsLoading(false);
   };
 
@@ -69,7 +64,7 @@ const MetadataForm = ({ metadataQuestions, surveyUuid }: MetadataFormProps) => {
     <Form {...form}>
       <form
         className="flex w-full flex-col items-center pt-10"
-        onSubmit={form.handleSubmit((data) => onSubmit(data))}
+        onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="flex w-2/3 flex-col gap-2">
           {metadataQuestions.map((question, index) => {
@@ -133,4 +128,4 @@ const MetadataForm = ({ metadataQuestions, surveyUuid }: MetadataFormProps) => {
   );
 };
 
-export default MetadataForm;
+export default MetadataAnswerForm;

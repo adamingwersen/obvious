@@ -6,37 +6,37 @@ import { Form, FormField, FormFieldTextArea } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { z } from "zod";
-import {
-  handleDeleteFilesFromAnswer,
-  handleUpsertAnswerFromForm,
-} from "../actions";
 import { ArrowRight, File, Trash } from "lucide-react";
 
-import FilePicker from "./FilePicker";
+import FilePicker from "@/components/files/file-picker";
 import Spinner from "@/components/ui/spinner";
-import Translator from "@/components/ui/translator";
-import { type Question } from "../page";
+import Translator from "@/components/translate/translator";
+import { type Question } from "@/types/question";
+import {
+  type CreateAnswerFormFields,
+  formSchema,
+} from "@/components/forms/schemas/answer-step";
 
-const formSchema = z.object({
-  content: z.string().min(10),
-});
-
-type AnswerStepProps = {
+type AnswerStepFormProps = {
   stepIndex: number;
   question: Question;
   nextFunc: () => void;
   backFunc: () => void;
+  handleDeleteFileFunc: (
+    filePaths: string[],
+    answerId: number,
+  ) => Promise<void>;
+  handleUpsertFileFunc: (formData: FormData) => Promise<void>;
 };
 
-export type CreateAnswerFormFields = z.infer<typeof formSchema>;
-
-const AnswerStep = ({
+const AnswerStepForm = ({
   stepIndex,
   question,
   nextFunc,
   backFunc,
-}: AnswerStepProps) => {
+  handleDeleteFileFunc,
+  handleUpsertFileFunc,
+}: AnswerStepFormProps) => {
   const existingAnswer = question.existingAnswer;
 
   // File states
@@ -69,7 +69,7 @@ const AnswerStep = ({
     fd.append("answerId", existingAnswer?.id?.toString() ?? "");
     answerFiles.forEach((file) => fd.append("files", file));
 
-    await handleUpsertAnswerFromForm(fd);
+    await handleUpsertFileFunc(fd);
 
     setAnswerFiles([]);
     form.reset();
@@ -95,7 +95,7 @@ const AnswerStep = ({
 
     // Show file processing
     setLoadingFiles((prev) => ({ ...prev, [index]: true }));
-    await handleDeleteFilesFromAnswer([filePath], existingAnswer.id);
+    await handleDeleteFileFunc([filePath], existingAnswer.id);
     setLoadingFiles((prev) => ({ ...prev, [index]: false }));
   };
 
@@ -196,4 +196,4 @@ const AnswerStep = ({
   );
 };
 
-export default AnswerStep;
+export default AnswerStepForm;

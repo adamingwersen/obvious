@@ -1,5 +1,5 @@
-import { DataTable } from "./_table/DataTable";
-import { DataTableColumns } from "./_table/DataTableColumns";
+import { DataTable } from "@/components/tables/survey-table/data-table";
+import { DataTableColumns } from "@/components/tables/survey-table/data-table-columns";
 import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/server";
 import Link from "next/link";

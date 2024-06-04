@@ -1,5 +1,6 @@
-import MetadataDynamicForm from "../_components/MetadataDynamicForm";
+import MetadataQuestionForm from "@/components/forms/metadata-question-form";
 import { api } from "@/trpc/server";
+import { handleCreateManySurveyMetadata } from "./actions";
 
 const MetadataPage = async ({ params }: { params: { surveyUuid: string } }) => {
   const formFieldsFromServer = await api.metadataQuestion.findManyBySurveyUuid({
@@ -12,9 +13,10 @@ const MetadataPage = async ({ params }: { params: { surveyUuid: string } }) => {
         <p className="flex justify-center pb-5">
           Basic information for respondent to disclose
         </p>
-        <MetadataDynamicForm
+        <MetadataQuestionForm
           surveyUuid={params.surveyUuid}
           formFieldsFromServer={formFieldsFromServer}
+          handleCreateManySurveyMetadata={handleCreateManySurveyMetadata}
         />
       </div>
     </div>

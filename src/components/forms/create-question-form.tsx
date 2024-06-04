@@ -10,26 +10,29 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { z } from "zod";
-import { handleUpsertQuestionFormSubmit } from "../actions";
 import { api } from "@/trpc/react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import Spinner from "@/components/ui/spinner";
 import useUrlHelpers from "@/hooks/useUrlHelpers";
+import {
+  type CreateQuestionFormFields,
+  formSchema,
+} from "@/components/forms/schemas/create-question";
 
-const formSchema = z.object({
-  title: z.string().min(5),
-  content: z.string().min(10),
-});
-
-export type CreateQuestionFormFields = z.infer<typeof formSchema>;
-
-type CreateQuestionProps = {
+type CreateQuestionFormProps = {
   surveyId: number;
+  handleUpsertQuestion: (
+    data: CreateQuestionFormFields,
+    surveyId: number,
+    questionId: number,
+  ) => Promise<void>;
 };
 
-const CreateQuestion = ({ surveyId }: CreateQuestionProps) => {
+const CreateQuestionForm = ({
+  surveyId,
+  handleUpsertQuestion,
+}: CreateQuestionFormProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { removeQueryParam } = useUrlHelpers();
@@ -57,7 +60,7 @@ const CreateQuestion = ({ surveyId }: CreateQuestionProps) => {
 
   const onAddQuestion = async (data: CreateQuestionFormFields) => {
     setIsLoading(true);
-    await handleUpsertQuestionFormSubmit(data, surveyId, Number(questionId));
+    await handleUpsertQuestion(data, surveyId, Number(questionId));
     form.reset();
     router.replace(removeQueryParam("questionId"));
     router.refresh();
@@ -120,4 +123,4 @@ const CreateQuestion = ({ surveyId }: CreateQuestionProps) => {
   );
 };
 
-export default CreateQuestion;
+export default CreateQuestionForm;

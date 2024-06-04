@@ -21,9 +21,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Bell, Check, ChevronsUpDown, Languages } from "lucide-react";
-import Spinner from "./spinner";
+import Spinner from "@/components/ui/spinner";
 import { createTranslationInDb } from "@/app/actions";
-import { type Translation } from "@/app/(not-protected)/respond/[surveyUuid]/identified/questionnaire/page";
+import { type Translation } from "@/types/translation";
 
 type TranslatorProps = {
   children: ReactNode;

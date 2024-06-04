@@ -21,7 +21,7 @@ const navItems = [
   { label: "Settings", href: "#" },
 ] as const;
 
-const Navigation = () => {
+const Navbar = () => {
   const NavLinks = navItems.map((navItem) => (
     <Link
       key={navItem.label}
@@ -100,4 +100,4 @@ const Navigation = () => {
   );
 };
 
-export default Navigation;
+export default Navbar;

@@ -1,9 +1,14 @@
-import CopyToClipboardButton from "@/app/(protected)/survey/[surveyUuid]/_components/CopyToClipboardButton";
-import ShareDynamicForm from "@/app/(protected)/survey/[surveyUuid]/_components/ShareDynamicForm";
+import CopyToClipboardButton from "@/components/core/copy-to-clipboard-button";
+import ShareForm from "@/components/forms/share-form";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/trpc/server";
 import { ArrowRight } from "lucide-react";
+import {
+  handleCreateManyRespondents,
+  handleDeleteRespondent,
+  handleSendManyInviteEmailsWithResend,
+} from "./actions";
 
 const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
   const survey = await api.survey.findById({ uuid: params.surveyUuid });
@@ -15,10 +20,15 @@ const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
     <div className="flex h-full flex-col space-y-4 pt-10">
       <div className="relative h-full w-2/5 items-center self-center rounded-md border p-4">
         <p className="flex justify-center py-5">Send to email</p>
-        <ShareDynamicForm
+        <ShareForm
           surveyId={survey.id}
           surveyUuid={params.surveyUuid}
           formFieldsFromServer={respondents}
+          handleCreateManyRespondents={handleCreateManyRespondents}
+          handleDeleteRespondent={handleDeleteRespondent}
+          handleSendManyInviteEmailsWithResend={
+            handleSendManyInviteEmailsWithResend
+          }
         />
         <div className="flex justify-center pt-5">
           <Separator className="flex w-2/3" />

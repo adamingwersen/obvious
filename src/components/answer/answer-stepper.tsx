@@ -3,14 +3,23 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import AnswerStep from "./AnswerStep";
-import { type Question } from "../page";
+import AnswerStepForm from "@/components/forms/answer-step-form";
+import { type Question } from "@/types/question";
 
 type AnswerStepperProps = {
   questions: Question[];
+  handleDeleteFileFunc: (
+    filePaths: string[],
+    answerId: number,
+  ) => Promise<void>;
+  handleUpsertFileFunc: (formData: FormData) => Promise<void>;
 };
 
-const AnswerStepper = ({ questions }: AnswerStepperProps) => {
+const AnswerStepper = ({
+  questions,
+  handleDeleteFileFunc,
+  handleUpsertFileFunc,
+}: AnswerStepperProps) => {
   const [answerIndex, setAnswerIndex] = useState(0);
   const router = useRouter();
   const currentQuestion = questions[answerIndex] ?? null;
@@ -36,12 +45,14 @@ const AnswerStepper = ({ questions }: AnswerStepperProps) => {
     <div>
       {currentQuestion && (
         <div className="mx-auto flex flex-col items-center gap-6">
-          <AnswerStep
+          <AnswerStepForm
             stepIndex={answerIndex}
             question={currentQuestion}
             nextFunc={Next}
             backFunc={Back}
-          ></AnswerStep>
+            handleDeleteFileFunc={handleDeleteFileFunc}
+            handleUpsertFileFunc={handleUpsertFileFunc}
+          ></AnswerStepForm>
         </div>
       )}
     </div>

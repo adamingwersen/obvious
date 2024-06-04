@@ -1,24 +1,8 @@
 import { api } from "@/trpc/server";
-import AnswerStepper from "./_components/AnswerStepper";
+import AnswerStepper from "@/components/answer/answer-stepper";
+import { handleUpsertAnswer, handleDeleteFilesFromAnswer } from "./actions";
 
 // Answer page data types
-export type Translation = {
-  language: string;
-  translatedContent: string;
-};
-
-export type Question = {
-  id: number;
-  title: string;
-  content: string;
-  translations: Translation[];
-  existingAnswer: {
-    id: number;
-    content: string;
-    translations: Translation[];
-    filePaths: string[];
-  } | null;
-};
 
 const RespondentQuestionnairePage = async ({
   params,
@@ -65,7 +49,11 @@ const RespondentQuestionnairePage = async ({
   return (
     <div className="flex h-full w-full flex-col justify-center space-y-4 pb-10 pt-10 ">
       <div className="relative flex  w-2/5 flex-col self-center rounded-md border bg-white p-4 pb-10">
-        <AnswerStepper questions={mappedQuestions} />
+        <AnswerStepper
+          questions={mappedQuestions}
+          handleDeleteFileFunc={handleDeleteFilesFromAnswer}
+          handleUpsertFileFunc={handleUpsertAnswer}
+        />
       </div>
     </div>
   );

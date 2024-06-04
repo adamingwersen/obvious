@@ -1,10 +1,10 @@
 "use server";
 
+import { type CreateQuestionFormFields } from "@/components/forms/schemas/create-question";
 import { api } from "@/trpc/server";
-import { type CreateQuestionFormFields } from "./_components/CreateQuestion";
 import { revalidatePath } from "next/cache";
 
-export const handleUpsertQuestionFormSubmit = async (
+export const handleUpsertQuestion = async (
   data: CreateQuestionFormFields,
   surveyId: number,
   questionId?: number,
@@ -15,7 +15,7 @@ export const handleUpsertQuestionFormSubmit = async (
   revalidatePath(`/(protected)/survey/[surveyUuid]/configure`, "page");
 };
 
-export const handleRemoveQuestion = async (questionId: number) => {
+export const handleDeleteQuestion = async (questionId: number) => {
   await api.question.deleteById({ id: questionId });
   revalidatePath(`/(protected)/survey/[surveyUuid]/configure`, "page");
 
