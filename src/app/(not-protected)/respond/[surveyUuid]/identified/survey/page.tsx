@@ -1,7 +1,7 @@
 import { api } from "@/trpc/server";
 import AnswerStepper from "@/components/answer/answer-stepper";
 import { handleUpsertAnswer, handleDeleteFilesFromAnswer } from "./actions";
-
+import { handleTranslate } from "@/app/actions";
 // Answer page data types
 
 const RespondentQuestionnairePage = async ({
@@ -53,6 +53,7 @@ const RespondentQuestionnairePage = async ({
           questions={mappedQuestions}
           handleDeleteFileFunc={handleDeleteFilesFromAnswer}
           handleUpsertFileFunc={handleUpsertAnswer}
+          handleTranslateFunc={handleTranslate}
         />
       </div>
     </div>

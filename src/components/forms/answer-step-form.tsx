@@ -27,6 +27,10 @@ type AnswerStepFormProps = {
     answerId: number,
   ) => Promise<void>;
   handleUpsertFileFunc: (formData: FormData) => Promise<void>;
+  handleTranslateFunc: (
+    content: string,
+    targetLangName: string,
+  ) => Promise<{ translation: string }>;
 };
 
 const AnswerStepForm = ({
@@ -36,6 +40,7 @@ const AnswerStepForm = ({
   backFunc,
   handleDeleteFileFunc,
   handleUpsertFileFunc,
+  handleTranslateFunc,
 }: AnswerStepFormProps) => {
   const existingAnswer = question.existingAnswer;
 
@@ -108,6 +113,7 @@ const AnswerStepForm = ({
           content={question.content}
           answerId={undefined}
           questionId={question.id}
+          handleTranslateFunc={handleTranslateFunc}
         >
           <p className="w-full text-left text-base font-extralight tracking-tight">
             {question.content}
