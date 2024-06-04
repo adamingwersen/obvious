@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import { type SurveyWithRelationsModel } from "@/server/db/schema";
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
@@ -142,13 +143,13 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
             <DropdownMenuItem
               onClick={() =>
                 navigator.clipboard.writeText(
-                  `localhost:3000/respond/${row.original.uuid}`,
+                  `https://obvious.earth/respond/${row.original.uuid}`,
                 )
               }
             >
               Copy link to survey
             </DropdownMenuItem>
-            <DropdownMenuItem
+            {/* <DropdownMenuItem
               onClick={() =>
                 navigator.clipboard.writeText(
                   `SurveyID: ${row.original.id} // CreatedByID: ${row.original.createdById}`,
@@ -156,7 +157,7 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
               }
             >
               Copy data fields for sharing
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             <Link href={`/survey/${row.original.uuid}/sharing`}>
               <DropdownMenuItem>Share</DropdownMenuItem>
             </Link>
