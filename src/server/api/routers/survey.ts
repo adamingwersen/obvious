@@ -74,7 +74,6 @@ export const surveyRouter = createTRPCRouter({
       });
     },
   ),
-
   findById: procedures.protected
     .input(surveyFindByIdSchema)
     .query(async ({ ctx, input }) => {

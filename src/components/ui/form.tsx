@@ -3,20 +3,17 @@ import * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
 import {
   Controller,
-  ControllerProps,
-  FieldPath,
-  FieldValues,
+  type ControllerProps,
+  type FieldPath,
+  type FieldValues,
   FormProvider,
   useFormContext,
 } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
-import { Input, InputProps } from "@/components/ui/input";
-import { Textarea, TextareaProps } from "@/components/ui/textarea";
-import { CalendarProps } from "@/components/ui/calendar";
-import { Popover, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+import { Input, type InputProps } from "@/components/ui/input";
+import { Textarea, type TextareaProps } from "@/components/ui/textarea";
 
 const Form = FormProvider;
 

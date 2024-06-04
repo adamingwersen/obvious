@@ -58,7 +58,7 @@ export const questionRouter = createTRPCRouter({
       // If content is set we assume its new content
       // We remove previous translations for question
       if (input.content !== undefined) {
-        const hest = await ctx.db
+        await ctx.db
           .delete(schema.translation)
           .where(eq(schema.translation.questionId, input.id!));
       }

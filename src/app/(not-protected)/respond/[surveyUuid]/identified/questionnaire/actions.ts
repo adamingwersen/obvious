@@ -1,11 +1,11 @@
 "use server";
 
 import { api } from "@/trpc/server";
-import { type CreateQuestionFormFields } from "./_components/CreateQuestion";
+
 import { revalidatePath } from "next/cache";
 import { DeleteFiles, UploadFiles } from "@/server/supabase/server";
-
-import { type CreateAnswerFormFields } from "./_components/AnswerStep";
+import { CreateAnswerFormFields } from "./_components/AnswerStep";
+import { CreateQuestionFormFields } from "@/app/(protected)/survey/[surveyUuid]/_components/CreateQuestion";
 
 export const handleUpsertQuestionFormSubmit = async (
   data: CreateQuestionFormFields,
@@ -44,13 +44,6 @@ export const handleUpsertAnswerFormSubmit = async (
   }
 
   return answer[0];
-};
-
-export const handleRemoveQuestion = async (questionId: number) => {
-  await api.question.deleteById({ id: questionId });
-  revalidatePath(`/(protected)/survey/[surveyUuid]/configure`, "page");
-
-  // TODO: Add Toaster here
 };
 
 export async function upsertAnswerFromForm(formData: FormData) {
@@ -109,6 +102,7 @@ export async function deleteFilesFromAnswer(
   filePaths: string[],
   answerId: number,
 ) {
+  console.log("deleteFilesFromAnswer", answerId, filePaths);
   // Remove file from Supabase
   await DeleteFiles(answerId, filePaths);
 

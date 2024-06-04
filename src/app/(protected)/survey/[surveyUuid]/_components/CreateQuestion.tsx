@@ -69,7 +69,7 @@ const CreateQuestion = ({ surveyId }: CreateQuestionProps) => {
 
     form.setValue("title", data.title);
     form.setValue("content", data.content);
-  }, [data]);
+  }, [data, form]);
 
   if (isQueryLoading && !data) {
     return (

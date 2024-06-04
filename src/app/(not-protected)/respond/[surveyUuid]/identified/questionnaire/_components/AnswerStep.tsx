@@ -13,7 +13,7 @@ import { ArrowRight, File, Trash } from "lucide-react";
 import FilePicker from "./FilePicker";
 import Spinner from "@/components/ui/spinner";
 import Translator from "@/components/ui/translator";
-import { type Question } from "../answer/page";
+import { Question } from "../page";
 
 const formSchema = z.object({
   content: z.string().min(10),
@@ -69,6 +69,7 @@ const AnswerStep = ({
     await upsertAnswerFromForm(fd);
 
     setAnswerFiles([]);
+    form.reset();
     nextFunc();
     setIsLoading(false);
   };
@@ -96,18 +97,16 @@ const AnswerStep = ({
   };
 
   return (
-    <div className="w-full">
-      <div className="p-5">
-        <h1 className="text-center text-xl font-extrabold tracking-tight">
-          {question.title}
-        </h1>
+    <div className="w-full p-5 text-left">
+      <div className="p-3">
+        <p className="text-lg font-light tracking-tight">{question.title}</p>
         <Translator
           translations={question.translations}
           content={question.content}
           answerId={undefined}
           questionId={question.id}
         >
-          <p className="w-1/3 text-center text-lg font-semibold tracking-tight">
+          <p className="w-full text-left text-base font-extralight tracking-tight">
             {question.content}
           </p>
         </Translator>
@@ -115,44 +114,48 @@ const AnswerStep = ({
       <div className="mx-auto flex flex-col items-center gap-6">
         <Form {...form}>
           <form
-            className="flex w-1/4 flex-col gap-4 "
+            className="flex w-full flex-col gap-4 "
             onSubmit={form.handleSubmit(handleSubmit)}
           >
             <FormField
               control={form.control}
               name="content"
               render={({ field }) => (
-                <FormFieldTextArea placeholder="Your answer..." {...field} />
+                <FormFieldTextArea
+                  className="min-h-40"
+                  placeholder="Your answer..."
+                  {...field}
+                />
               )}
             />
 
             {(existingAnswer?.filePaths ?? []).length > 0 && (
-              <div>
+              <div className="font-medium">
                 Existing documents
                 <div className="flex flex-col gap-2">
                   {existingAnswer?.filePaths?.map((p, index) => {
                     return (
                       <div
                         key={p}
-                        className="flex items-center justify-between rounded border p-2"
+                        className="flex items-center justify-between rounded-lg border px-2 py-1"
                       >
                         <div className="flex items-center justify-center gap-2">
                           <File size={15}></File>
-                          <p className="text-lg">{p}</p>
+                          <p className="text-sm">{p}</p>
                         </div>
-                        <button
-                          className="flex h-10 w-10 items-center justify-center"
+                        <Button
+                          variant="destructive"
+                          type="button"
                           onClick={async () => {
                             await handleDeleteFile(index);
                           }}
-                          type="button"
                         >
                           {loadingFiles[index] ? (
-                            <Spinner className="size-15"></Spinner>
+                            <Spinner className="size-4"></Spinner>
                           ) : (
-                            <Trash size={15}></Trash>
+                            <Trash size={12}></Trash>
                           )}
-                        </button>
+                        </Button>
                       </div>
                     );
                   })}

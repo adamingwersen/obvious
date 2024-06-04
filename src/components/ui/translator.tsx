@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
@@ -123,14 +123,14 @@ const Translator = ({
       <Popover>
         <PopoverTrigger>
           {/* This button is for some reason causing hydration error? */}
-          <Button variant="outline" className="relative h-7 w-7 p-1">
+          <div className="relative flex h-7 w-7 items-center justify-center rounded-lg border p-1">
             <Languages size={12} className="" />
             {Object.keys(translations).length > 0 && (
               <span className="absolute right-0 top-0 inline-flex -translate-y-1/2 translate-x-1/2 transform items-center justify-center rounded-full bg-red-300 px-1 py-1 text-xs font-bold leading-none text-red-100">
                 <Bell size={8} strokeWidth={3}></Bell>
               </span>
             )}
-          </Button>
+          </div>
         </PopoverTrigger>
         <PopoverContent className="w-96">
           <div>

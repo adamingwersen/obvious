@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Navigation from "@/components/ui/navigation";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";

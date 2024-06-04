@@ -68,7 +68,7 @@ export const answerRouter = createTRPCRouter({
         .returning();
     }),
 
-  findManyByQuestionIds: procedures.protected
+  findManyByQuestionIdsForUser: procedures.protected
     .input(getUserAnswersForQuestionsSchema)
     .mutation(async ({ ctx, input }) => {
       const authUserId = ctx.user.id;
@@ -79,6 +79,22 @@ export const answerRouter = createTRPCRouter({
       return ctx.db.query.answer.findMany({
         where: and(
           eq(schema.answer.createdById, user.id),
+          inArray(schema.answer.questionId, input.questionIds),
+          isNull(schema.answer.deletedAt),
+        ),
+      });
+    }),
+
+  findManyByQuesitionIds: procedures.protected
+    .input(getUserAnswersForQuestionsSchema)
+    .mutation(async ({ ctx, input }) => {
+      const authUserId = ctx.user.id;
+      const user = await ctx.db.query.user.findFirst({
+        where: eq(schema.user.authId, authUserId),
+      });
+      if (!user) throw new Error("No user found");
+      return ctx.db.query.answer.findMany({
+        where: and(
           inArray(schema.answer.questionId, input.questionIds),
           isNull(schema.answer.deletedAt),
         ),

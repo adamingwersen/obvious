@@ -4,7 +4,7 @@ import { defaultRows } from "./shared";
 import { user } from "@/server/db/schema/user.schema";
 import { answer } from "@/server/db/schema/answer.schema";
 import { question } from "@/server/db/schema/question.schema";
-import { z } from "zod";
+import { type z } from "zod";
 import { relations } from "drizzle-orm";
 
 export const translation = pgTable("translation", {
