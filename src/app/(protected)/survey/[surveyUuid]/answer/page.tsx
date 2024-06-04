@@ -1,24 +1,10 @@
-import AnswerStepper from "@/app/(protected)/survey/[surveyUuid]/_components/AnswerStepper";
 import { api } from "@/trpc/server";
-
-// Answer page data types
-export type Translation = {
-  language: string;
-  translatedContent: string;
-};
-
-export type Question = {
-  id: number;
-  title: string;
-  content: string;
-  translations: Translation[];
-  existingAnswer: {
-    id: number;
-    content: string;
-    translations: Translation[];
-    filePaths: string[];
-  } | null;
-};
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const AnswerSurveyIdPage = async ({
   params,
@@ -31,40 +17,49 @@ const AnswerSurveyIdPage = async ({
 
   // Fetch existing answers for survey questions
   const questionIds = questions.map((question) => question.id);
-  const userAnswers = await api.answer.findManyByQuestionIds({
-    questionIds: questionIds,
-  });
-  // Fetch translations for questions in survey
-  const questionsTranslations = await api.translation.findManyByQuestionIds({
+  const answers = await api.answer.findManyByQuesitionIds({
     questionIds: questionIds,
   });
 
   // Construct data model
   const mappedQuestions = questions.map((q) => {
-    const foundAnswer = userAnswers.find((a) => a.questionId === q.id);
-    const questionTranslations = questionsTranslations.filter(
-      (t) => t.questionId === q.id,
-    );
+    const foundAnswers = answers.filter((a) => a.questionId === q.id);
 
     return {
       id: q.id,
       title: q.title,
       content: q.content,
-      translations: questionTranslations,
-      existingAnswer: foundAnswer
-        ? {
-            id: foundAnswer.id,
-            content: foundAnswer.content,
-            filePaths: foundAnswer.documentIds ?? [],
-            translations: [], // We dont have translations for answers yet
-          }
-        : null,
+      answers: foundAnswers,
     };
   });
 
   return (
-    <div className="flex h-full flex-col space-y-4 pt-10">
-      <AnswerStepper questions={mappedQuestions} />
+    <div className="mx-auto h-full w-2/3 pt-10 ">
+      <Accordion type="multiple" className="w-full">
+        {mappedQuestions.map((question, i) => {
+          return (
+            <AccordionItem value={`item-${i}`} key={`item-${i}`}>
+              <AccordionTrigger>{question.content}</AccordionTrigger>
+              <AccordionContent>
+                {question.answers.map((a, j) => {
+                  return (
+                    <div className="flex justify-between" key={j}>
+                      <div className="flex">
+                        <p className="font-semibold">Answer:</p>
+                        <p>{a.content}</p>
+                      </div>
+                      <div className="flex">
+                        <p className="font-semibold">Answer by:</p>
+                        <p> {a.createdById}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </AccordionContent>
+            </AccordionItem>
+          );
+        })}
+      </Accordion>
     </div>
   );
 };

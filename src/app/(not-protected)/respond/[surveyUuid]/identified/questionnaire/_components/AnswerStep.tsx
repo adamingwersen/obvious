@@ -7,13 +7,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { z } from "zod";
-import { deleteFilesFromAnswer, upsertAnswerFromForm } from "../actions";
+import {
+  handleDeleteFilesFromAnswer,
+  handleUpsertAnswerFromForm,
+} from "../actions";
 import { ArrowRight, File, Trash } from "lucide-react";
 
 import FilePicker from "./FilePicker";
 import Spinner from "@/components/ui/spinner";
 import Translator from "@/components/ui/translator";
-import { type Question } from "../answer/page";
+import { type Question } from "../page";
 
 const formSchema = z.object({
   content: z.string().min(10),
@@ -48,13 +51,13 @@ const AnswerStep = ({
     },
   });
 
-  const handleBack = () => {
+  const onBack = () => {
     setIsLoading(true);
     backFunc();
     setIsLoading(false);
   };
 
-  const handleSubmit = async (data: CreateAnswerFormFields) => {
+  const onSubmit = async (data: CreateAnswerFormFields) => {
     setIsLoading(true);
 
     // Only plain objects, and a few built-ins, can be passed to Server Actions.
@@ -66,14 +69,15 @@ const AnswerStep = ({
     fd.append("answerId", existingAnswer?.id?.toString() ?? "");
     answerFiles.forEach((file) => fd.append("files", file));
 
-    await upsertAnswerFromForm(fd);
+    await handleUpsertAnswerFromForm(fd);
 
     setAnswerFiles([]);
+    form.reset();
     nextFunc();
     setIsLoading(false);
   };
 
-  const handleDeleteFile = async (index: number) => {
+  const onDeleteFile = async (index: number) => {
     if (existingAnswer === null) {
       console.error("You cant delete file without an answer?!?");
       return;
@@ -91,23 +95,21 @@ const AnswerStep = ({
 
     // Show file processing
     setLoadingFiles((prev) => ({ ...prev, [index]: true }));
-    await deleteFilesFromAnswer([filePath], existingAnswer.id);
+    await handleDeleteFilesFromAnswer([filePath], existingAnswer.id);
     setLoadingFiles((prev) => ({ ...prev, [index]: false }));
   };
 
   return (
-    <div className="w-full">
-      <div className="p-5">
-        <h1 className="text-center text-xl font-extrabold tracking-tight">
-          {question.title}
-        </h1>
+    <div className="w-full p-5 text-left">
+      <div className="p-3">
+        <p className="text-lg font-light tracking-tight">{question.title}</p>
         <Translator
           translations={question.translations}
           content={question.content}
           answerId={undefined}
           questionId={question.id}
         >
-          <p className="w-1/3 text-center text-lg font-semibold tracking-tight">
+          <p className="w-full text-left text-base font-extralight tracking-tight">
             {question.content}
           </p>
         </Translator>
@@ -115,44 +117,48 @@ const AnswerStep = ({
       <div className="mx-auto flex flex-col items-center gap-6">
         <Form {...form}>
           <form
-            className="flex w-1/4 flex-col gap-4 "
-            onSubmit={form.handleSubmit(handleSubmit)}
+            className="flex w-full flex-col gap-4 "
+            onSubmit={form.handleSubmit(onSubmit)}
           >
             <FormField
               control={form.control}
               name="content"
               render={({ field }) => (
-                <FormFieldTextArea placeholder="Your answer..." {...field} />
+                <FormFieldTextArea
+                  className="min-h-40"
+                  placeholder="Your answer..."
+                  {...field}
+                />
               )}
             />
 
             {(existingAnswer?.filePaths ?? []).length > 0 && (
-              <div>
+              <div className="font-medium">
                 Existing documents
                 <div className="flex flex-col gap-2">
                   {existingAnswer?.filePaths?.map((p, index) => {
                     return (
                       <div
                         key={p}
-                        className="flex items-center justify-between rounded border p-2"
+                        className="flex items-center justify-between rounded-lg border px-2 py-1"
                       >
                         <div className="flex items-center justify-center gap-2">
                           <File size={15}></File>
-                          <p className="text-lg">{p}</p>
+                          <p className="text-sm">{p}</p>
                         </div>
-                        <button
-                          className="flex h-10 w-10 items-center justify-center"
-                          onClick={async () => {
-                            await handleDeleteFile(index);
-                          }}
+                        <Button
+                          variant="destructive"
                           type="button"
+                          onClick={async () => {
+                            await onDeleteFile(index);
+                          }}
                         >
                           {loadingFiles[index] ? (
-                            <Spinner className="size-15"></Spinner>
+                            <Spinner className="size-4"></Spinner>
                           ) : (
-                            <Trash size={15}></Trash>
+                            <Trash size={12}></Trash>
                           )}
-                        </button>
+                        </Button>
                       </div>
                     );
                   })}
@@ -166,7 +172,7 @@ const AnswerStep = ({
             <div className="flex flex-row justify-between">
               <Button
                 variant="outline"
-                onClick={handleBack}
+                onClick={onBack}
                 type="button"
                 disabled={stepIndex === 0}
               >

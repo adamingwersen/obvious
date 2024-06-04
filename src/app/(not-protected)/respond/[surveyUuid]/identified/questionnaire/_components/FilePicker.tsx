@@ -57,9 +57,9 @@ export default function FilePicker({ files, setFiles }: FilerPickerProps) {
   }, [files]);
 
   return (
-    <div className="mx-auto mt-10 max-w-md p-4">
+    <div className="mx-auto p-4">
       <h2 className="mb-4 text-xl font-bold">Attach documents</h2>
-      {/* <form onSubmit={handleSubmit}> */}
+
       <div className="flex items-center justify-center">
         <div
           className={` w-[200px] rounded-lg border-2 border-dashed p-6 ${

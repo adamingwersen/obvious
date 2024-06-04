@@ -1,15 +1,71 @@
+import { api } from "@/trpc/server";
+import AnswerStepper from "./_components/AnswerStepper";
+
+// Answer page data types
+export type Translation = {
+  language: string;
+  translatedContent: string;
+};
+
+export type Question = {
+  id: number;
+  title: string;
+  content: string;
+  translations: Translation[];
+  existingAnswer: {
+    id: number;
+    content: string;
+    translations: Translation[];
+    filePaths: string[];
+  } | null;
+};
+
 const RespondentQuestionnairePage = async ({
   params,
 }: {
   params: { surveyUuid: string };
 }) => {
-  console.log(params);
+  // Fetch survey with questions
+  const survey = await api.survey.findById({ uuid: params.surveyUuid });
+  const questions = survey.questions;
+
+  // Fetch existing answers for survey questions
+  const questionIds = questions.map((question) => question.id);
+  const userAnswers = await api.answer.findManyByQuestionIdsForUser({
+    questionIds: questionIds,
+  });
+  // Fetch translations for questions in survey
+  const questionsTranslations = await api.translation.findManyByQuestionIds({
+    questionIds: questionIds,
+  });
+
+  // Construct data model
+  const mappedQuestions = questions.map((q) => {
+    const foundAnswer = userAnswers.find((a) => a.questionId === q.id);
+    const questionTranslations = questionsTranslations.filter(
+      (t) => t.questionId === q.id,
+    );
+
+    return {
+      id: q.id,
+      title: q.title,
+      content: q.content,
+      translations: questionTranslations,
+      existingAnswer: foundAnswer
+        ? {
+            id: foundAnswer.id,
+            content: foundAnswer.content,
+            filePaths: foundAnswer.documentIds ?? [],
+            translations: [], // We dont have translations for answers yet
+          }
+        : null,
+    };
+  });
+
   return (
     <div className="flex h-full w-full flex-col justify-center space-y-4 pb-10 pt-10 ">
       <div className="relative flex  w-2/5 flex-col self-center rounded-md border bg-white p-4 pb-10">
-        <div className="flex flex-col px-20 pt-10 text-lg font-light">
-          You did it!
-        </div>
+        <AnswerStepper questions={mappedQuestions} />
       </div>
     </div>
   );
