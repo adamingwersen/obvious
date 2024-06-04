@@ -4,7 +4,7 @@ import { api } from "@/trpc/server";
 
 import { revalidatePath } from "next/cache";
 import { DeleteFiles, UploadFiles } from "@/server/supabase/server";
-import { type CreateAnswerFormFields } from "./_components/AnswerStep";
+import { type CreateAnswerFormFields } from "@/components/forms/schemas/answer-step";
 
 const upsertAnswer = async (
   data: CreateAnswerFormFields,
@@ -34,7 +34,7 @@ const upsertAnswer = async (
   return answer[0];
 };
 
-export async function handleUpsertAnswerFromForm(formData: FormData) {
+export async function handleUpsertAnswer(formData: FormData) {
   const content = formData.get("content") as string | null;
   if (!content) throw new Error("Content is required");
 

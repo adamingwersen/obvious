@@ -2,7 +2,7 @@
 
 import { api } from "@/trpc/server";
 import { revalidatePath } from "next/cache";
-import { type CreateMetadataQuestionFormFields } from "../_components/MetadataDynamicForm";
+import { type CreateMetadataQuestionFormFields } from "@/components/forms/schemas/metadata-question";
 import { redirect } from "next/navigation";
 
 export const handleCreateManySurveyMetadata = async (

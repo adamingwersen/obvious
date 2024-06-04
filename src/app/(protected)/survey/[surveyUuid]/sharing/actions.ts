@@ -3,7 +3,7 @@
 import { api } from "@/trpc/server";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { type ShareDynamicFormFields } from "../_components/ShareDynamicForm";
+import { type ShareFormFields } from "@/components/forms/schemas/share-form";
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { Resend } from "resend";
 import { InviteRespondentEmailTemplate } from "@/components/email/invite-respondent";
@@ -27,9 +27,7 @@ const generateMagicLinkAsAdmin = async (email: string, surveyUuid: string) => {
   return { data, error };
 };
 
-export const handleCreateManyRespondents = async (
-  data: ShareDynamicFormFields,
-) => {
+export const handleCreateManyRespondents = async (data: ShareFormFields) => {
   await api.respondent.createMany(data.emails);
   revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
 };
