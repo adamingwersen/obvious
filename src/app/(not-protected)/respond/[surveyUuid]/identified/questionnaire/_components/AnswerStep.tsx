@@ -7,7 +7,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { z } from "zod";
-import { deleteFilesFromAnswer, upsertAnswerFromForm } from "../actions";
+import {
+  handleDeleteFilesFromAnswer,
+  handleUpsertAnswerFromForm,
+} from "../actions";
 import { ArrowRight, File, Trash } from "lucide-react";
 
 import FilePicker from "./FilePicker";
@@ -48,13 +51,13 @@ const AnswerStep = ({
     },
   });
 
-  const handleBack = () => {
+  const onBack = () => {
     setIsLoading(true);
     backFunc();
     setIsLoading(false);
   };
 
-  const handleSubmit = async (data: CreateAnswerFormFields) => {
+  const onSubmit = async (data: CreateAnswerFormFields) => {
     setIsLoading(true);
 
     // Only plain objects, and a few built-ins, can be passed to Server Actions.
@@ -66,7 +69,7 @@ const AnswerStep = ({
     fd.append("answerId", existingAnswer?.id?.toString() ?? "");
     answerFiles.forEach((file) => fd.append("files", file));
 
-    await upsertAnswerFromForm(fd);
+    await handleUpsertAnswerFromForm(fd);
 
     setAnswerFiles([]);
     form.reset();
@@ -74,7 +77,7 @@ const AnswerStep = ({
     setIsLoading(false);
   };
 
-  const handleDeleteFile = async (index: number) => {
+  const onDeleteFile = async (index: number) => {
     if (existingAnswer === null) {
       console.error("You cant delete file without an answer?!?");
       return;
@@ -92,7 +95,7 @@ const AnswerStep = ({
 
     // Show file processing
     setLoadingFiles((prev) => ({ ...prev, [index]: true }));
-    await deleteFilesFromAnswer([filePath], existingAnswer.id);
+    await handleDeleteFilesFromAnswer([filePath], existingAnswer.id);
     setLoadingFiles((prev) => ({ ...prev, [index]: false }));
   };
 
@@ -115,7 +118,7 @@ const AnswerStep = ({
         <Form {...form}>
           <form
             className="flex w-full flex-col gap-4 "
-            onSubmit={form.handleSubmit(handleSubmit)}
+            onSubmit={form.handleSubmit(onSubmit)}
           >
             <FormField
               control={form.control}
@@ -147,7 +150,7 @@ const AnswerStep = ({
                           variant="destructive"
                           type="button"
                           onClick={async () => {
-                            await handleDeleteFile(index);
+                            await onDeleteFile(index);
                           }}
                         >
                           {loadingFiles[index] ? (
@@ -169,7 +172,7 @@ const AnswerStep = ({
             <div className="flex flex-row justify-between">
               <Button
                 variant="outline"
-                onClick={handleBack}
+                onClick={onBack}
                 type="button"
                 disabled={stepIndex === 0}
               >

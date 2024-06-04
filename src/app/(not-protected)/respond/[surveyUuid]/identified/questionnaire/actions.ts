@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { DeleteFiles, UploadFiles } from "@/server/supabase/server";
 import { type CreateAnswerFormFields } from "./_components/AnswerStep";
 
-export const handleUpsertAnswerFormSubmit = async (
+const upsertAnswer = async (
   data: CreateAnswerFormFields,
   questionId: number,
   answerId?: number,
@@ -34,7 +34,7 @@ export const handleUpsertAnswerFormSubmit = async (
   return answer[0];
 };
 
-export async function upsertAnswerFromForm(formData: FormData) {
+export async function handleUpsertAnswerFromForm(formData: FormData) {
   const content = formData.get("content") as string | null;
   if (!content) throw new Error("Content is required");
 
@@ -48,7 +48,7 @@ export async function upsertAnswerFromForm(formData: FormData) {
   const files = formData.getAll("files") as unknown as File[] | [];
   try {
     // Upsert answer to get ID and existing filepaths used for potential file upload
-    const insertedAnswer = await handleUpsertAnswerFormSubmit(
+    const insertedAnswer = await upsertAnswer(
       { content },
       questionId,
       answerId,
@@ -72,12 +72,7 @@ export async function upsertAnswerFromForm(formData: FormData) {
         );
       }
 
-      await handleUpsertAnswerFormSubmit(
-        { content },
-        questionId,
-        insertedAnswer.id,
-        paths,
-      );
+      await upsertAnswer({ content }, questionId, insertedAnswer.id, paths);
     }
   } catch (error) {
     console.error("Failed to upload file", error);
@@ -86,7 +81,7 @@ export async function upsertAnswerFromForm(formData: FormData) {
   revalidatePath(`/(protected)/survey/[surveyUuid]/answer`, "page");
 }
 
-export async function deleteFilesFromAnswer(
+export async function handleDeleteFilesFromAnswer(
   filePaths: string[],
   answerId: number,
 ) {
