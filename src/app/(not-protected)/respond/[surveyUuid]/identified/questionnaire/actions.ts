@@ -102,7 +102,6 @@ export async function deleteFilesFromAnswer(
   filePaths: string[],
   answerId: number,
 ) {
-  console.log("deleteFilesFromAnswer", answerId, filePaths);
   // Remove file from Supabase
   await DeleteFiles(answerId, filePaths);
 
