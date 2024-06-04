@@ -30,8 +30,8 @@ const QuestionRow = ({ question, handleDeleteQuestion }: QuestionRowProps) => {
           />
           <X
             className="size-4"
-            onClick={() => {
-              void handleDeleteQuestion(question.id);
+            onClick={async () => {
+              await handleDeleteQuestion(question.id);
             }}
           />
         </div>
