@@ -9,7 +9,7 @@ export const handleCreateManySurveyMetadata = async (
   data: CreateMetadataQuestionFormFields,
   surveyUuid: string,
 ) => {
-  const surveyId = await api.survey.findById({ uuid: surveyUuid });
+  const surveyId = await api.survey.findByUuid({ uuid: surveyUuid });
   const modifiedData = data.metadataQuestionFields.map((metadata) => {
     return {
       id: metadata.id,
@@ -21,5 +21,5 @@ export const handleCreateManySurveyMetadata = async (
 
   await api.metadataQuestion.createMany(modifiedData);
   revalidatePath(`/(protected)/survey/[surveyUuid]/metadata`, "page");
-  redirect(`/survey/${surveyUuid}/configure`);
+  redirect(`/survey/${surveyUuid}/create`);
 };

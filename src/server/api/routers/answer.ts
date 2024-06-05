@@ -24,6 +24,10 @@ const answerFindByIdSchema = answerSelectSchema.pick({
   id: true,
 });
 
+const deleteByQuestionIdSchema = answerSelectSchema.pick({
+  questionId: true,
+});
+
 export const answerRouter = createTRPCRouter({
   findById: procedures.protected
     .input(answerFindByIdSchema)
@@ -99,5 +103,18 @@ export const answerRouter = createTRPCRouter({
           isNull(schema.answer.deletedAt),
         ),
       });
+    }),
+
+  deleteByQuestionId: procedures.protected
+    .input(deleteByQuestionIdSchema)
+    .mutation(async ({ ctx, input }) => {
+      const authUserId = ctx.user.id;
+      const user = await ctx.db.query.user.findFirst({
+        where: eq(schema.user.authId, authUserId),
+      });
+      if (!user) throw new Error("No user found");
+      return ctx.db
+        .delete(schema.answer)
+        .where(eq(schema.answer.questionId, input.questionId));
     }),
 });

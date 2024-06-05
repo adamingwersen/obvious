@@ -9,7 +9,7 @@ export const handleValidateRespondent = async (
   surveyUuid: string,
   data: ValidateRespondentFormFields,
 ) => {
-  const survey = await api.survey.findById({ uuid: surveyUuid });
+  const survey = await api.survey.findByUuid({ uuid: surveyUuid });
 
   if (!survey) redirect(`/respond/${surveyUuid}/rejected`);
   const respondent = await api.respondent.validate({
