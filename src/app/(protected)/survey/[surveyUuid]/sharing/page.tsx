@@ -11,7 +11,7 @@ import {
 } from "./actions";
 
 const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
-  const survey = await api.survey.findById({ uuid: params.surveyUuid });
+  const survey = await api.survey.findByUuid({ uuid: params.surveyUuid });
   const respondents = await api.respondent.findBySurveyUuid({
     uuid: params.surveyUuid,
   });

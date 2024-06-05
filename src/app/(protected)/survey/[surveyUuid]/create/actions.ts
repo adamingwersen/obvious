@@ -12,12 +12,12 @@ export const handleUpsertQuestion = async (
   if (!questionId) await api.question.create({ ...data, surveyId });
   if (questionId) await api.question.update({ ...data, id: questionId });
 
-  revalidatePath(`/(protected)/survey/[surveyUuid]/configure`, "page");
+  revalidatePath(`/(protected)/survey/[surveyUuid]/create`, "page");
 };
 
 export const handleDeleteQuestion = async (questionId: number) => {
   await api.question.deleteById({ id: questionId });
-  revalidatePath(`/(protected)/survey/[surveyUuid]/configure`, "page");
+  revalidatePath(`/(protected)/survey/[surveyUuid]/create`, "page");
 
   // TODO: Add Toaster here
 };

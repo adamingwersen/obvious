@@ -10,7 +10,7 @@ const RespondentIdentifiedPage = async ({
   const metadataQuestions = await api.metadataQuestion.findManyBySurveyUuid({
     surveyUuid: params.surveyUuid,
   });
-  const survey = await api.survey.findById({ uuid: params.surveyUuid });
+  const survey = await api.survey.findByUuid({ uuid: params.surveyUuid });
   const originator = survey.user;
 
   return (

@@ -10,7 +10,7 @@ export const handleSubmitMetadataAnswer = async (
   surveyUuid: string,
   data: CreateMetadataAnswerFormFields,
 ) => {
-  const survey = await api.survey.findById({ uuid: surveyUuid });
+  const survey = await api.survey.findByUuid({ uuid: surveyUuid });
   if (!survey) throw new Error("Whoops. Survey doesn't exsit");
   const respondent_uuid = cookies().get("respondent-identifier")?.value;
   if (!respondent_uuid)

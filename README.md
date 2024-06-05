@@ -20,7 +20,7 @@
   - [ ] Translate Q/A
   - [ ] Forward Survey instance
 - [ ] Email + Signup + Login flows (user setup)
-- [ ] survey/.../configure/page.tsx
+- [ ] survey/.../create/page.tsx
   - [ ] Add some polish
   - [ ] Stop empty surveys from allowing "finish"
 - [ ] survey/.../validate/page.tsx

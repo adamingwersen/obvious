@@ -12,7 +12,7 @@ const AnswerSurveyIdPage = async ({
   params: { surveyUuid: string };
 }) => {
   // Fetch survey with questions
-  const survey = await api.survey.findById({ uuid: params.surveyUuid });
+  const survey = await api.survey.findByUuid({ uuid: params.surveyUuid });
   const questions = survey.questions;
 
   // Fetch existing answers for survey questions

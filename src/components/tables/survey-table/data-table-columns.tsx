@@ -130,7 +130,7 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
             <Link href={`/survey/${row.original.uuid}/answer`}>
               <DropdownMenuItem>Go to answers</DropdownMenuItem>
             </Link>
-            <Link href={`/survey/${row.original.uuid}/configure`}>
+            <Link href={`/survey/${row.original.uuid}/create`}>
               <DropdownMenuItem>Edit questions</DropdownMenuItem>
             </Link>
 
