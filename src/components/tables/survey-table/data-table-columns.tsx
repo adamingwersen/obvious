@@ -143,7 +143,7 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
             <DropdownMenuItem
               onClick={() =>
                 navigator.clipboard.writeText(
-                  `https://obvious.earth/respond/${row.original.uuid}`,
+                  `https://app.obvious.earth/respond/${row.original.uuid}`,
                 )
               }
             >
