@@ -2,7 +2,6 @@ import ValidateQuestions from "@/components/question/validate-questions";
 import { api } from "@/trpc/server";
 import { handleDeleteQuestionById } from "./actions";
 import { Button } from "@/components/ui/button";
-import { redirect } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 

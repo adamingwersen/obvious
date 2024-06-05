@@ -11,7 +11,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-import { QuestionModel } from "@/server/db/schema";
+import { type QuestionModel } from "@/server/db/schema";
 import { useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
