@@ -34,6 +34,15 @@ const respondentFindBySurveyUuidSchema = surveySelectSchema.pick({
   uuid: true,
 });
 
+const respondentUpsertAccessTokenSchema = respondentInsertSchema
+  .pick({
+    email: true,
+    accessToken: true,
+  })
+  .extend({
+    surveyUuid: z.string(),
+  });
+
 export const respondentRouter = createTRPCRouter({
   delete: procedures.protected
     .input(respondentValidateSchema)
@@ -129,6 +138,34 @@ export const respondentRouter = createTRPCRouter({
           and(
             eq(schema.respondent.surveyId, input.surveyId),
             eq(schema.respondent.id, input.id),
+          ),
+        );
+    }),
+
+  upsertAccessToken: procedures.public
+    .input(respondentUpsertAccessTokenSchema)
+    .mutation(async ({ ctx, input }) => {
+      const survey = await ctx.db.query.survey.findFirst({
+        where: and(
+          eq(schema.survey.uuid, input.surveyUuid),
+          isNull(schema.survey.deletedAt),
+        ),
+      });
+      if (!survey) throw new Error("No survey found");
+      const respondent = await ctx.db.query.respondent.findFirst({
+        where: and(
+          eq(schema.respondent.surveyId, survey.id),
+          eq(schema.respondent.email, input.email),
+        ),
+      });
+      if (!respondent) throw new Error("Respondent not found for this survey");
+      return ctx.db
+        .update(schema.respondent)
+        .set({ accessToken: input.accessToken })
+        .where(
+          and(
+            eq(schema.respondent.surveyId, survey.id),
+            eq(schema.respondent.id, respondent.id),
           ),
         );
     }),

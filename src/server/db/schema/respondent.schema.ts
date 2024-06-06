@@ -23,6 +23,7 @@ export const respondent = pgTable(
     invitedById: integer("invited_by_id").notNull(),
     surveyId: integer("survey_id").notNull(),
     uuid: uuid("uuid").notNull().defaultRandom().unique(),
+    accessToken: varchar("access_token").default(sql`null`),
   },
   (t) => ({
     emailSurveyIdUniqueConstraint: unique("email_survey_unq").on(
