@@ -7,13 +7,13 @@ import { cookies } from "next/headers";
 
 export const handleValidateRespondent = async (
   surveyUuid: string,
-  data: ValidateRespondentFormFields,
+  formFields: ValidateRespondentFormFields,
 ) => {
   const survey = await api.survey.findByUuid({ uuid: surveyUuid });
 
   if (!survey) redirect(`/respond/${surveyUuid}/rejected`);
   const respondent = await api.respondent.validate({
-    email: data.email,
+    email: formFields.email,
     surveyId: survey.id,
   });
   if (!respondent) redirect(`/respond/${surveyUuid}/rejected`);
@@ -22,6 +22,7 @@ export const handleValidateRespondent = async (
     surveyId: respondent.surveyId,
   });
   if (!updated) redirect(`/respond/${surveyUuid}/rejected`);
+
   cookies().set("respondent-identifier", respondent.uuid, { secure: true });
   redirect(`/respond/${surveyUuid}/identified`);
 };

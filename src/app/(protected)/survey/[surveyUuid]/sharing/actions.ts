@@ -23,7 +23,23 @@ const generateMagicLinkAsAdmin = async (email: string, surveyUuid: string) => {
       redirectTo: `/respond/${surveyUuid}`,
     },
   });
-  return { data, error };
+  const accessToken = data.properties?.hashed_token;
+  const expiresIn = 3600;
+  const expiresAt = Math.floor((Date.now() + expiresIn) / 1000);
+  try {
+    const data = {
+      data: {
+        access_token: accessToken,
+        expires_in: expiresIn,
+        expires_at: expiresAt,
+        action_link: `${process.env.BASE_URL?.includes("localhost") ? "http://" : ""}${process.env.BASE_URL}/auth/magiclink/callback?surveyUuid=${surveyUuid}&access_token=${accessToken}&expires_at=${expiresAt}&expires_in=${expiresIn}`,
+      },
+      error: undefined,
+    };
+    return data;
+  } catch (error) {
+    return { data: { action_link: undefined, access_token: undefined }, error };
+  }
 };
 
 export const handleCreateManyRespondents = async (data: ShareFormFields) => {
@@ -45,11 +61,15 @@ export const handleSendInviteEmailWithResend = async (
 ) => {
   const { data, error } = await generateMagicLinkAsAdmin(email, surveyUuid);
   if (error) throw new Error(`Supabase: Can't generate magic link `, error);
-  if (!data.properties?.action_link)
+  if (!data.action_link)
     throw new Error("Supabase: Couldnt generate magic link");
-  const actionLink = data.properties.action_link;
+  if (!data.access_token)
+    throw new Error("Internal: Couldn't fetch access token from data object");
+
+  const actionLink = data.action_link;
+  const accessToken = data.access_token;
   try {
-    const { data, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: "Adam from Obvious <adam@obvious.earth>",
       to: email,
       subject: "You've been invited to a answer a Due Diligence Questionnaire",
@@ -61,6 +81,7 @@ export const handleSendInviteEmailWithResend = async (
   } catch (error) {
     throw new Error(`Resend: Error while sending email to ${email}`);
   }
+  await api.respondent.upsertAccessToken({ email, surveyUuid, accessToken });
   revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
 };
 
@@ -80,9 +101,15 @@ export const handleSendManyInviteEmailsWithResend = async (
         );
         if (error)
           throw new Error(`Supabase: Can't generate magic link `, error);
-        if (!data.properties?.action_link)
+        if (!data.action_link)
           throw new Error("Supabase: Couldnt generate magic link");
-        const actionLink = data.properties.action_link;
+        if (!data.access_token)
+          throw new Error(
+            "Internal: Couldn't fetch access token from data object",
+          );
+        const actionLink = data.action_link;
+        const accessToken = data.access_token;
+        console.log(actionLink);
         try {
           const { data, error } = await resend.emails.send({
             from: "Adam from Obvious <adam@obvious.earth>",
@@ -93,6 +120,11 @@ export const handleSendManyInviteEmailsWithResend = async (
               email: email,
               actionLink: actionLink,
             }) as React.ReactElement,
+          });
+          await api.respondent.upsertAccessToken({
+            email,
+            surveyUuid,
+            accessToken,
           });
         } catch (error) {
           throw new Error(`Resend: Error while sending email to ${email}`);
