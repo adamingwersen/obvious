@@ -7,7 +7,7 @@ export default function ConfirmPage() {
   const router = useRouter();
 
   return (
-    <div className="mx-auto flex h-full flex-col items-center justify-center gap-2">
+    <div className="mx-auto flex h-full flex-col items-center justify-center gap-4">
       <h1>Account created</h1>
       <p>We have sent you an email that you need to confirm to login</p>
       <Button

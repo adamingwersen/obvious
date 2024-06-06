@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { type signInWithProvider, signUp } from "@/app/auth/actions";
+import { signInWithProvider, signUp } from "@/app/auth/actions";
 import { Button } from "@/components/ui/button";
 
 import { useToast } from "@/components/ui/use-toast";
