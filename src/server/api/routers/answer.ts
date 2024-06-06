@@ -5,13 +5,13 @@ import { z } from "zod";
 
 const answerCreateSchema = answerInsertSchema.pick({
   content: true,
-  documentIds: true,
+  documentUrls: true,
   questionId: true,
 });
 const answerUpdateSchema = answerInsertSchema
   .pick({
     content: true,
-    documentIds: true,
+    documentUrls: true,
     id: true,
   })
   .partial({ content: true }); // Make it possible to update without content
