@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { signInWithPassword, signInWithProvider } from "@/app/auth/actions";
 import { Button } from "@/components/ui/button";
-
+import Image from "next/image";
 import { useToast } from "@/components/ui/use-toast";
 import EmailAuthForm from "@/components/forms/email-auth-form";
 
@@ -27,28 +27,38 @@ export default function LoginPage() {
         <h1>Welcome back</h1>
         <Button
           onClick={async () => {
-            signInWithProvider("google");
+            await signInWithProvider("google");
           }}
           variant="outline"
           className="w-72 gap-4 rounded-sm"
         >
-          <img className="size-4" src="/google_logo.png"></img>
+          <Image
+            width={16}
+            height={16}
+            src="/google_logo.png"
+            alt="google-icon"
+          />
           Sign in with Google
         </Button>
         <Button
           variant="outline"
           onClick={async () => {
-            signInWithProvider("azure");
+            await signInWithProvider("azure");
           }}
           className="w-72 gap-4 rounded-sm"
         >
-          <img className="size-5" src="/Outlook_40x40.svg"></img>
+          <Image
+            width={32}
+            height={32}
+            src="/Outlook_40x40.svg"
+            alt="outlook-icon"
+          />
           Sign in with Outlook
         </Button>
         <div className="flex w-72 flex-grow items-center justify-center">
-          <hr className="flex-grow border border-gray-300" />
-          <span className="px-4 text-sm text-gray-300">OR</span>
-          <hr className=" flex-grow border border-gray-300" />
+          <hr className="flex-grow border border-gray-200" />
+          <span className="px-4 text-xs text-gray-200">OR</span>
+          <hr className=" flex-grow border border-gray-200" />
         </div>
 
         <EmailAuthForm authType="login" onAuthSubmit={onSubmit} />
