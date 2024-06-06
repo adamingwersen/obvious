@@ -13,7 +13,7 @@ const inter = Inter({
 export const metadata = {
   title: "Obvious Surveys",
   description: "Intuitive surveys for due diligence",
-  icons: [{ rel: "icon", url: "/obvious-icon.svg" }],
+  icons: [{ rel: "icon", url: "/obvious-round-icon.svg" }],
 };
 
 export default function RootLayout({
