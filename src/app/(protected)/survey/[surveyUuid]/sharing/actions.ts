@@ -32,15 +32,13 @@ const generateMagicLinkAsAdmin = async (email: string, surveyUuid: string) => {
         access_token: accessToken,
         expires_in: expiresIn,
         expires_at: expiresAt,
-        properties: {
-          action_link: `${process.env.BASE_URL}/auth/magiclink/callback?surveyUuid=${surveyUuid}&access_token=${accessToken}&expires_at=${expiresAt}&expires_in=${expiresIn}`,
-        },
+        action_link: `${process.env.BASE_URL?.includes("localhost") ? "http://" : ""}${process.env.BASE_URL}/auth/magiclink/callback?surveyUuid=${surveyUuid}&access_token=${accessToken}&expires_at=${expiresAt}&expires_in=${expiresIn}`,
       },
       error: undefined,
     };
     return data;
   } catch (error) {
-    return { data: { properties: undefined, accessToken: undefined }, error };
+    return { data: { action_link: undefined, access_token: undefined }, error };
   }
 };
 
@@ -63,12 +61,12 @@ export const handleSendInviteEmailWithResend = async (
 ) => {
   const { data, error } = await generateMagicLinkAsAdmin(email, surveyUuid);
   if (error) throw new Error(`Supabase: Can't generate magic link `, error);
-  if (!data.properties?.action_link)
+  if (!data.action_link)
     throw new Error("Supabase: Couldnt generate magic link");
   if (!data.access_token)
     throw new Error("Internal: Couldn't fetch access token from data object");
 
-  const actionLink = data.properties.action_link;
+  const actionLink = data.action_link;
   const accessToken = data.access_token;
   try {
     const { error } = await resend.emails.send({
@@ -103,14 +101,15 @@ export const handleSendManyInviteEmailsWithResend = async (
         );
         if (error)
           throw new Error(`Supabase: Can't generate magic link `, error);
-        if (!data.properties?.action_link)
+        if (!data.action_link)
           throw new Error("Supabase: Couldnt generate magic link");
         if (!data.access_token)
           throw new Error(
             "Internal: Couldn't fetch access token from data object",
           );
-        const actionLink = data.properties.action_link;
+        const actionLink = data.action_link;
         const accessToken = data.access_token;
+        console.log(actionLink);
         try {
           const { data, error } = await resend.emails.send({
             from: "Adam from Obvious <adam@obvious.earth>",
