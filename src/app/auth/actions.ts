@@ -38,7 +38,7 @@ export const signUp = async (email: string, password: string) => {
 export const signOut = async () => {
   const supabase = createClient();
   await supabase.auth.signOut();
-  redirect("/auth/login");
+  redirect("/auth");
 };
 
 export const updatePassword = async (password: string) => {
@@ -76,4 +76,21 @@ export const inviteByEmail = async (
   });
   if (error) console.log(error);
   return data;
+};
+
+export type Provider = "google" | "azure";
+
+export const signInWithProvider = async (provider: Provider) => {
+  const supabase = createClient();
+
+  const origin = headers().get("origin");
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: provider,
+    options: {
+      redirectTo: `${origin}/auth/callback`,
+    },
+  });
+  if (data.url) {
+    redirect(data.url);
+  }
 };
