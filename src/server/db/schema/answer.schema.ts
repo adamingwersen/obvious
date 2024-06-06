@@ -10,7 +10,7 @@ import { question } from "@/server/db/schema/question.schema";
 export const answer = pgTable("answer", {
   ...defaultRows,
   content: text("content").notNull(),
-  documentIds: text("document_ids").array(),
+  documentUrls: text("document_urls").array(),
   questionId: integer("question_id")
     .notNull()
     .references(() => question.id),
@@ -31,7 +31,7 @@ export const answerRelations = relations(answer, ({ one }) => ({
 }));
 
 export const answerInsertSchema = createInsertSchema(answer, {
-  documentIds: z.array(z.string()),
+  documentUrls: z.array(z.string()),
 });
 export const answerSelectSchema = createSelectSchema(answer);
 export type AnswerModel = z.infer<typeof answerSelectSchema>;

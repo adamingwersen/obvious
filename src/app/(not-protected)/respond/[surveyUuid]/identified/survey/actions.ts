@@ -16,14 +16,14 @@ const upsertAnswer = async (
   if (!answerId) {
     answer = await api.answer.create({
       ...data,
-      documentIds: filePaths,
+      documentUrls: filePaths,
       questionId: questionId,
     });
   } else {
     answer = await api.answer.update({
       ...data,
       id: answerId,
-      documentIds: filePaths,
+      documentUrls: filePaths,
     });
   }
   revalidatePath(`/(protected)/survey/[surveyUuid]/answer`, `page`);
@@ -63,12 +63,12 @@ export async function handleUpsertAnswer(formData: FormData) {
 
       // Handle existing paths and make sure there is no duplicates
       let paths = undefined;
-      if (insertedAnswer.documentIds === null) {
+      if (insertedAnswer.documentUrls === null) {
         paths = newFilePaths;
       } else {
         // Add unique new to exisiting
-        paths = insertedAnswer.documentIds.concat(
-          newFilePaths.filter((x) => !insertedAnswer.documentIds?.includes(x)),
+        paths = insertedAnswer.documentUrls.concat(
+          newFilePaths.filter((x) => !insertedAnswer.documentUrls?.includes(x)),
         );
       }
 
@@ -90,16 +90,16 @@ export async function handleDeleteFilesFromAnswer(
 
   // Fetch answer from db
   const answer = await api.answer.findById({ id: answerId });
-  if (answer.documentIds === null)
+  if (answer.documentUrls === null)
     throw new Error(
       "Cant remove document from answer, no documents saved for answer",
     );
 
-  const newDocPaths = answer.documentIds.filter((x) => !filePaths.includes(x));
+  const newDocPaths = answer.documentUrls.filter((x) => !filePaths.includes(x));
 
   await api.answer.update({
     id: answerId,
-    documentIds: newDocPaths,
+    documentUrls: newDocPaths,
   });
   revalidatePath(`/(protected)/survey/[surveyUuid]/answer`, "page");
 }

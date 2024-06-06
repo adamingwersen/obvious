@@ -39,7 +39,7 @@ const RespondentSurveyPage = async ({
         ? {
             id: foundAnswer.id,
             content: foundAnswer.content,
-            filePaths: foundAnswer.documentIds ?? [],
+            filePaths: foundAnswer.documentUrls ?? [],
             translations: [], // We dont have translations for answers yet
           }
         : null,
