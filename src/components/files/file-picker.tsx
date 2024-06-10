@@ -10,12 +10,12 @@ import {
 
 type setFiles = (files: File[]) => void;
 
-interface FilerPickerProps {
+interface FilePickerProps {
   files: File[];
   setFiles: setFiles;
 }
 
-export default function FilePicker({ files, setFiles }: FilerPickerProps) {
+export default function FilePicker({ files, setFiles }: FilePickerProps) {
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {

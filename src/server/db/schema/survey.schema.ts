@@ -16,6 +16,7 @@ import {
   type QuestionModel,
 } from "@/server/db/schema/question.schema";
 import { SURVEY_STATUS_SCHEMA } from "@/server/db/schema/enums";
+import { respondent } from "./respondent.schema";
 
 export const survey = pgTable("survey", {
   ...defaultRows,
@@ -44,6 +45,7 @@ export const surveyRelations = relations(survey, ({ one, many }) => ({
     fields: [survey.parentInstanceId],
     references: [survey.id],
   }),
+  respondents: many(respondent),
 }));
 
 export const surveyInsertSchema = createInsertSchema(survey);

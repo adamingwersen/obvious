@@ -1,10 +1,7 @@
 import { api } from "@/trpc/server";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+
+import ViewAnswers from "@/components/answer/view-answers";
+import { HandleCreateSignedLink } from "./actions";
 
 const AnswerSurveyIdPage = async ({
   params,
@@ -12,54 +9,15 @@ const AnswerSurveyIdPage = async ({
   params: { surveyUuid: string };
 }) => {
   // Fetch survey with questions
-  const survey = await api.survey.findByUuid({ uuid: params.surveyUuid });
-  const questions = survey.questions;
-
-  // Fetch existing answers for survey questions
-  const questionIds = questions.map((question) => question.id);
-  const answers = await api.answer.findManyByQuesitionIds({
-    questionIds: questionIds,
-  });
-
-  // Construct data model
-  const mappedQuestions = questions.map((q) => {
-    const foundAnswers = answers.filter((a) => a.questionId === q.id);
-
-    return {
-      id: q.id,
-      title: q.title,
-      content: q.content,
-      answers: foundAnswers,
-    };
-  });
+  const survey = await api.survey.findByUuidFull({ uuid: params.surveyUuid });
 
   return (
     <div className="mx-auto h-full w-2/3 pt-10 ">
-      <Accordion type="multiple" className="w-full">
-        {mappedQuestions.map((question, i) => {
-          return (
-            <AccordionItem value={`item-${i}`} key={`item-${i}`}>
-              <AccordionTrigger>{question.content}</AccordionTrigger>
-              <AccordionContent>
-                {question.answers.map((a, j) => {
-                  return (
-                    <div className="flex justify-between" key={j}>
-                      <div className="flex">
-                        <p className="font-semibold">Answer:</p>
-                        <p>{a.content}</p>
-                      </div>
-                      <div className="flex">
-                        <p className="font-semibold">Answer by:</p>
-                        <p> {a.createdById}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </AccordionContent>
-            </AccordionItem>
-          );
-        })}
-      </Accordion>
+      <ViewAnswers
+        questions={survey.questions}
+        respondents={survey.respondents}
+        handleCreateDownloadLink={HandleCreateSignedLink}
+      ></ViewAnswers>
     </div>
   );
 };
