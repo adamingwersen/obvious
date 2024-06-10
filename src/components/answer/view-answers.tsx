@@ -7,8 +7,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { RespondentModel } from "@/server/db/schema";
-import { QuestionWithAnswers } from "@/types/question";
+import { type RespondentModel } from "@/server/db/schema";
+import { type QuestionWithAnswers } from "@/types/question";
 import { DownloadCloud } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -63,7 +63,7 @@ const ViewAnswers = ({
               </div>
             </AccordionTrigger>
             <AccordionContent>
-              {question.answers.map((a, j) => {
+              {question.answers.map((a) => {
                 return (
                   <div
                     key={a.id}
@@ -84,9 +84,12 @@ const ViewAnswers = ({
                     </div>
                     <div className="flex flex-col gap-1">
                       {a.documentUrls && a.documentUrls.length > 0 && a.id ? (
-                        a.documentUrls.map((url, n) => {
+                        a.documentUrls.map((url) => {
                           return (
-                            <div className="flex items-center justify-between rounded-lg border px-2 py-1">
+                            <div
+                              key={url}
+                              className="flex items-center justify-between rounded-lg border px-2 py-1"
+                            >
                               <div className="flex items-center gap-1">
                                 <DynamicFileIcon filename={url} size={15} />
                                 <p className="text-xs font-extralight">{url}</p>
@@ -95,9 +98,9 @@ const ViewAnswers = ({
                                 variant="ghost"
                                 size="icon"
                                 disabled={isDownloading[url]}
-                                onClick={() => {
+                                onClick={async () => {
                                   if (!a.id) return;
-                                  onDownloadFileClicked(url, a.id);
+                                  await onDownloadFileClicked(url, a.id);
                                 }}
                               >
                                 {isDownloading[url] ? (

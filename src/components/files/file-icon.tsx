@@ -6,8 +6,8 @@ import {
   FileSpreadsheet,
   FileText,
   FileVideo,
-  Image,
   File,
+  FileImage,
 } from "lucide-react";
 import {} from "react";
 
@@ -32,7 +32,7 @@ export default function DynamicFileIcon({ filename, size }: FileIconProps) {
       case "png":
       case "gif":
       case "bmp":
-        return <Image size={size} />;
+        return <FileImage size={size} />;
       case "mp4":
       case "avi":
       case "mov":

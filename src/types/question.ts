@@ -1,9 +1,4 @@
-import {
-  AnswerModel,
-  QuestionModel,
-  RespondentModel,
-  UserModel,
-} from "@/server/db/schema";
+import { type AnswerModel, type QuestionModel } from "@/server/db/schema";
 import { type Translation } from "@/types/translation";
 
 export type Question = {
