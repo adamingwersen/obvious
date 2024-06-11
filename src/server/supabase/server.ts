@@ -83,3 +83,20 @@ export const DeleteFiles = async (answerId: number, filePaths: string[]) => {
 export const getRemoteFilePath = (filename: string, answerId: number) => {
   return `${answerId}/${filename}`;
 };
+
+export const createSignedDownloadUrl = async (
+  filename: string,
+  answerId: number,
+) => {
+  const client = createClient();
+  const { data, error } = await client.storage
+    .from(SUPABASE_BUCKET_PATH)
+    .createSignedUrl(getRemoteFilePath(filename, answerId), 3600);
+  if (error) {
+    throw new Error("Error creating signed download link");
+  }
+  if (!data) {
+    console.error("Error creating signed download link");
+  }
+  return data.signedUrl + "&download";
+};
