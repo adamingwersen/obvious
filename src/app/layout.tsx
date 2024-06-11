@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { Toaster } from "@/components/ui/toaster";
+import { boolean } from "drizzle-orm/mysql-core";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,6 +15,11 @@ export const metadata = {
   title: "Obvious Surveys",
   description: "Intuitive surveys for due diligence",
   icons: [{ rel: "icon", url: "/obvious-round-icon.svg" }],
+};
+
+// testing purposes only
+export const deploy = {
+  yes: boolean,
 };
 
 export default function RootLayout({
