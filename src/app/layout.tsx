@@ -17,11 +17,6 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/obvious-round-icon.svg" }],
 };
 
-// testing purposes only
-export const _localvariableThatisStupid = {
-  yes: boolean,
-};
-
 export default function RootLayout({
   children,
 }: {
