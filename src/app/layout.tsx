@@ -18,7 +18,7 @@ export const metadata = {
 };
 
 // testing purposes only
-export const deploy = {
+export const _localvariableThatisStupid = {
   yes: boolean,
 };
 
