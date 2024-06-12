@@ -33,5 +33,7 @@ export const answerRelations = relations(answer, ({ one }) => ({
 export const answerInsertSchema = createInsertSchema(answer, {
   documentUrls: z.array(z.string()),
 });
-export const answerSelectSchema = createSelectSchema(answer);
-export type AnswerModel = z.infer<typeof answerInsertSchema>;
+export const answerSelectSchema = createSelectSchema(answer, {
+  documentUrls: z.array(z.string()),
+});
+export type AnswerModel = z.infer<typeof answerSelectSchema>;

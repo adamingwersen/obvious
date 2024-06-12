@@ -88,6 +88,28 @@ export const surveyRouter = createTRPCRouter({
       return survey;
     }),
 
+  findByUuidFull: procedures.protected
+    .input(surveyFindByIdSchema)
+    .query(async ({ ctx, input }) => {
+      const survey = await ctx.db.query.survey.findFirst({
+        where: and(
+          eq(schema.survey.uuid, input.uuid),
+          isNull(schema.survey.deletedAt),
+        ),
+        with: {
+          questions: {
+            with: {
+              answers: true,
+            },
+          },
+          user: true,
+          respondents: true,
+        },
+      });
+      if (!survey) throw new Error("No survey found");
+      return survey;
+    }),
+
   // update on deleted_at
   archiveById: procedures.protected
     .input(surveyArchiveByIdSchema)

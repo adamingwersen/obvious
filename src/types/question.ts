@@ -1,3 +1,4 @@
+import { type AnswerModel, type QuestionModel } from "@/server/db/schema";
 import { type Translation } from "@/types/translation";
 
 export type Question = {
@@ -11,4 +12,8 @@ export type Question = {
     translations: Translation[];
     filePaths: string[];
   } | null;
+};
+
+export type QuestionWithAnswers = QuestionModel & {
+  answers: AnswerModel[];
 };
