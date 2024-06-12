@@ -17,7 +17,7 @@ const AnswerSurveyIdPage = async ({
 
   // Fetch existing answers for survey questions
   const questionIds = questions.map((question) => question.id);
-  const answers = await api.answer.findManyByQuesitionIds({
+  const answers = await api.answer.findManyByQuestionIds({
     questionIds: questionIds,
   });
 

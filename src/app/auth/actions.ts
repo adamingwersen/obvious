@@ -93,4 +93,5 @@ export const signInWithProvider = async (provider: Provider) => {
   if (data.url) {
     redirect(data.url);
   }
+  if (error) throw new Error("Error signing with provider " + error.message);
 };

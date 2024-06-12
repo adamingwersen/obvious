@@ -1,6 +1,10 @@
 import { api } from "@/trpc/server";
 import AnswerStepper from "@/components/answer/answer-stepper";
-import { handleUpsertAnswer, handleDeleteFilesFromAnswer } from "./actions";
+import {
+  handleUpsertAnswer,
+  handleDeleteFilesFromAnswer,
+  handleGetQuestionsAnswers,
+} from "./actions";
 import { handleTranslate } from "@/app/actions";
 // Answer page data types
 
@@ -15,9 +19,8 @@ const RespondentSurveyPage = async ({
 
   // Fetch existing answers for survey questions
   const questionIds = questions.map((question) => question.id);
-  const userAnswers = await api.answer.findManyByQuestionIdsForUser({
-    questionIds: questionIds,
-  });
+  const respondentAnswers = await handleGetQuestionsAnswers(questionIds);
+
   // Fetch translations for questions in survey
   const questionsTranslations = await api.translation.findManyByQuestionIds({
     questionIds: questionIds,
@@ -25,7 +28,7 @@ const RespondentSurveyPage = async ({
 
   // Construct data model
   const mappedQuestions = questions.map((q) => {
-    const foundAnswer = userAnswers.find((a) => a.questionId === q.id);
+    const foundAnswer = respondentAnswers.find((a) => a.questionId === q.id);
     const questionTranslations = questionsTranslations.filter(
       (t) => t.questionId === q.id,
     );

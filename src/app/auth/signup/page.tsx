@@ -14,7 +14,7 @@ export default function SignUpPage() {
 
   const onSubmit = async (email: string, password: string) => {
     try {
-      const res = await signUp(email, password);
+      await signUp(email, password);
       router.push("/auth/confirm");
     } catch (error) {
       toast({ title: "unable to sign up" });
