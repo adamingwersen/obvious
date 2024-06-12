@@ -3,11 +3,15 @@ import { and, eq, isNull, schema, inArray } from "@/server/db";
 import { answerInsertSchema, answerSelectSchema } from "@/server/db/schema";
 import { z } from "zod";
 
-const answerCreateSchema = answerInsertSchema.pick({
-  content: true,
-  documentUrls: true,
-  questionId: true,
-});
+const answerCreateSchema = answerInsertSchema
+  .pick({
+    content: true,
+    documentUrls: true,
+    questionId: true,
+  })
+  .extend({
+    respondentId: z.number().positive(),
+  });
 const answerUpdateSchema = answerInsertSchema
   .pick({
     content: true,
@@ -15,6 +19,11 @@ const answerUpdateSchema = answerInsertSchema
     id: true,
   })
   .partial({ content: true }); // Make it possible to update without content
+
+const getRespondentAnswersForQuestionsSchema = z.object({
+  questionIds: z.array(z.number()),
+  respondentId: z.number().positive(),
+});
 
 const getUserAnswersForQuestionsSchema = z.object({
   questionIds: z.array(z.number()),
@@ -39,20 +48,15 @@ export const answerRouter = createTRPCRouter({
       return answer;
     }),
 
-  create: procedures.protected
+  create: procedures.public
     .input(answerCreateSchema)
     .mutation(async ({ ctx, input }) => {
-      const authUserId = ctx.user.id;
-      const user = await ctx.db.query.user.findFirst({
-        where: eq(schema.user.authId, authUserId),
-      });
-      if (!user) throw new Error("No user found");
       return ctx.db
         .insert(schema.answer)
         .values({
           ...input,
           questionId: input.questionId,
-          createdById: user.id,
+          createdById: input.respondentId,
         })
         .returning();
     }),
@@ -60,11 +64,6 @@ export const answerRouter = createTRPCRouter({
   update: procedures.protected
     .input(answerUpdateSchema)
     .mutation(async ({ ctx, input }) => {
-      const authUserId = ctx.user.id;
-      const user = await ctx.db.query.user.findFirst({
-        where: eq(schema.user.authId, authUserId),
-      });
-      if (!user) throw new Error("No user found");
       return ctx.db
         .update(schema.answer)
         .set(input)
@@ -72,7 +71,7 @@ export const answerRouter = createTRPCRouter({
         .returning();
     }),
 
-  findManyByQuestionIdsForUser: procedures.protected
+  findManyByQuestionIds: procedures.protected
     .input(getUserAnswersForQuestionsSchema)
     .mutation(async ({ ctx, input }) => {
       const authUserId = ctx.user.id;
@@ -89,16 +88,12 @@ export const answerRouter = createTRPCRouter({
       });
     }),
 
-  findManyByQuesitionIds: procedures.protected
-    .input(getUserAnswersForQuestionsSchema)
+  findManyByQuestionIdsForRespondent: procedures.public
+    .input(getRespondentAnswersForQuestionsSchema)
     .mutation(async ({ ctx, input }) => {
-      const authUserId = ctx.user.id;
-      const user = await ctx.db.query.user.findFirst({
-        where: eq(schema.user.authId, authUserId),
-      });
-      if (!user) throw new Error("No user found");
       return ctx.db.query.answer.findMany({
         where: and(
+          eq(schema.answer.createdById, input.respondentId),
           inArray(schema.answer.questionId, input.questionIds),
           isNull(schema.answer.deletedAt),
         ),
