@@ -21,6 +21,12 @@ const surveyRespondentUpsertAccessTokenSchema =
 
 const surveyRespondentCreateManySchema = z.array(surveyRespondentCreateSchema);
 
+const surveyRespondentValidateSchema = surveyRespondentInsertSchema
+  .pick({
+    surveyId: true,
+  })
+  .extend({ email: z.string().email() });
+
 const surveyRespondentDeleteSchema = surveyRespondentSelectSchema.pick({
   surveyId: true,
   respondentUserId: true,
@@ -90,22 +96,28 @@ export const surveyRespondentRouter = createTRPCRouter({
             schema.surveyToRespondentUser.respondentUserId,
           ],
           set: { deletedAt: null },
-        });
+        })
+        .returning();
     }),
 
-  // TODO: Maybe create a semi-public router? Don't know if that's a thing...
-  // validate: procedures.public
-  //   .input(respondentValidateSchema)
-  //   .query(async ({ ctx, input }) => {
-  //     const respondent = await ctx.db.query.respondent.findFirst({
-  //       where: and(
-  //         eq(schema.respondent.email, input.email),
-  //         eq(schema.respondent.surveyId, input.surveyId),
-  //       ),
-  //     });
-  //     if (!respondent) return null;
-  //     return respondent;
-  //   }),
+  validate: procedures.public
+    .input(surveyRespondentValidateSchema)
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.query.user.findFirst({
+        where: eq(schema.user.email, input.email),
+      });
+      if (!user) throw new Error("User does not exist");
+      const respondentSurvey =
+        await ctx.db.query.surveyToRespondentUser.findFirst({
+          where: and(
+            eq(schema.surveyToRespondentUser.respondentUserId, user.id),
+            eq(schema.surveyToRespondentUser.surveyId, input.surveyId),
+          ),
+        });
+      if (!respondentSurvey)
+        throw new Error("Respondent not valid for this survey");
+      return respondentSurvey;
+    }),
 
   updateFirstSeenAt: procedures.public
     .input(surveyRespondentCreateSchema)

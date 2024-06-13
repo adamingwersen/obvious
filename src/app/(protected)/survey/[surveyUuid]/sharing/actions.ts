@@ -7,6 +7,7 @@ import { type ShareFormFields } from "@/components/forms/schemas/share-form";
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { Resend } from "resend";
 import { InviteRespondentEmailTemplate } from "@/components/email/invite-respondent";
+import { type UserModel } from "@/server/db/schema";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -42,15 +43,24 @@ const generateMagicLinkAsAdmin = async (email: string, surveyUuid: string) => {
   }
 };
 
-export const handleCreateManyRespondents = async (data: ShareFormFields) => {
+export const handleCreateManyRespondentsAndSendEmails = async (
+  data: ShareFormFields,
+  surveyUuid: string,
+) => {
   //create users
   const newUsers = await api.user.createManyByEmail(data.emails);
+
   const surveyId = data.emails[0]?.surveyId;
   if (!surveyId) throw new Error("Why didnt you give me a surveyid?");
+
   const payload = newUsers.map((u) => {
-    return { respondentUserId: u.id, surveyId: surveyId };
+    const respondentUserId: number = u.id;
+    const sameSurveyId: number = surveyId;
+    return { respondentUserId: respondentUserId, surveyId: sameSurveyId };
   });
   await api.surveyRespondent.createMany(payload);
+  // const emailList = newUsers.map((u) => u.email);
+  await handleSendManyInviteEmailsWithResend(newUsers, surveyUuid, surveyId);
   revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
 };
 
@@ -62,6 +72,57 @@ export const handleDeleteRespondent = async (
     respondentUserId: userId,
     surveyId: surveyId,
   });
+  revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
+};
+
+export const handleSendManyInviteEmailsWithResend = async (
+  users: UserModel[],
+  surveyUuid: string,
+  surveyId: number,
+) => {
+  function sendEmails(newUsers: UserModel[]): Promise<void[]> {
+    if (newUsers.length < 1) throw new Error(`Email: No emails submitted`);
+    if (newUsers.length > 5)
+      throw new Error(`Email: Hold your horses. Max 5 emails at a time`);
+    return Promise.all(
+      newUsers.map(async (user: UserModel) => {
+        const { data, error } = await generateMagicLinkAsAdmin(
+          user.email,
+          surveyUuid,
+        );
+        if (error)
+          throw new Error(`Supabase: Can't generate magic link `, error);
+        if (!data.action_link)
+          throw new Error("Supabase: Couldnt generate magic link");
+        if (!data.access_token)
+          throw new Error(
+            "Internal: Couldn't fetch access token from data object",
+          );
+        const actionLink = data.action_link;
+        const accessToken = data.access_token;
+        try {
+          const { data, error } = await resend.emails.send({
+            from: "Adam from Obvious <adam@obvious.earth>",
+            to: user.email,
+            subject:
+              "You've been invited to a answer a Due Diligence Questionnaire",
+            react: InviteRespondentEmailTemplate({
+              email: user.email,
+              actionLink: actionLink,
+            }) as React.ReactElement,
+          });
+          await api.surveyRespondent.upsertAccessToken({
+            respondentUserId: user.id,
+            surveyId: surveyId,
+            surveyAccessToken: accessToken,
+          });
+        } catch (error) {
+          throw new Error(`Resend: Error while sending email to ${user.email}`);
+        }
+      }),
+    );
+  }
+  await sendEmails(users);
   revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
 };
 
@@ -94,53 +155,3 @@ export const handleDeleteRespondent = async (
 //   await api.respondent.upsertAccessToken({ email, surveyUuid, accessToken });
 //   revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
 // };
-
-export const handleSendManyInviteEmailsWithResend = async (
-  emails: string[],
-  surveyUuid: string,
-) => {
-  function sendEmails(manyEmails: string[]): Promise<void[]> {
-    if (manyEmails.length < 1) throw new Error(`Email: No emails submitted`);
-    if (manyEmails.length > 5)
-      throw new Error(`Email: Hold your horses. Max 5 emails at a time`);
-    return Promise.all(
-      manyEmails.map(async (email: string) => {
-        const { data, error } = await generateMagicLinkAsAdmin(
-          email,
-          surveyUuid,
-        );
-        if (error)
-          throw new Error(`Supabase: Can't generate magic link `, error);
-        if (!data.action_link)
-          throw new Error("Supabase: Couldnt generate magic link");
-        if (!data.access_token)
-          throw new Error(
-            "Internal: Couldn't fetch access token from data object",
-          );
-        const actionLink = data.action_link;
-        const accessToken = data.access_token;
-        try {
-          const { data, error } = await resend.emails.send({
-            from: "Adam from Obvious <adam@obvious.earth>",
-            to: email,
-            subject:
-              "You've been invited to a answer a Due Diligence Questionnaire",
-            react: InviteRespondentEmailTemplate({
-              email: email,
-              actionLink: actionLink,
-            }) as React.ReactElement,
-          });
-          // await api.respondent.upsertAccessToken({
-          //   email,
-          //   surveyUuid,
-          //   accessToken,
-          // });
-        } catch (error) {
-          throw new Error(`Resend: Error while sending email to ${email}`);
-        }
-      }),
-    );
-  }
-  await sendEmails(emails);
-  revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
-};

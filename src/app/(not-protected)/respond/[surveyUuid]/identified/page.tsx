@@ -16,9 +16,10 @@ const RespondentIdentifiedPage = async ({
 
   const respondentUuid = cookies().get("respondent-identifier")?.value;
   if (!respondentUuid) throw new Error("Whoops. Unable to identify respondent");
-  const respondent = survey.respondents.find(
-    (respondent) => respondent.uuid === respondentUuid,
-  );
+
+  // const respondent = survey.respondents.find(
+  //   (respondent) => respondent.uuid === respondentUuid,
+  // );
   if (!respondent) throw new Error("Unable to locate respondent");
 
   return (

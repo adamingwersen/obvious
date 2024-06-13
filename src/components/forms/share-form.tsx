@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Send, Trash } from "lucide-react";
-import { UserModel, type SurveyRespondentModel } from "@/server/db/schema";
+import { type UserModel } from "@/server/db/schema";
 import {
   type ShareFormFields,
   formSchema,
@@ -24,12 +24,11 @@ type ShareFormProps = {
   surveyId: number;
   surveyUuid: string;
   surveyRespondents: UserModel[];
-  handleCreateManyRespondents: (data: ShareFormFields) => Promise<void>;
-  handleDeleteRespondent: (userId: number, surveyId: number) => Promise<void>;
-  handleSendManyInviteEmailsWithResend: (
-    emails: string[],
+  handleCreateManyRespondents: (
+    data: ShareFormFields,
     surveyUuid: string,
   ) => Promise<void>;
+  handleDeleteRespondent: (userId: number, surveyId: number) => Promise<void>;
 };
 
 const ShareForm = ({
@@ -38,7 +37,6 @@ const ShareForm = ({
   surveyRespondents,
   handleCreateManyRespondents,
   handleDeleteRespondent,
-  handleSendManyInviteEmailsWithResend,
 }: ShareFormProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -90,9 +88,9 @@ const ShareForm = ({
     const newEmails = values.emails.filter(
       (email) => !existingEmails.includes(email.email),
     );
-    await handleCreateManyRespondents({ emails: newEmails });
-    const onlyNewEmails = newEmails.map((user) => user.email);
-    await handleSendManyInviteEmailsWithResend(onlyNewEmails, surveyUuid);
+    await handleCreateManyRespondents({ emails: newEmails }, surveyUuid);
+    // const onlyNewEmails = newEmails.map((user) => user.email);
+    // await handleSendManyInviteEmailsWithResend(onlyNewEmails, surveyUuid);
     setIsLoading(false);
     toast({
       title: "Sending emails...",

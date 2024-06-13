@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { api } from "@/trpc/server";
 import { ArrowRight } from "lucide-react";
 import {
-  handleCreateManyRespondents,
+  handleCreateManyRespondentsAndSendEmails,
   handleDeleteRespondent,
   handleSendManyInviteEmailsWithResend,
 } from "./actions";
@@ -31,7 +31,7 @@ const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
           surveyId={survey.id}
           surveyUuid={params.surveyUuid}
           surveyRespondents={respondents}
-          handleCreateManyRespondents={handleCreateManyRespondents}
+          handleCreateManyRespondents={handleCreateManyRespondentsAndSendEmails}
           handleDeleteRespondent={handleDeleteRespondent}
           handleSendManyInviteEmailsWithResend={
             handleSendManyInviteEmailsWithResend
@@ -44,7 +44,7 @@ const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
           <p className=" py-5">Copy link</p>
           <CopyToClipboardButton
             text={`respond/${params.surveyUuid}`}
-            url={`localhost:3000/respond/${params.surveyUuid}`}
+            url={`${process.env.BASE_URL}/respond/${params.surveyUuid}`}
           />
         </div>
         <div className="absolute bottom-6 right-6">

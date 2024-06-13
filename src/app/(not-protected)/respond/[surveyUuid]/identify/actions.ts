@@ -12,17 +12,22 @@ export const handleValidateRespondent = async (
   const survey = await api.survey.findByUuid({ uuid: surveyUuid });
 
   if (!survey) redirect(`/respond/${surveyUuid}/rejected`);
-  const respondent = await api.respondent.validate({
-    email: formFields.email,
-    surveyId: survey.id,
-  });
-  if (!respondent) redirect(`/respond/${surveyUuid}/rejected`);
-  const updated = await api.respondent.updateFirstSeenAt({
-    id: respondent.id,
-    surveyId: respondent.surveyId,
-  });
-  if (!updated) redirect(`/respond/${surveyUuid}/rejected`);
 
-  cookies().set("respondent-identifier", respondent.uuid, { secure: true });
-  redirect(`/respond/${surveyUuid}/identified`);
+  try {
+    const validatedRespondent = await api.surveyRespondent.validate({
+      email: formFields.email,
+      surveyId: survey.id,
+    });
+    const updated = await api.surveyRespondent.updateFirstSeenAt({
+      respondentUserId: validatedRespondent.respondentUserId,
+      surveyId: validatedRespondent.surveyId,
+    });
+    if (!updated) redirect(`/respond/${surveyUuid}/rejected`);
+    cookies().set("respondent-identifier", validatedRespondent.uuid, {
+      secure: true,
+    });
+    redirect(`/respond/${surveyUuid}/identified`);
+  } catch (error) {
+    redirect(`/respond/${surveyUuid}/rejected`);
+  }
 };
