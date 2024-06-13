@@ -14,7 +14,7 @@ export default function LoginPage() {
   const onSubmit = async (email: string, password: string) => {
     try {
       const res = await signInWithPassword(email, password);
-      router.push("/home");
+      // router.push("/home");
     } catch (error) {
       toast({ title: "unable to sign in" });
       console.error("Error signing in", error);
