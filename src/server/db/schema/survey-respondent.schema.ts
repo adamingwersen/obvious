@@ -44,24 +44,20 @@ export const surveyRespondentRelations = relations(
     respondent: one(user, {
       fields: [surveyToRespondentUser.respondentUserId],
       references: [user.id],
+      relationName: "survey_respondent",
+    }),
+    invitedBy: one(user, {
+      fields: [surveyToRespondentUser.invitedById],
+      references: [user.id],
+      relationName: "survey_inviter",
     }),
     survey: one(survey, {
       fields: [surveyToRespondentUser.surveyId],
       references: [survey.id],
     }),
-    invitedBy: one(user, {
-      fields: [surveyToRespondentUser.invitedById],
-      references: [user.id],
-    }),
   }),
 );
 
-// export const surveyRespondentRelations = relations(
-//   surveyToRespondentUser,
-//   ({ many }) => ({
-//     users: many(user),
-//   }),
-// );
 export const surveyRespondentInsertSchema = createInsertSchema(
   surveyToRespondentUser,
 );

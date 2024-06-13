@@ -37,11 +37,8 @@ export const surveyRelations = relations(survey, ({ one, many }) => ({
   user: one(user, {
     fields: [survey.createdById],
     references: [user.id],
-    relationName: "survey_user",
   }),
-  respondents: many(surveyToRespondentUser, {
-    relationName: "survey_respondents",
-  }),
+  respondents: many(surveyToRespondentUser),
   questions: many(question),
   parentInstanceId: one(survey, {
     fields: [survey.parentInstanceId],

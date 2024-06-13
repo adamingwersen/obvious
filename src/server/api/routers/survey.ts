@@ -1,5 +1,6 @@
+import { surveyToRespondentUser } from "./../../db/schema/survey-respondent.schema";
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
-import { and, eq, isNull, schema } from "@/server/db";
+import { and, eq, isNotNull, isNull, schema } from "@/server/db";
 import { surveySelectSchema } from "@/server/db/schema";
 
 const surveyCreateSchema = surveySelectSchema.pick({
@@ -90,6 +91,9 @@ export const surveyRouter = createTRPCRouter({
         },
       });
       if (!survey) throw new Error("No survey found");
+      survey.respondents = survey.respondents.filter(
+        (x) => x.deletedAt === null,
+      );
       return survey;
     }),
 

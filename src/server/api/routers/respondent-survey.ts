@@ -1,9 +1,9 @@
+import { surveyToRespondentUser } from "./../../db/schema/survey-respondent.schema";
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
 import { and, asc, eq, isNull, schema } from "@/server/db";
 import {
   surveyRespondentInsertSchema,
   surveyRespondentSelectSchema,
-  surveySelectSchema,
 } from "@/server/db/schema";
 import { z } from "zod";
 
@@ -81,7 +81,16 @@ export const surveyRespondentRouter = createTRPCRouter({
           invitedById: user.id,
         };
       });
-      return ctx.db.insert(schema.surveyToRespondentUser).values(data);
+      return ctx.db
+        .insert(schema.surveyToRespondentUser)
+        .values(data)
+        .onConflictDoUpdate({
+          target: [
+            schema.surveyToRespondentUser.surveyId,
+            schema.surveyToRespondentUser.respondentUserId,
+          ],
+          set: { deletedAt: null },
+        });
     }),
 
   // TODO: Maybe create a semi-public router? Don't know if that's a thing...

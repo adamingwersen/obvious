@@ -26,16 +26,15 @@ export const userRouter = createTRPCRouter({
         where: eq(schema.user.email, input.email),
       });
     }),
-
   findManyById: procedures.protected
     .input(findManyByIdSchema)
     .query(({ ctx, input }) => {
       const ids = input.map((x) => x.id);
+      if (ids.length === 0) return [];
       return ctx.db.query.user.findMany({
         where: inArray(schema.user.id, ids),
       });
     }),
-
   updateByEmail: procedures.protected
     .input(updateSchema)
     .mutation(async ({ ctx, input }) => {
@@ -66,10 +65,17 @@ export const userRouter = createTRPCRouter({
         .values({ ...input })
         .returning({ newUserId: schema.user.id });
     }),
-
   createManyByEmail: procedures.protected
     .input(createManyByEmailSchema)
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.insert(schema.user).values(input).returning();
+      const newUsers = await ctx.db
+        .insert(schema.user)
+        .values(input)
+        .onConflictDoNothing({ target: schema.user.email })
+        .returning();
+      if (!newUsers)
+        await ctx.db
+          .select(schema.user)
+          .where(eq(schema.user.email, input.email));
     }),
 });

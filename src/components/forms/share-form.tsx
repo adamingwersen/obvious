@@ -44,7 +44,7 @@ const ShareForm = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const mapped = surveyRespondents.map(({ email, id }) => ({
-    id,
+    userId: id,
     email,
     surveyId,
   }));
@@ -69,8 +69,15 @@ const ShareForm = ({
     control: form.control,
   });
 
-  const onDelete = async (index: number, userId: number, surveyId: number) => {
+  console.log(fields);
+  const onDelete = async (
+    index: number,
+    userId: number | undefined,
+    surveyId: number,
+  ) => {
     remove(index);
+    console.log(userId, surveyId, typeof userId);
+    if (!userId) throw new Error("No user id");
     await handleDeleteRespondent(userId, surveyId);
     toast({
       title: "Removed email from list",
@@ -128,7 +135,7 @@ const ShareForm = ({
                         type="button"
                         variant="destructive"
                         onClick={() =>
-                          onDelete(index, field.id, field.surveyId)
+                          onDelete(index, field?.userId, field.surveyId)
                         }
                       >
                         <Trash className="size-4" />

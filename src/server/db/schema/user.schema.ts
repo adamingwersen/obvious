@@ -12,7 +12,7 @@ import { surveyToRespondentUser } from "./survey-respondent.schema";
 export const user = pgTable("user", {
   ...defaultRows,
   authId: uuid("auth_id"), // null = user hasn't signed up from email link
-  email: varchar("email", { length: 256 }).notNull(),
+  email: varchar("email", { length: 256 }).notNull().unique(),
   firstName: varchar("first_name", { length: 256 }),
   lastName: varchar("last_name", { length: 256 }),
   privilege: USER_PRIVILEGE_SCHEMA("privilege").notNull().default("RESPONDENT"),
@@ -28,9 +28,9 @@ export const userRelations = relations(user, ({ one, many }) => ({
     fields: [user.organisationId],
     references: [organisation.id],
   }),
-  createdSurveys: many(survey, { relationName: "survey_user" }),
+  createdSurveys: many(survey, { relationName: "survey_inviter" }),
   respondentSurveys: many(surveyToRespondentUser, {
-    relationName: "survey_respondents",
+    relationName: "survey_respondent",
   }),
 }));
 
