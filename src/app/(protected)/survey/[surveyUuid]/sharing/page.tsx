@@ -11,10 +11,17 @@ import {
 } from "./actions";
 
 const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
-  const survey = await api.survey.findByUuid({ uuid: params.surveyUuid });
-  const respondents = await api.respondent.findBySurveyUuid({
+  const survey = await api.survey.findByUuidWithRespondents({
     uuid: params.surveyUuid,
   });
+  const respondentUserIds = survey.respondents.map((x) => {
+    return {
+      id: x.respondentUserId,
+    };
+  });
+  if (!respondentUserIds)
+    throw new Error("Got null or undefined for respondents?");
+  const respondents = await api.user.findManyById(respondentUserIds);
 
   return (
     <div className="flex h-full flex-col space-y-4 pt-10">
@@ -23,7 +30,7 @@ const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
         <ShareForm
           surveyId={survey.id}
           surveyUuid={params.surveyUuid}
-          formFieldsFromServer={respondents}
+          surveyRespondents={respondents}
           handleCreateManyRespondents={handleCreateManyRespondents}
           handleDeleteRespondent={handleDeleteRespondent}
           handleSendManyInviteEmailsWithResend={

@@ -43,47 +43,57 @@ const generateMagicLinkAsAdmin = async (email: string, surveyUuid: string) => {
 };
 
 export const handleCreateManyRespondents = async (data: ShareFormFields) => {
-  await api.respondent.createMany(data.emails);
+  //create users
+  const newUsers = await api.user.createManyByEmail(data.emails);
+  const surveyId = data.emails[0]?.surveyId;
+  if (!surveyId) throw new Error("Why didnt you give me a surveyid?");
+  const payload = newUsers.map((u) => {
+    return { respondentUserId: u.id, surveyId: surveyId };
+  });
+  await api.surveyRespondent.createMany(payload);
   revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
 };
 
 export const handleDeleteRespondent = async (
-  email: string,
+  userId: number,
   surveyId: number,
 ) => {
-  await api.respondent.delete({ email: email, surveyId: surveyId });
+  await api.surveyRespondent.delete({
+    respondentUserId: userId,
+    surveyId: surveyId,
+  });
   revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
 };
 
-export const handleSendInviteEmailWithResend = async (
-  email: string,
-  surveyUuid: string,
-) => {
-  const { data, error } = await generateMagicLinkAsAdmin(email, surveyUuid);
-  if (error) throw new Error(`Supabase: Can't generate magic link `, error);
-  if (!data.action_link)
-    throw new Error("Supabase: Couldnt generate magic link");
-  if (!data.access_token)
-    throw new Error("Internal: Couldn't fetch access token from data object");
+// export const handleSendInviteEmailWithResend = async (
+//   email: string,
+//   surveyUuid: string,
+// ) => {
+//   const { data, error } = await generateMagicLinkAsAdmin(email, surveyUuid);
+//   if (error) throw new Error(`Supabase: Can't generate magic link `, error);
+//   if (!data.action_link)
+//     throw new Error("Supabase: Couldnt generate magic link");
+//   if (!data.access_token)
+//     throw new Error("Internal: Couldn't fetch access token from data object");
 
-  const actionLink = data.action_link;
-  const accessToken = data.access_token;
-  try {
-    const { error } = await resend.emails.send({
-      from: "Adam from Obvious <adam@obvious.earth>",
-      to: email,
-      subject: "You've been invited to a answer a Due Diligence Questionnaire",
-      react: InviteRespondentEmailTemplate({
-        email: email,
-        actionLink: actionLink,
-      }) as React.ReactElement,
-    });
-  } catch (error) {
-    throw new Error(`Resend: Error while sending email to ${email}`);
-  }
-  await api.respondent.upsertAccessToken({ email, surveyUuid, accessToken });
-  revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
-};
+//   const actionLink = data.action_link;
+//   const accessToken = data.access_token;
+//   try {
+//     const { error } = await resend.emails.send({
+//       from: "Adam from Obvious <adam@obvious.earth>",
+//       to: email,
+//       subject: "You've been invited to a answer a Due Diligence Questionnaire",
+//       react: InviteRespondentEmailTemplate({
+//         email: email,
+//         actionLink: actionLink,
+//       }) as React.ReactElement,
+//     });
+//   } catch (error) {
+//     throw new Error(`Resend: Error while sending email to ${email}`);
+//   }
+//   await api.respondent.upsertAccessToken({ email, surveyUuid, accessToken });
+//   revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
+// };
 
 export const handleSendManyInviteEmailsWithResend = async (
   emails: string[],
@@ -121,11 +131,11 @@ export const handleSendManyInviteEmailsWithResend = async (
               actionLink: actionLink,
             }) as React.ReactElement,
           });
-          await api.respondent.upsertAccessToken({
-            email,
-            surveyUuid,
-            accessToken,
-          });
+          // await api.respondent.upsertAccessToken({
+          //   email,
+          //   surveyUuid,
+          //   accessToken,
+          // });
         } catch (error) {
           throw new Error(`Resend: Error while sending email to ${email}`);
         }

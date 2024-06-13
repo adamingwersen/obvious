@@ -16,7 +16,7 @@ import {
   type QuestionModel,
 } from "@/server/db/schema/question.schema";
 import { SURVEY_STATUS_SCHEMA } from "@/server/db/schema/enums";
-import { respondent } from "./respondent.schema";
+import { surveyToRespondentUser } from "./survey-respondent.schema";
 
 export const survey = pgTable("survey", {
   ...defaultRows,
@@ -31,21 +31,22 @@ export const survey = pgTable("survey", {
     .notNull()
     .default("DRAFT"),
   dueAt: timestamp("due_at").default(sql`null`),
-  // TODO:
-  // keywords
 });
 
 export const surveyRelations = relations(survey, ({ one, many }) => ({
   user: one(user, {
     fields: [survey.createdById],
     references: [user.id],
+    relationName: "survey_user",
+  }),
+  respondents: many(surveyToRespondentUser, {
+    relationName: "survey_respondents",
   }),
   questions: many(question),
   parentInstanceId: one(survey, {
     fields: [survey.parentInstanceId],
     references: [survey.id],
   }),
-  respondents: many(respondent),
 }));
 
 export const surveyInsertSchema = createInsertSchema(survey);

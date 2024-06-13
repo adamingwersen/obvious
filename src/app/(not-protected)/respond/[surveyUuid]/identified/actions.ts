@@ -8,18 +8,15 @@ import { cookies } from "next/headers";
 
 export const handleSubmitMetadataAnswer = async (
   surveyUuid: string,
+  respondentUserId: number,
   data: CreateMetadataAnswerFormFields,
 ) => {
   const survey = await api.survey.findByUuid({ uuid: surveyUuid });
   if (!survey) throw new Error("Whoops. Survey doesn't exsit");
-  const respondent_uuid = cookies().get("respondent-identifier")?.value;
-  if (!respondent_uuid)
-    throw new Error("Whoops. Unable to identify respondent");
-  const respondent = await api.respondent.findByUuid({ uuid: respondent_uuid });
-  if (!respondent) throw new Error("Whoops. Unable to identify respondent");
+
   const formattedData: MetadataAnswerModel[] = data.data.map((response) => {
     return {
-      createdById: respondent.id,
+      createdById: respondentUserId,
       surveyId: survey.id,
       metadataQuestionId: response.questionId,
       response: response.response,

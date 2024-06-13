@@ -18,6 +18,7 @@ import {
 import {
   type MetadataType,
   type MetadataQuestionModel,
+  SurveyRespondentModel,
 } from "@/server/db/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -28,9 +29,11 @@ import { useForm } from "react-hook-form";
 
 type MetadataAnswerFormProps = {
   surveyUuid: string;
+  respondent: SurveyRespondentModel;
   metadataQuestions: MetadataQuestionModel[];
   handleSubmitMetadataAnswer: (
     surveyUuid: string,
+    respondentUserId: number,
     data: CreateMetadataAnswerFormFields,
   ) => Promise<void>;
 };
@@ -38,6 +41,7 @@ type MetadataAnswerFormProps = {
 const MetadataAnswerForm = ({
   metadataQuestions,
   surveyUuid,
+  respondent,
   handleSubmitMetadataAnswer,
 }: MetadataAnswerFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +51,11 @@ const MetadataAnswerForm = ({
 
   const onSubmit = async (data: CreateMetadataAnswerFormFields) => {
     setIsLoading(true);
-    await handleSubmitMetadataAnswer(surveyUuid, data);
+    await handleSubmitMetadataAnswer(
+      surveyUuid,
+      respondent.respondentUserId,
+      data,
+    );
     setIsLoading(false);
   };
 

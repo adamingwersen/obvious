@@ -1,6 +1,7 @@
 import MetadataAnswerForm from "@/components/forms/metadata-answer-form";
 import { api } from "@/trpc/server";
 import { handleSubmitMetadataAnswer } from "./actions";
+import { cookies } from "next/headers";
 
 const RespondentIdentifiedPage = async ({
   params,
@@ -12,6 +13,13 @@ const RespondentIdentifiedPage = async ({
   });
   const survey = await api.survey.findByUuid({ uuid: params.surveyUuid });
   const originator = survey.user;
+
+  const respondentUuid = cookies().get("respondent-identifier")?.value;
+  if (!respondentUuid) throw new Error("Whoops. Unable to identify respondent");
+  const respondent = survey.respondents.find(
+    (respondent) => respondent.uuid === respondentUuid,
+  );
+  if (!respondent) throw new Error("Unable to locate respondent");
 
   return (
     <div className="flex h-full w-full flex-col justify-center space-y-4 pb-10 pt-10 ">
@@ -26,6 +34,7 @@ const RespondentIdentifiedPage = async ({
         <MetadataAnswerForm
           metadataQuestions={metadataQuestions}
           surveyUuid={params.surveyUuid}
+          respondent={respondent}
           handleSubmitMetadataAnswer={handleSubmitMetadataAnswer}
         />
       </div>

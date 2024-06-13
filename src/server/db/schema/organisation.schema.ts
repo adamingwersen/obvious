@@ -15,9 +15,9 @@ export const organisation = pgTable("organisation", {
   ...defaultRows,
   uuid: uuid("uuid").notNull().defaultRandom().unique(),
   name: varchar("name", { length: 256 }).notNull(),
-  size: ORGANISATION_SIZE_TYPES_SCHEMA("size").notNull(),
-  headquarters: COUNTRY_TYPES_SCHEMA("headquarters").notNull(),
-  industry: INDUSTRY_TYPES_SCHEMA("industry").notNull(),
+  size: ORGANISATION_SIZE_TYPES_SCHEMA("size"),
+  headquarters: COUNTRY_TYPES_SCHEMA("headquarters"),
+  industry: INDUSTRY_TYPES_SCHEMA("industry"),
 });
 
 export const organisationRelations = relations(organisation, ({ many }) => ({
