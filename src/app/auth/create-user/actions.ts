@@ -41,7 +41,7 @@ export const handleCreateUser = async (
   if (!authUser) throw new Error("Cannot create user without authed account");
   if (!authUser.email)
     throw new Error("Cannot create user without email on account");
-  console.log(authUser);
+
   const name: string = authUser.user_metadata.name ?? "";
   const { firstName, lastName } = splitName(name);
 

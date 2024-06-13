@@ -69,14 +69,13 @@ const ShareForm = ({
     control: form.control,
   });
 
-  console.log(fields);
   const onDelete = async (
     index: number,
     userId: number | undefined,
     surveyId: number,
   ) => {
     remove(index);
-    console.log(userId, surveyId, typeof userId);
+
     if (!userId) throw new Error("No user id");
     await handleDeleteRespondent(userId, surveyId);
     toast({
@@ -91,9 +90,9 @@ const ShareForm = ({
     const newEmails = values.emails.filter(
       (email) => !existingEmails.includes(email.email),
     );
-    const onlyNewEmails = newEmails.map((item) => item.email);
     await handleCreateManyRespondents({ emails: newEmails });
-    // await handleSendManyInviteEmailsWithResend(onlyNewEmails, surveyUuid);
+    const onlyNewEmails = newEmails.map((user) => user.email);
+    await handleSendManyInviteEmailsWithResend(onlyNewEmails, surveyUuid);
     setIsLoading(false);
     toast({
       title: "Sending emails...",

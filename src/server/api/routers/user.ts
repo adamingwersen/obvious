@@ -1,5 +1,5 @@
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
-import { eq, inArray, schema } from "@/server/db";
+import { and, eq, inArray, isNull, schema } from "@/server/db";
 import { userInsertSchema, userSelectSchema } from "@/server/db/schema";
 import { z } from "zod";
 
@@ -73,9 +73,18 @@ export const userRouter = createTRPCRouter({
         .values(input)
         .onConflictDoNothing({ target: schema.user.email })
         .returning();
-      if (!newUsers)
-        await ctx.db
-          .select(schema.user)
-          .where(eq(schema.user.email, input.email));
+      if (newUsers.length > 0) {
+        return newUsers;
+      } else {
+        return await ctx.db.query.user.findMany({
+          where: and(
+            inArray(
+              schema.user.email,
+              input.map((x) => x.email),
+            ),
+            isNull(schema.user.deletedAt),
+          ),
+        });
+      }
     }),
 });

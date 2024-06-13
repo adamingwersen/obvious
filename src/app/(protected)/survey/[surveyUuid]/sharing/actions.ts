@@ -45,7 +45,6 @@ const generateMagicLinkAsAdmin = async (email: string, surveyUuid: string) => {
 export const handleCreateManyRespondents = async (data: ShareFormFields) => {
   //create users
   const newUsers = await api.user.createManyByEmail(data.emails);
-
   const surveyId = data.emails[0]?.surveyId;
   if (!surveyId) throw new Error("Why didnt you give me a surveyid?");
   const payload = newUsers.map((u) => {
@@ -120,7 +119,6 @@ export const handleSendManyInviteEmailsWithResend = async (
           );
         const actionLink = data.action_link;
         const accessToken = data.access_token;
-        console.log(actionLink);
         try {
           const { data, error } = await resend.emails.send({
             from: "Adam from Obvious <adam@obvious.earth>",

@@ -25,7 +25,6 @@ export default function CreateUser({
 }: CreateUserProps) {
   const [selectedOrg, setSelectedOrg] = useState<number>();
   const onDoneClicked = async () => {
-    console.log(selectedOrg);
     if (!selectedOrg) return;
     await handleCreateUser(selectedOrg);
   };

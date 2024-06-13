@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get("next") ?? "/auth/create-user";
-  console.log("Callback redirect to", `${origin}${next}`);
+
   if (code) {
     const cookieStore = cookies();
     const supabase = createServerClient(
