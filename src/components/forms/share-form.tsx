@@ -24,7 +24,7 @@ type ShareFormProps = {
   surveyId: number;
   surveyUuid: string;
   surveyRespondents: UserModel[];
-  handleCreateManyRespondents: (
+  handleCreateManyRespondentsAndSendEmails: (
     data: ShareFormFields,
     surveyUuid: string,
   ) => Promise<void>;
@@ -35,7 +35,7 @@ const ShareForm = ({
   surveyId,
   surveyUuid,
   surveyRespondents,
-  handleCreateManyRespondents,
+  handleCreateManyRespondentsAndSendEmails,
   handleDeleteRespondent,
 }: ShareFormProps) => {
   const { toast } = useToast();
@@ -88,7 +88,10 @@ const ShareForm = ({
     const newEmails = values.emails.filter(
       (email) => !existingEmails.includes(email.email),
     );
-    await handleCreateManyRespondents({ emails: newEmails }, surveyUuid);
+    await handleCreateManyRespondentsAndSendEmails(
+      { emails: newEmails },
+      surveyUuid,
+    );
     // const onlyNewEmails = newEmails.map((user) => user.email);
     // await handleSendManyInviteEmailsWithResend(onlyNewEmails, surveyUuid);
     setIsLoading(false);

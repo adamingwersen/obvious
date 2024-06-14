@@ -8,8 +8,11 @@ const surveyCreateSchema = surveySelectSchema.pick({
   description: true,
   dueAt: true,
 });
-const surveyFindByIdSchema = surveySelectSchema.pick({
+const surveyFindByUuidSchema = surveySelectSchema.pick({
   uuid: true,
+});
+const surveyFindByIdSchema = surveySelectSchema.pick({
+  id: true,
 });
 
 const surveyArchiveByIdSchema = surveySelectSchema.pick({
@@ -77,7 +80,7 @@ export const surveyRouter = createTRPCRouter({
   ),
 
   findByUuidWithRespondents: procedures.protected
-    .input(surveyFindByIdSchema)
+    .input(surveyFindByUuidSchema)
     .query(async ({ ctx, input }) => {
       const survey = await ctx.db.query.survey.findFirst({
         where: and(
@@ -97,8 +100,8 @@ export const surveyRouter = createTRPCRouter({
       return survey;
     }),
 
-  findByUuid: procedures.public
-    .input(surveyFindByIdSchema)
+  findByUuid: procedures.jwtProtected
+    .input(surveyFindByUuidSchema)
     .query(async ({ ctx, input }) => {
       const survey = await ctx.db.query.survey.findFirst({
         where: and(
@@ -114,8 +117,25 @@ export const surveyRouter = createTRPCRouter({
       return survey;
     }),
 
-  findByUuidFull: procedures.protected
+  findById: procedures.jwtProtected
     .input(surveyFindByIdSchema)
+    .query(async ({ ctx, input }) => {
+      const survey = await ctx.db.query.survey.findFirst({
+        where: and(
+          eq(schema.survey.id, input.id),
+          isNull(schema.survey.deletedAt),
+        ),
+        with: {
+          questions: true,
+          user: true,
+        },
+      });
+      if (!survey) throw new Error("No survey found");
+      return survey;
+    }),
+
+  findByUuidFull: procedures.protected
+    .input(surveyFindByUuidSchema)
     .query(async ({ ctx, input }) => {
       const survey = await ctx.db.query.survey.findFirst({
         where: and(

@@ -11,38 +11,6 @@ import { type UserModel } from "@/server/db/schema";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const generateMagicLinkAsAdmin = async (email: string, surveyUuid: string) => {
-  const supabase = createServerActionClient(
-    { cookies },
-    { supabaseKey: process.env.SUPABASE_SERVICE_ROLE },
-  );
-  // Maybe move to lib/utils?
-  const { data, error } = await supabase.auth.admin.generateLink({
-    type: "magiclink",
-    email: email,
-    options: {
-      redirectTo: `/respond/${surveyUuid}`,
-    },
-  });
-  const accessToken = data.properties?.hashed_token;
-  const expiresIn = 3600;
-  const expiresAt = Math.floor((Date.now() + expiresIn) / 1000);
-  try {
-    const data = {
-      data: {
-        access_token: accessToken,
-        expires_in: expiresIn,
-        expires_at: expiresAt,
-        action_link: `${process.env.BASE_URL?.includes("localhost") ? "http://" : ""}${process.env.BASE_URL}/auth/magiclink/callback?surveyUuid=${surveyUuid}&access_token=${accessToken}&expires_at=${expiresAt}&expires_in=${expiresIn}`,
-      },
-      error: undefined,
-    };
-    return data;
-  } catch (error) {
-    return { data: { action_link: undefined, access_token: undefined }, error };
-  }
-};
-
 export const handleCreateManyRespondentsAndSendEmails = async (
   data: ShareFormFields,
   surveyUuid: string,
@@ -75,7 +43,39 @@ export const handleDeleteRespondent = async (
   revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
 };
 
-export const handleSendManyInviteEmailsWithResend = async (
+const generateMagicLinkAsAdmin = async (email: string, surveyUuid: string) => {
+  const supabase = createServerActionClient(
+    { cookies },
+    { supabaseKey: process.env.SUPABASE_SERVICE_ROLE },
+  );
+  // Maybe move to lib/utils?
+  const { data, error } = await supabase.auth.admin.generateLink({
+    type: "magiclink",
+    email: email,
+    options: {
+      redirectTo: `/respond`,
+    },
+  });
+  const accessToken = data.properties?.hashed_token;
+  const expiresIn = 3600;
+  const expiresAt = Math.floor((Date.now() + expiresIn) / 1000);
+  try {
+    const data = {
+      data: {
+        access_token: accessToken,
+        expires_in: expiresIn,
+        expires_at: expiresAt,
+        action_link: `${process.env.BASE_URL?.includes("localhost") ? "http://" : ""}${process.env.BASE_URL}/auth/magiclink/callback?surveyUuid=${surveyUuid}&access_token=${accessToken}&expires_at=${expiresAt}&expires_in=${expiresIn}`,
+      },
+      error: undefined,
+    };
+    return data;
+  } catch (error) {
+    return { data: { action_link: undefined, access_token: undefined }, error };
+  }
+};
+
+const handleSendManyInviteEmailsWithResend = async (
   users: UserModel[],
   surveyUuid: string,
   surveyId: number,
@@ -125,33 +125,3 @@ export const handleSendManyInviteEmailsWithResend = async (
   await sendEmails(users);
   revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
 };
-
-// export const handleSendInviteEmailWithResend = async (
-//   email: string,
-//   surveyUuid: string,
-// ) => {
-//   const { data, error } = await generateMagicLinkAsAdmin(email, surveyUuid);
-//   if (error) throw new Error(`Supabase: Can't generate magic link `, error);
-//   if (!data.action_link)
-//     throw new Error("Supabase: Couldnt generate magic link");
-//   if (!data.access_token)
-//     throw new Error("Internal: Couldn't fetch access token from data object");
-
-//   const actionLink = data.action_link;
-//   const accessToken = data.access_token;
-//   try {
-//     const { error } = await resend.emails.send({
-//       from: "Adam from Obvious <adam@obvious.earth>",
-//       to: email,
-//       subject: "You've been invited to a answer a Due Diligence Questionnaire",
-//       react: InviteRespondentEmailTemplate({
-//         email: email,
-//         actionLink: actionLink,
-//       }) as React.ReactElement,
-//     });
-//   } catch (error) {
-//     throw new Error(`Resend: Error while sending email to ${email}`);
-//   }
-//   await api.respondent.upsertAccessToken({ email, surveyUuid, accessToken });
-//   revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
-// };

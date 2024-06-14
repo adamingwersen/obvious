@@ -21,6 +21,7 @@ const metadataQuestionDeleteSchema = metadataQuestionSelectSchema.pick({
 });
 
 const findManyBySurveyUuidSchema = z.object({ surveyUuid: z.string() });
+const findManyBySurveyIdSchema = z.object({ surveyId: z.number() });
 
 export const metadataQuestionRouter = createTRPCRouter({
   create: procedures.protected
@@ -98,6 +99,17 @@ export const metadataQuestionRouter = createTRPCRouter({
       if (!survey) throw new Error("No survey found");
       const metadataQuestions = await ctx.db.query.metadataQuestion.findMany({
         where: eq(schema.metadataQuestion.surveyId, survey.id),
+        orderBy: asc(schema.metadataQuestion.createdAt),
+      });
+      if (!metadataQuestions) return [];
+      return metadataQuestions;
+    }),
+
+  findManyBySurveyId: procedures.jwtProtected
+    .input(findManyBySurveyIdSchema)
+    .query(async ({ ctx, input }) => {
+      const metadataQuestions = await ctx.db.query.metadataQuestion.findMany({
+        where: eq(schema.metadataQuestion.surveyId, input.surveyId),
         orderBy: asc(schema.metadataQuestion.createdAt),
       });
       if (!metadataQuestions) return [];

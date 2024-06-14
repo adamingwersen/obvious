@@ -4,7 +4,7 @@ import { surveyRouter } from "@/server/api/routers/survey";
 import { metadataQuestionRouter } from "@/server/api/routers/metadataQuestion";
 import { userRouter } from "@/server/api/routers/user";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
-import { surveyRespondentRouter } from "@/server/api/routers/respondent-survey";
+import { surveyRespondentRouter } from "@/server/api/routers/survey-respondent";
 import { metadataAnswerRouter } from "@/server/api/routers/metadataAnswer";
 import { translationRouter } from "@/server/api/routers/translation";
 import { organisationRouter } from "./routers/organisation";

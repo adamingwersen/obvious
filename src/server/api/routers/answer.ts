@@ -16,7 +16,7 @@ const answerUpdateSchema = answerInsertSchema
   })
   .partial({ content: true }); // Make it possible to update without content
 
-const getUserAnswersForQuestionsSchema = z.object({
+const findUserAnswersForQuestionsSchema = z.object({
   questionIds: z.array(z.number()),
 });
 
@@ -29,7 +29,7 @@ const deleteByQuestionIdSchema = answerSelectSchema.pick({
 });
 
 export const answerRouter = createTRPCRouter({
-  findById: procedures.protected
+  findById: procedures.jwtProtected
     .input(answerFindByIdSchema)
     .query(async ({ ctx, input }) => {
       const answer = await ctx.db.query.answer.findFirst({
@@ -39,32 +39,23 @@ export const answerRouter = createTRPCRouter({
       return answer;
     }),
 
-  create: procedures.protected
+  create: procedures.jwtProtected
     .input(answerCreateSchema)
     .mutation(async ({ ctx, input }) => {
-      const authUserId = ctx.user.id;
-      const user = await ctx.db.query.user.findFirst({
-        where: eq(schema.user.authId, authUserId),
-      });
-      if (!user) throw new Error("No user found");
+      const respondentUserId = ctx.respondentUser.respondentUserId;
       return ctx.db
         .insert(schema.answer)
         .values({
           ...input,
           questionId: input.questionId,
-          createdById: user.id,
+          createdById: respondentUserId,
         })
         .returning();
     }),
 
-  update: procedures.protected
+  update: procedures.jwtProtected
     .input(answerUpdateSchema)
     .mutation(async ({ ctx, input }) => {
-      const authUserId = ctx.user.id;
-      const user = await ctx.db.query.user.findFirst({
-        where: eq(schema.user.authId, authUserId),
-      });
-      if (!user) throw new Error("No user found");
       return ctx.db
         .update(schema.answer)
         .set(input)
@@ -73,7 +64,7 @@ export const answerRouter = createTRPCRouter({
     }),
 
   findManyByQuestionIdsForUser: procedures.protected
-    .input(getUserAnswersForQuestionsSchema)
+    .input(findUserAnswersForQuestionsSchema)
     .mutation(async ({ ctx, input }) => {
       const authUserId = ctx.user.id;
       const user = await ctx.db.query.user.findFirst({
@@ -89,8 +80,20 @@ export const answerRouter = createTRPCRouter({
       });
     }),
 
+  findManyByQuestionIdsForRespondent: procedures.jwtProtected
+    .input(findUserAnswersForQuestionsSchema)
+    .mutation(async ({ ctx, input }) => {
+      const respondentUserId = ctx.respondentUser.respondentUserId;
+      return ctx.db.query.answer.findMany({
+        where: and(
+          eq(schema.answer.createdById, respondentUserId),
+          inArray(schema.answer.questionId, input.questionIds),
+          isNull(schema.answer.deletedAt),
+        ),
+      });
+    }),
   findManyByQuesitionIds: procedures.protected
-    .input(getUserAnswersForQuestionsSchema)
+    .input(findUserAnswersForQuestionsSchema)
     .mutation(async ({ ctx, input }) => {
       const authUserId = ctx.user.id;
       const user = await ctx.db.query.user.findFirst({

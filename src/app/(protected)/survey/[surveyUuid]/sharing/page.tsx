@@ -5,10 +5,10 @@ import { Separator } from "@/components/ui/separator";
 import { api } from "@/trpc/server";
 import { ArrowRight } from "lucide-react";
 import {
-  handleCreateManyRespondentsAndSendEmails,
   handleDeleteRespondent,
-  handleSendManyInviteEmailsWithResend,
+  handleCreateManyRespondentsAndSendEmails,
 } from "./actions";
+import Link from "next/link";
 
 const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
   const survey = await api.survey.findByUuidWithRespondents({
@@ -31,11 +31,10 @@ const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
           surveyId={survey.id}
           surveyUuid={params.surveyUuid}
           surveyRespondents={respondents}
-          handleCreateManyRespondents={handleCreateManyRespondentsAndSendEmails}
-          handleDeleteRespondent={handleDeleteRespondent}
-          handleSendManyInviteEmailsWithResend={
-            handleSendManyInviteEmailsWithResend
+          handleCreateManyRespondentsAndSendEmails={
+            handleCreateManyRespondentsAndSendEmails
           }
+          handleDeleteRespondent={handleDeleteRespondent}
         />
         <div className="flex justify-center pt-5">
           <Separator className="flex w-2/3" />
@@ -48,10 +47,12 @@ const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
           />
         </div>
         <div className="absolute bottom-6 right-6">
-          <Button variant="outline" className="gap-2">
-            Finish
-            <ArrowRight className="size-4" />
-          </Button>
+          <Link href="/survey">
+            <Button variant="outline" className="gap-2">
+              Finish
+              <ArrowRight className="size-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

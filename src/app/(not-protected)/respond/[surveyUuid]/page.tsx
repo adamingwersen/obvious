@@ -7,6 +7,7 @@ const RespondPage = async ({ params }: { params: { surveyUuid: string } }) => {
   const survey = await api.survey.findByUuid({ uuid: params.surveyUuid });
   const originator = survey.user;
   const nQuestions = survey.questions.length;
+  const respondentUser = await getRespondent();
 
   return (
     <div className="flex h-full w-full flex-col justify-center space-y-4 pb-10 pt-10 ">
