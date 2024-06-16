@@ -1,7 +1,6 @@
 import MetadataAnswerForm from "@/components/forms/metadata-answer-form";
 import { api } from "@/trpc/server";
 import { handleSubmitMetadataAnswer } from "./actions";
-import { cookies } from "next/headers";
 import { getRespondent } from "@/app/(not-protected)/respond/actions";
 import { redirect } from "next/navigation";
 

@@ -5,7 +5,6 @@ import { api } from "@/trpc/server";
 import { revalidatePath } from "next/cache";
 import { DeleteFiles, UploadFiles } from "@/server/supabase/server";
 import { type CreateAnswerFormFields } from "@/components/forms/schemas/answer-step";
-import { cookies } from "next/headers";
 
 // const getRespondent = async () => {
 //   const respondent_uuid = cookies().get("respondent-identifier")?.value;

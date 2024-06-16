@@ -20,9 +20,6 @@ const RespondentSurveyPage = async () => {
   // Fetch existing answers for survey questions
   const questionIds = questions.map((question) => question.id);
 
-  const userAnswers = await api.answer.findManyByQuestionIdsForRespondent({
-    questionIds: questionIds,
-  });
   const respondentAnswers = await handleGetQuestionsAnswers(questionIds);
 
   // Fetch translations for questions in survey
