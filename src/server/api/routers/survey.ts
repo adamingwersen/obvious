@@ -1,6 +1,5 @@
-import { surveyToRespondentUser } from "./../../db/schema/survey-respondent.schema";
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
-import { and, eq, isNotNull, isNull, schema } from "@/server/db";
+import { and, eq, isNull, schema } from "@/server/db";
 import { surveySelectSchema } from "@/server/db/schema";
 
 const surveyCreateSchema = surveySelectSchema.pick({

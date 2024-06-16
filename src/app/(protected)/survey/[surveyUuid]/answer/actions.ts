@@ -2,7 +2,7 @@
 
 import { createSignedDownloadUrl } from "@/server/supabase/server";
 
-export const HandleCreateSignedLink = async (
+export const handleCreateSignedLink = async (
   filePath: string,
   answerId: number,
 ) => {

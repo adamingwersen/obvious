@@ -14,12 +14,10 @@ const metadataAnswerCreateSchema = metadataAnswerInsertSchema.pick({
 const metadataAnswerCreateManySchema = z.array(metadataAnswerCreateSchema);
 
 export const metadataAnswerRouter = createTRPCRouter({
-  create: procedures.public
+  create: procedures.jwtProtected
     .input(metadataAnswerCreateSchema)
     .mutation(async ({ ctx, input }) => {
-      const respondent = await ctx.db.query.respondent.findFirst({
-        where: eq(schema.respondent.id, input.createdById),
-      });
+      const respondent = ctx.respondentUser;
       if (!respondent) throw new Error("Respondent not found");
       return ctx.db.insert(schema.metadataAnswer).values({ ...input });
     }),
