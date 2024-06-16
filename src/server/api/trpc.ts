@@ -12,6 +12,9 @@ import { ZodError } from "zod";
 
 import { db } from "@/server/db";
 import { type SupabaseClient } from "@supabase/supabase-js";
+import { cookies } from "next/headers";
+import { verify } from "jsonwebtoken";
+import { type RespondentWithUserJwt } from "@/types/respondent";
 
 /**
  * 1. CONTEXT
@@ -34,6 +37,16 @@ export const createTRPCContext = async (opts: {
 
   const token = opts.headers.get("authorization");
 
+  const respondentToken = cookies().get("respondent-identifier");
+  let respondentUser = undefined;
+
+  if (respondentToken) {
+    try {
+      const decoded = verify(respondentToken.value, `${process.env.JWT_HASH}`);
+      respondentUser = (decoded as RespondentWithUserJwt).respondentUser;
+    } catch (err) {}
+  }
+
   const user = token
     ? await supabase.auth.getUser(token)
     : await supabase.auth.getUser();
@@ -44,6 +57,7 @@ export const createTRPCContext = async (opts: {
   return {
     user: user.data.user,
     db,
+    respondentUser,
   };
 };
 
@@ -105,7 +119,21 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
 });
 const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
 
+const enforceUserHasJwt = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.respondentUser) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next({
+    ctx: {
+      // infers the `user` as non-nullable
+      respondentUser: ctx.respondentUser,
+    },
+  });
+});
+const jwtProtectedProcedure = t.procedure.use(enforceUserHasJwt);
+
 export const procedures = {
   public: publicProcedure,
   protected: protectedProcedure,
+  jwtProtected: jwtProtectedProcedure,
 };

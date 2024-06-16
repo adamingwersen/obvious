@@ -7,10 +7,10 @@
     "build": "next build",
     "db:push": "drizzle-kit push:pg",
     "db:studio": "drizzle-kit studio",
+    "db:generate": "drizzle-kit generate:pg",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start",
-    "db:generate": "drizzle-kit generate:pg"
+    "start": "next start"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
@@ -45,6 +45,7 @@
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.29.4",
     "drizzle-zod": "^0.5.1",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.368.0",
     "next": "^14.2.1",
     "openai": "^4.47.1",
@@ -56,6 +57,7 @@
     "react-hook-form": "^7.51.3",
     "resend": "^3.2.0",
     "server-only": "^0.0.1",
+    "stream": "^0.0.2",
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
@@ -64,6 +66,7 @@
   },
   "devDependencies": {
     "@types/eslint": "^8.56.2",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.11.20",
     "@types/react": "^18.2.57",
     "@types/react-dom": "^18.2.19",
@@ -80,6 +83,9 @@
     "prettier-plugin-tailwindcss": "^0.5.11",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.4.2"
+  },
+  "browser": {
+    "crypto": false
   },
   "ct3aMetadata": {
     "initVersion": "7.30.2"

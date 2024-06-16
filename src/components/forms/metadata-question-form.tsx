@@ -185,11 +185,12 @@ const MetadataQuestionForm = ({
         </Button>
         <div className="absolute bottom-6 right-6">
           <Button
-            className="gap-2 bg-lilla-700"
+            className="gap-2"
+            variant="default"
             type="submit"
             isLoading={isLoading}
           >
-            Submit
+            Next
             <ArrowRight className="size-4" />
           </Button>
         </div>

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { type User } from "@supabase/supabase-js";
 import { CircleUser, Menu, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,7 +22,11 @@ const navItems = [
   { label: "Settings", href: "#" },
 ] as const;
 
-const Navbar = () => {
+type NavbarProps = {
+  user: User;
+};
+
+const Navbar = ({ user }: NavbarProps) => {
   const NavLinks = navItems.map((navItem) => (
     <Link
       key={navItem.label}
@@ -85,7 +90,8 @@ const Navbar = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>My account</DropdownMenuLabel>
+            <DropdownMenuItem>{user.email}</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>

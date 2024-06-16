@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { signInWithPassword, signInWithProvider } from "@/app/auth/actions";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -9,12 +8,11 @@ import EmailAuthForm from "@/components/forms/email-auth-form";
 
 export default function LoginPage() {
   const { toast } = useToast();
-  const router = useRouter();
 
   const onSubmit = async (email: string, password: string) => {
     try {
       await signInWithPassword(email, password);
-      router.push("/home");
+      // router.push("/home");
     } catch (error) {
       toast({ title: "unable to sign in" });
       console.error("Error signing in", error);

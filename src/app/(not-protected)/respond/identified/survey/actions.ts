@@ -5,19 +5,17 @@ import { api } from "@/trpc/server";
 import { revalidatePath } from "next/cache";
 import { DeleteFiles, UploadFiles } from "@/server/supabase/server";
 import { type CreateAnswerFormFields } from "@/components/forms/schemas/answer-step";
-import { cookies } from "next/headers";
 
-const getRespondent = async () => {
-  const respondent_uuid = cookies().get("respondent-identifier")?.value;
-  if (!respondent_uuid)
-    throw new Error("Whoops. Unable to identify respondent");
-  const respondent = await api.respondent.findByUuid({ uuid: respondent_uuid });
-  return respondent;
-};
+// const getRespondent = async () => {
+//   const respondent_uuid = cookies().get("respondent-identifier")?.value;
+//   if (!respondent_uuid)
+//     throw new Error("Whoops. Unable to identify respondent");
+//   const respondent = await api.respondent.findByUuid({ uuid: respondent_uuid });
+//   return respondent;
+// };
 
 const upsertAnswer = async (
   data: CreateAnswerFormFields,
-  respondentId: number,
   questionId: number,
   answerId?: number,
   filePaths?: string[],
@@ -28,7 +26,6 @@ const upsertAnswer = async (
       ...data,
       documentUrls: filePaths,
       questionId: questionId,
-      respondentId: respondentId,
     });
   } else {
     answer = await api.answer.update({
@@ -37,7 +34,6 @@ const upsertAnswer = async (
       documentUrls: filePaths,
     });
   }
-
   if (answer.length === 0 || answer[0] === undefined) {
     throw new Error("DB didnt return object for upsert answer operation");
   }
@@ -46,13 +42,9 @@ const upsertAnswer = async (
 };
 
 export const handleGetQuestionsAnswers = async (questionIds: number[]) => {
-  const respondent = await getRespondent();
-  if (!respondent) throw new Error("Cant get answers without respondent!");
-
   const respondentAnswers = await api.answer.findManyByQuestionIdsForRespondent(
     {
       questionIds: questionIds,
-      respondentId: respondent.id,
     },
   );
   return respondentAnswers;
@@ -61,10 +53,6 @@ export const handleGetQuestionsAnswers = async (questionIds: number[]) => {
 export async function handleUpsertAnswer(formData: FormData) {
   const content = formData.get("content") as string | null;
   if (!content) throw new Error("Content is required");
-
-  const respondent = await getRespondent();
-  if (!respondent)
-    throw new Error("Cannot repond to survey questions without a responder!");
 
   const questionId =
     parseInt(formData.get("questionId") as string, 10) || undefined;
@@ -78,7 +66,6 @@ export async function handleUpsertAnswer(formData: FormData) {
     // Upsert answer to get ID and existing filepaths used for potential file upload
     const insertedAnswer = await upsertAnswer(
       { content },
-      respondent.id,
       questionId,
       answerId,
       undefined,
@@ -101,19 +88,13 @@ export async function handleUpsertAnswer(formData: FormData) {
         );
       }
 
-      await upsertAnswer(
-        { content },
-        respondent.id,
-        questionId,
-        insertedAnswer.id,
-        paths,
-      );
+      await upsertAnswer({ content }, questionId, insertedAnswer.id, paths);
     }
   } catch (error) {
     console.error("Failed to upload file", error);
     throw new Error("Error upserting answer from form");
   }
-  revalidatePath("/(not-protected)/respond/[surveyUuid]/survey", "page");
+  revalidatePath(`/(not-protected)/respond/identified/survey`, "page");
 }
 
 export async function handleDeleteFilesFromAnswer(
@@ -136,5 +117,5 @@ export async function handleDeleteFilesFromAnswer(
     id: answerId,
     documentUrls: newDocPaths,
   });
-  revalidatePath(`/(not-protected)/respond/[surveyUuid]/survey`, "page");
+  revalidatePath(`/(not-protected)/respond/identified/survey`, "page");
 }

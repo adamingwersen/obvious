@@ -4,6 +4,7 @@ export const formSchema = z
   .object({
     emails: z.array(
       z.object({
+        userId: z.number().optional(),
         email: z.string().email(),
         surveyId: z.number(),
       }),

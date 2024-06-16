@@ -1,13 +1,20 @@
 import { createClient } from "@/server/supabase/server";
 import { redirect } from "next/navigation";
 import Image from "next/image";
+import { api } from "@/trpc/server";
 
 const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (user) redirect("/");
+  // if (!user) redirect("/auth");
+  if (user) {
+    const dbUser = await api.user.getByEmail({ email: user?.email ?? "" });
+
+    console.log("db-user", dbUser);
+    if (dbUser !== undefined) redirect("/home");
+  }
 
   return (
     <div className="flex w-full flex-row">

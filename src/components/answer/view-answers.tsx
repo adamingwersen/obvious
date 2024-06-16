@@ -7,7 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { type RespondentModel } from "@/server/db/schema";
+import { type UserModel } from "@/server/db/schema";
 import { type QuestionWithAnswers } from "@/types/question";
 import { DownloadCloud } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -17,7 +17,7 @@ import DynamicFileIcon from "../files/file-icon";
 
 type ViewAnswersProps = {
   questions: QuestionWithAnswers[];
-  respondents: RespondentModel[];
+  respondents: UserModel[];
   handleCreateDownloadLink: (
     filePath: string,
     answerId: number,
@@ -33,12 +33,12 @@ const ViewAnswers = ({
   const [isDownloading, setIsDownloading] = useState<Record<string, boolean>>(
     {},
   );
-  const respondentLookup: Record<number, RespondentModel> = respondents.reduce(
+  const respondentLookup: Record<number, UserModel> = respondents.reduce(
     (acc, res) => {
       acc[res.id] = res;
       return acc;
     },
-    {} as Record<number, RespondentModel>,
+    {} as Record<number, UserModel>,
   );
 
   const onDownloadFileClicked = async (fileUrl: string, answerId: number) => {

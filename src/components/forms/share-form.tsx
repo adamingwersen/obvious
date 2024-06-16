@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Send, Trash } from "lucide-react";
-import { type RespondentModel } from "@/server/db/schema";
+import { type UserModel } from "@/server/db/schema";
 import {
   type ShareFormFields,
   formSchema,
@@ -23,27 +23,26 @@ import {
 type ShareFormProps = {
   surveyId: number;
   surveyUuid: string;
-  formFieldsFromServer: RespondentModel[];
-  handleCreateManyRespondents: (data: ShareFormFields) => Promise<void>;
-  handleDeleteRespondent: (email: string, surveyId: number) => Promise<void>;
-  handleSendManyInviteEmailsWithResend: (
-    emails: string[],
+  surveyRespondents: UserModel[];
+  handleCreateManyRespondentsAndSendEmails: (
+    data: ShareFormFields,
     surveyUuid: string,
   ) => Promise<void>;
+  handleDeleteRespondent: (userId: number, surveyId: number) => Promise<void>;
 };
 
 const ShareForm = ({
   surveyId,
   surveyUuid,
-  formFieldsFromServer,
-  handleCreateManyRespondents,
+  surveyRespondents,
+  handleCreateManyRespondentsAndSendEmails,
   handleDeleteRespondent,
-  handleSendManyInviteEmailsWithResend,
 }: ShareFormProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
-  const mapped = formFieldsFromServer.map(({ email }) => ({
+  const mapped = surveyRespondents.map(({ email, id }) => ({
+    userId: id,
     email,
     surveyId,
   }));
@@ -68,9 +67,15 @@ const ShareForm = ({
     control: form.control,
   });
 
-  const onDelete = async (index: number, email: string, surveyId: number) => {
+  const onDelete = async (
+    index: number,
+    userId: number | undefined,
+    surveyId: number,
+  ) => {
     remove(index);
-    await handleDeleteRespondent(email, surveyId);
+
+    if (!userId) throw new Error("No user id");
+    await handleDeleteRespondent(userId, surveyId);
     toast({
       title: "Removed email from list",
       description: new Date().toLocaleString(),
@@ -79,13 +84,16 @@ const ShareForm = ({
 
   const onSubmit = async (values: ShareFormFields) => {
     setIsLoading(true);
-    const existingEmails = formFieldsFromServer.map((field) => field.email);
+    const existingEmails = surveyRespondents.map((field) => field.email);
     const newEmails = values.emails.filter(
       (email) => !existingEmails.includes(email.email),
     );
-    const onlyNewEmails = newEmails.map((item) => item.email);
-    await handleCreateManyRespondents({ emails: newEmails });
-    await handleSendManyInviteEmailsWithResend(onlyNewEmails, surveyUuid);
+    await handleCreateManyRespondentsAndSendEmails(
+      { emails: newEmails },
+      surveyUuid,
+    );
+    // const onlyNewEmails = newEmails.map((user) => user.email);
+    // await handleSendManyInviteEmailsWithResend(onlyNewEmails, surveyUuid);
     setIsLoading(false);
     toast({
       title: "Sending emails...",
@@ -127,7 +135,7 @@ const ShareForm = ({
                         type="button"
                         variant="destructive"
                         onClick={() =>
-                          onDelete(index, field.email, field.surveyId)
+                          onDelete(index, field?.userId, field.surveyId)
                         }
                       >
                         <Trash className="size-4" />

@@ -3,15 +3,11 @@ import { and, eq, isNull, schema, inArray } from "@/server/db";
 import { answerInsertSchema, answerSelectSchema } from "@/server/db/schema";
 import { z } from "zod";
 
-const answerCreateSchema = answerInsertSchema
-  .pick({
-    content: true,
-    documentUrls: true,
-    questionId: true,
-  })
-  .extend({
-    respondentId: z.number().positive(),
-  });
+const answerCreateSchema = answerInsertSchema.pick({
+  content: true,
+  documentUrls: true,
+  questionId: true,
+});
 const answerUpdateSchema = answerInsertSchema
   .pick({
     content: true,
@@ -20,12 +16,7 @@ const answerUpdateSchema = answerInsertSchema
   })
   .partial({ content: true }); // Make it possible to update without content
 
-const getRespondentAnswersForQuestionsSchema = z.object({
-  questionIds: z.array(z.number()),
-  respondentId: z.number().positive(),
-});
-
-const getUserAnswersForQuestionsSchema = z.object({
+const findUserAnswersForQuestionsSchema = z.object({
   questionIds: z.array(z.number()),
 });
 
@@ -38,7 +29,7 @@ const deleteByQuestionIdSchema = answerSelectSchema.pick({
 });
 
 export const answerRouter = createTRPCRouter({
-  findById: procedures.protected
+  findById: procedures.jwtProtected
     .input(answerFindByIdSchema)
     .query(async ({ ctx, input }) => {
       const answer = await ctx.db.query.answer.findFirst({
@@ -48,20 +39,21 @@ export const answerRouter = createTRPCRouter({
       return answer;
     }),
 
-  create: procedures.public
+  create: procedures.jwtProtected
     .input(answerCreateSchema)
     .mutation(async ({ ctx, input }) => {
+      const respondentUserId = ctx.respondentUser.respondentUserId;
       return ctx.db
         .insert(schema.answer)
         .values({
           ...input,
           questionId: input.questionId,
-          createdById: input.respondentId,
+          createdById: respondentUserId,
         })
         .returning();
     }),
 
-  update: procedures.protected
+  update: procedures.jwtProtected
     .input(answerUpdateSchema)
     .mutation(async ({ ctx, input }) => {
       return ctx.db
@@ -71,8 +63,8 @@ export const answerRouter = createTRPCRouter({
         .returning();
     }),
 
-  findManyByQuestionIds: procedures.protected
-    .input(getUserAnswersForQuestionsSchema)
+  findManyByQuestionIdsForUser: procedures.protected
+    .input(findUserAnswersForQuestionsSchema)
     .mutation(async ({ ctx, input }) => {
       const authUserId = ctx.user.id;
       const user = await ctx.db.query.user.findFirst({
@@ -88,12 +80,25 @@ export const answerRouter = createTRPCRouter({
       });
     }),
 
-  findManyByQuestionIdsForRespondent: procedures.public
-    .input(getRespondentAnswersForQuestionsSchema)
+  findManyByQuestionIdsForRespondent: procedures.jwtProtected
+    .input(findUserAnswersForQuestionsSchema)
     .mutation(async ({ ctx, input }) => {
+      const respondentUserId = ctx.respondentUser.respondentUserId;
       return ctx.db.query.answer.findMany({
         where: and(
-          eq(schema.answer.createdById, input.respondentId),
+          eq(schema.answer.createdById, respondentUserId),
+          inArray(schema.answer.questionId, input.questionIds),
+          isNull(schema.answer.deletedAt),
+        ),
+      });
+    }),
+  findManyByQuesitionIds: procedures.jwtProtected
+    .input(findUserAnswersForQuestionsSchema)
+    .mutation(async ({ ctx, input }) => {
+      const respondentUserId = ctx.respondentUser.respondentUserId;
+      return ctx.db.query.answer.findMany({
+        where: and(
+          eq(schema.answer.createdById, respondentUserId),
           inArray(schema.answer.questionId, input.questionIds),
           isNull(schema.answer.deletedAt),
         ),

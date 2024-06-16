@@ -1,10 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/server";
-import Link from "next/link";
 import { daysFromToday } from "@/lib/utils";
+import { getRespondent } from "./actions";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 
-const RespondPage = async ({ params }: { params: { surveyUuid: string } }) => {
-  const survey = await api.survey.findByUuid({ uuid: params.surveyUuid });
+const RespondPage = async () => {
+  const respondentUser = await getRespondent();
+  if (!respondentUser) redirect("/respond/rejected");
+  const survey = await api.survey.findById({ id: respondentUser.surveyId });
   const originator = survey.user;
   const nQuestions = survey.questions.length;
 
@@ -19,7 +23,7 @@ const RespondPage = async ({ params }: { params: { surveyUuid: string } }) => {
             wants you to complete a Due Diligence survey
           </div>
           <div className="">
-            <Link href={`/respond/${params.surveyUuid}/identify`}>
+            <Link href="/respond/identified">
               <Button className="rounded-none bg-lilla-100 text-lilla-900 hover:bg-lilla-900 hover:text-white">
                 COMPLETE SURVEY
               </Button>

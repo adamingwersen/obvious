@@ -1,16 +1,16 @@
 import MetadataAnswerForm from "@/components/forms/metadata-answer-form";
 import { api } from "@/trpc/server";
 import { handleSubmitMetadataAnswer } from "./actions";
+import { getRespondent } from "@/app/(not-protected)/respond/actions";
+import { redirect } from "next/navigation";
 
-const RespondentIdentifiedPage = async ({
-  params,
-}: {
-  params: { surveyUuid: string };
-}) => {
-  const metadataQuestions = await api.metadataQuestion.findManyBySurveyUuid({
-    surveyUuid: params.surveyUuid,
+const RespondentIdentifiedPage = async () => {
+  const respondentUser = await getRespondent();
+  if (!respondentUser) redirect("/respond/rejected");
+  const metadataQuestions = await api.metadataQuestion.findManyBySurveyId({
+    surveyId: respondentUser.surveyId,
   });
-  const survey = await api.survey.findByUuid({ uuid: params.surveyUuid });
+  const survey = await api.survey.findById({ id: respondentUser.surveyId });
   const originator = survey.user;
 
   return (
@@ -25,7 +25,8 @@ const RespondentIdentifiedPage = async ({
         </div>
         <MetadataAnswerForm
           metadataQuestions={metadataQuestions}
-          surveyUuid={params.surveyUuid}
+          surveyUuid={survey.uuid}
+          respondent={respondentUser}
           handleSubmitMetadataAnswer={handleSubmitMetadataAnswer}
         />
       </div>

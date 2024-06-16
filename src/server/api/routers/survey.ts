@@ -7,8 +7,11 @@ const surveyCreateSchema = surveySelectSchema.pick({
   description: true,
   dueAt: true,
 });
-const surveyFindByIdSchema = surveySelectSchema.pick({
+const surveyFindByUuidSchema = surveySelectSchema.pick({
   uuid: true,
+});
+const surveyFindByIdSchema = surveySelectSchema.pick({
+  id: true,
 });
 
 const surveyArchiveByIdSchema = surveySelectSchema.pick({
@@ -74,22 +77,64 @@ export const surveyRouter = createTRPCRouter({
       });
     },
   ),
-  findByUuid: procedures.protected
-    .input(surveyFindByIdSchema)
+
+  findByUuidWithRespondents: procedures.protected
+    .input(surveyFindByUuidSchema)
     .query(async ({ ctx, input }) => {
       const survey = await ctx.db.query.survey.findFirst({
         where: and(
           eq(schema.survey.uuid, input.uuid),
           isNull(schema.survey.deletedAt),
         ),
-        with: { questions: true, user: true },
+        with: {
+          questions: true,
+          user: true,
+          respondents: true,
+        },
+      });
+      if (!survey) throw new Error("No survey found");
+      survey.respondents = survey.respondents.filter(
+        (x) => x.deletedAt === null,
+      );
+      return survey;
+    }),
+
+  findByUuid: procedures.jwtProtected
+    .input(surveyFindByUuidSchema)
+    .query(async ({ ctx, input }) => {
+      const survey = await ctx.db.query.survey.findFirst({
+        where: and(
+          eq(schema.survey.uuid, input.uuid),
+          isNull(schema.survey.deletedAt),
+        ),
+        with: {
+          questions: true,
+          user: true,
+        },
+      });
+      if (!survey) throw new Error("No survey found");
+      return survey;
+    }),
+
+  findById: procedures.jwtProtected
+    .input(surveyFindByIdSchema)
+    .query(async ({ ctx, input }) => {
+      const survey = await ctx.db.query.survey.findFirst({
+        where: and(
+          eq(schema.survey.id, input.id),
+          isNull(schema.survey.deletedAt),
+        ),
+        with: {
+          questions: true,
+          user: true,
+        },
       });
       if (!survey) throw new Error("No survey found");
       return survey;
     }),
 
   findByUuidFull: procedures.protected
-    .input(surveyFindByIdSchema)
+    .input(surveyFindByUuidSchema)
     .query(async ({ ctx, input }) => {
       const survey = await ctx.db.query.survey.findFirst({
         where: and(

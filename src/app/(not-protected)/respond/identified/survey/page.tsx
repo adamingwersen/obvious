@@ -6,25 +6,27 @@ import {
   handleGetQuestionsAnswers,
 } from "./actions";
 import { handleTranslate } from "@/app/actions";
+import { getRespondent } from "@/app/(not-protected)/respond/actions";
+import { redirect } from "next/navigation";
 // Answer page data types
 
-const RespondentSurveyPage = async ({
-  params,
-}: {
-  params: { surveyUuid: string };
-}) => {
+const RespondentSurveyPage = async () => {
+  const respondentUser = await getRespondent();
+  if (!respondentUser) redirect("/respond/rejected");
   // Fetch survey with questions
-  const survey = await api.survey.findByUuid({ uuid: params.surveyUuid });
+  const survey = await api.survey.findById({ id: respondentUser.surveyId });
   const questions = survey.questions;
 
   // Fetch existing answers for survey questions
   const questionIds = questions.map((question) => question.id);
+
   const respondentAnswers = await handleGetQuestionsAnswers(questionIds);
 
   // Fetch translations for questions in survey
-  const questionsTranslations = await api.translation.findManyByQuestionIds({
-    questionIds: questionIds,
-  });
+  const questionsTranslations =
+    await api.translation.findManyByQuestionIdsWithJwt({
+      questionIds: questionIds,
+    });
 
   // Construct data model
   const mappedQuestions = questions.map((q) => {
