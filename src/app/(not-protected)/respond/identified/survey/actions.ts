@@ -5,6 +5,15 @@ import { api } from "@/trpc/server";
 import { revalidatePath } from "next/cache";
 import { DeleteFiles, UploadFiles } from "@/server/supabase/server";
 import { type CreateAnswerFormFields } from "@/components/forms/schemas/answer-step";
+import { cookies } from "next/headers";
+
+// const getRespondent = async () => {
+//   const respondent_uuid = cookies().get("respondent-identifier")?.value;
+//   if (!respondent_uuid)
+//     throw new Error("Whoops. Unable to identify respondent");
+//   const respondent = await api.respondent.findByUuid({ uuid: respondent_uuid });
+//   return respondent;
+// };
 
 const upsertAnswer = async (
   data: CreateAnswerFormFields,
@@ -31,6 +40,15 @@ const upsertAnswer = async (
   }
 
   return answer[0];
+};
+
+export const handleGetQuestionsAnswers = async (questionIds: number[]) => {
+  const respondentAnswers = await api.answer.findManyByQuestionIdsForRespondent(
+    {
+      questionIds: questionIds,
+    },
+  );
+  return respondentAnswers;
 };
 
 export async function handleUpsertAnswer(formData: FormData) {

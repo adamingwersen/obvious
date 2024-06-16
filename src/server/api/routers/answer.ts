@@ -92,16 +92,13 @@ export const answerRouter = createTRPCRouter({
         ),
       });
     }),
-  findManyByQuesitionIds: procedures.protected
+  findManyByQuesitionIds: procedures.jwtProtected
     .input(findUserAnswersForQuestionsSchema)
     .mutation(async ({ ctx, input }) => {
-      const authUserId = ctx.user.id;
-      const user = await ctx.db.query.user.findFirst({
-        where: eq(schema.user.authId, authUserId),
-      });
-      if (!user) throw new Error("No user found");
+      const respondentUserId = ctx.respondentUser.respondentUserId;
       return ctx.db.query.answer.findMany({
         where: and(
+          eq(schema.answer.createdById, respondentUserId),
           inArray(schema.answer.questionId, input.questionIds),
           isNull(schema.answer.deletedAt),
         ),

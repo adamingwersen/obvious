@@ -8,9 +8,9 @@ const AnswerSurveyIdPage = async ({
 }: {
   params: { surveyUuid: string };
 }) => {
-  // Fetch survey with questions
-  const survey = await api.survey.findByUuidFull({ uuid: params.surveyUuid });
 
+  const survey = await api.survey.findByUuidFull({ uuid: params.surveyUuid });
+  
   return (
     <div className="mx-auto h-full w-2/3 pt-10 ">
       <ViewAnswers
