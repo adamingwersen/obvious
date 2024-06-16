@@ -1,9 +1,5 @@
 "use server";
 
-import { cookies, headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
-import { USER_PRIVILEGE, type UserPrivilegeType } from "@/server/db/schema";
 import { createClient } from "@/server/supabase/server";
 import { api } from "@/trpc/server";
 import { revalidatePath } from "next/cache";
@@ -17,10 +13,10 @@ const splitName = (
     return { firstName: null, lastName: null };
   }
 
-  let nameParts: string[] = name.trim().split(/\s+/);
+  const nameParts: string[] = name.trim().split(/\s+/);
 
-  let firstName: string | null = nameParts[0] ?? null;
-  let lastName: string | null = nameParts.slice(1).join(" ");
+  const firstName: string | null = nameParts[0] ?? null;
+  const lastName: string | null = nameParts.slice(1).join(" ");
 
   return { firstName, lastName };
 };
@@ -42,7 +38,11 @@ export const handleCreateUser = async (
   if (!authUser.email)
     throw new Error("Cannot create user without email on account");
 
-  const name: string = authUser.user_metadata.name ?? "";
+  const userMetadata = authUser.user_metadata;
+  if (!userMetadata) throw new Error("No name on user found");
+  if (!userMetadata.name) throw new Error("");
+  const name: string = userMetadata.name as string;
+
   const { firstName, lastName } = splitName(name);
 
   await api.user.create({

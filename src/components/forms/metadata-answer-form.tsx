@@ -18,7 +18,7 @@ import {
 import {
   type MetadataType,
   type MetadataQuestionModel,
-  SurveyRespondentModel,
+  type SurveyRespondentModel,
 } from "@/server/db/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";

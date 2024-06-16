@@ -1,5 +1,4 @@
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
-import { eq, schema } from "@/server/db";
 import { organisationSelectSchema } from "@/server/db/schema";
 
 const findAllSchema = organisationSelectSchema.pick({});

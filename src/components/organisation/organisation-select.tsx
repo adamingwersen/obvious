@@ -1,13 +1,11 @@
 "use client";
 
-import { OrganisationModel } from "@/server/db/schema";
+import { type OrganisationModel } from "@/server/db/schema";
 
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -36,7 +34,11 @@ export default function CreateUser({
         </SelectTrigger>
         <SelectContent>
           {organisations.map((o) => {
-            return <SelectItem value={o.id?.toString()}>{o.name}</SelectItem>;
+            return (
+              <SelectItem value={o.id?.toString()} key={o.id}>
+                {o.name}
+              </SelectItem>
+            );
           })}
         </SelectContent>
       </Select>
