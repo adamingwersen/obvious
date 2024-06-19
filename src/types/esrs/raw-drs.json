@@ -1,0 +1,875 @@
+[
+  {
+    "uuid": "18e374be-79ce-07c3-2e0f-7b150cc57c76",
+    "esrs": "E1",
+    "disclosureRequirement": "E1-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e10597-3-1",
+    "topic": "Climate Change",
+    "reportingArea": "Strategy",
+    "drName": "Transition plan for climate change mitigation"
+  },
+  {
+    "uuid": "abf9cf47-94ac-41ed-9e5f-a6645a3be442",
+    "esrs": "E1",
+    "disclosureRequirement": "E1-2",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e10995-3-1",
+    "topic": "Climate Change",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Policies related to climate change mitigation and adaptation"
+  },
+  {
+    "uuid": "ce3a5115-888d-2c56-df54-9b3ddc5ea834",
+    "esrs": "E1",
+    "disclosureRequirement": "E1-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e11132-3-1",
+    "topic": "Climate Change",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Actions and resources in relation to climate change policies"
+  },
+  {
+    "uuid": "56882425-284e-b15a-4002-12a39db777e3",
+    "esrs": "E1",
+    "disclosureRequirement": "E1-4",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e11246-3-1",
+    "topic": "Climate Change",
+    "reportingArea": "Metrics and targets",
+    "drName": "Targets related to climate change mitigation and adaptation"
+  },
+  {
+    "uuid": "120bd334-e9c5-488c-6cc5-63cb1093920f",
+    "esrs": "E1",
+    "disclosureRequirement": "E1-5",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e11429-3-1",
+    "topic": "Climate Change",
+    "reportingArea": "Metrics and targets",
+    "drName": "Energy consumption and mix"
+  },
+  {
+    "uuid": "1fdd436f-8508-0c9b-345d-d04829a145bc",
+    "esrs": "E1",
+    "disclosureRequirement": "E1-6",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e11639-3-1",
+    "topic": "Climate Change",
+    "reportingArea": "Metrics and targets",
+    "drName": "Gross Scopes 1, 2, 3 and Total GHG emissions"
+  },
+  {
+    "uuid": "a5f8d2a1-d1f3-e145-8e08-345eb7834bc6",
+    "esrs": "E1",
+    "disclosureRequirement": "E1-7",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e11953-3-1",
+    "topic": "Climate Change",
+    "reportingArea": "Metrics and targets",
+    "drName": "GHG removals and GHG mitigation projects financed through carbon credits"
+  },
+  {
+    "uuid": "b4d2a383-d8aa-24e9-b882-58af041f5e0c",
+    "esrs": "E1",
+    "disclosureRequirement": "E1-8",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e12119-3-1",
+    "topic": "Climate Change",
+    "reportingArea": "Metrics and targets",
+    "drName": "Internal carbon pricing"
+  },
+  {
+    "uuid": "b4684309-95e8-b00b-8549-5ce5b60cdf2c",
+    "esrs": "E1",
+    "disclosureRequirement": "E1-9",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e12176-3-1",
+    "topic": "Climate Change",
+    "reportingArea": "Metrics and targets",
+    "drName": "Anticipated financial effects from material physical and transition risks and potential climate-related opportunities"
+  },
+  {
+    "uuid": "053a2644-c6bf-2a37-1f46-62b738d9d0e7",
+    "esrs": "E1",
+    "disclosureRequirement": "E1.GOV-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e10569-3-1",
+    "topic": "Climate Change",
+    "reportingArea": "Governance",
+    "drName": "Integration of sustainability-related performance in incentive schemes"
+  },
+  {
+    "uuid": "c31c7152-1552-6d62-67f2-fcc7138f9a60",
+    "esrs": "E1",
+    "disclosureRequirement": "E1.IRO-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e10868-3-1",
+    "topic": "Climate Change",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Description of the processes to identify and assess material climate-related impacts, risks and opportunities"
+  },
+  {
+    "uuid": "b61db5e2-dd3f-a690-57cd-5064f86bd99f",
+    "esrs": "E1",
+    "disclosureRequirement": "E1.SBM-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e10807-3-1",
+    "topic": "Climate Change",
+    "reportingArea": "Strategy",
+    "drName": "Material impacts, risks and opportunities and their interaction with strategy and business model"
+  },
+  {
+    "uuid": "3c43e41d-de69-e56d-3c91-6fe4b7bc64e8",
+    "esrs": "E2",
+    "disclosureRequirement": "E2-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e17066-3-1",
+    "topic": "Pollution",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Policies related to pollution"
+  },
+  {
+    "uuid": "6f083d5d-a4e3-2de3-3eae-74a6efbb015c",
+    "esrs": "E2",
+    "disclosureRequirement": "E2-2",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e17183-3-1",
+    "topic": "Pollution",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Actions and resources related to pollution"
+  },
+  {
+    "uuid": "679f1d23-883d-04d6-2642-1d5f35394396",
+    "esrs": "E2",
+    "disclosureRequirement": "E2-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e17268-3-1",
+    "topic": "Pollution",
+    "reportingArea": "Metrics and targets",
+    "drName": "Targets related to pollution"
+  },
+  {
+    "uuid": "e3828534-7504-0b31-d5d7-dcaab9b22836",
+    "esrs": "E2",
+    "disclosureRequirement": "E2-4",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e17419-3-1",
+    "topic": "Pollution",
+    "reportingArea": "Metrics and targets",
+    "drName": "Pollution of air, water and soil"
+  },
+  {
+    "uuid": "3e24fd60-38ad-7da2-483f-424b38331d42",
+    "esrs": "E2",
+    "disclosureRequirement": "E2-5",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e17547-3-1",
+    "topic": "Pollution",
+    "reportingArea": "Metrics and targets",
+    "drName": "Substances of concern and substances of very high concern"
+  },
+  {
+    "uuid": "26f9f9d9-830d-6e07-6806-caabdca25c3e",
+    "esrs": "E2",
+    "disclosureRequirement": "E2-6",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e17594-3-1",
+    "topic": "Pollution",
+    "reportingArea": "Metrics and targets",
+    "drName": "Anticipated financial effects from material pollution-related risks and opportunities"
+  },
+  {
+    "uuid": "4608ab07-1e36-5dd7-e9d1-d5bcf9267c83",
+    "esrs": "E2",
+    "disclosureRequirement": "E2.IRO-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e17012-3-1",
+    "topic": "Pollution",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Description of the processes to identify and assess material pollution-related impacts, risks and opportunities"
+  },
+  {
+    "uuid": "7e36b8af-8a96-1351-b01d-27f9dad05af6",
+    "esrs": "E3",
+    "disclosureRequirement": "E3-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e19273-3-1",
+    "topic": "Water and Marine Resources",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Policies related to water and marine resources"
+  },
+  {
+    "uuid": "2600ab6f-2414-a9b1-9e17-f0ae7a98d94f",
+    "esrs": "E3",
+    "disclosureRequirement": "E3-2",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e19451-3-1",
+    "topic": "Water and Marine Resources",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Actions and resources related to water and marine resources"
+  },
+  {
+    "uuid": "d5132922-0a17-10d5-4d29-be90bf5d2d5c",
+    "esrs": "E3",
+    "disclosureRequirement": "E3-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e19559-3-1",
+    "topic": "Water and Marine Resources",
+    "reportingArea": "Metrics and targets",
+    "drName": "Targets related to water and marine resources"
+  },
+  {
+    "uuid": "80806e94-c727-13f8-b23b-e331a3bce98c",
+    "esrs": "E3",
+    "disclosureRequirement": "E3-4",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e19672-3-1",
+    "topic": "Water and Marine Resources",
+    "reportingArea": "Metrics and targets",
+    "drName": "Water consumption"
+  },
+  {
+    "uuid": "75dc722c-6d1a-6863-0169-66e0b1bf42fd",
+    "esrs": "E3",
+    "disclosureRequirement": "E3-5",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e19765-3-1",
+    "topic": "Water and Marine Resources",
+    "reportingArea": "Metrics and targets",
+    "drName": "Anticipated financial effects from material water and marine resources-related risks and opportunities"
+  },
+  {
+    "uuid": "abcebb5f-d7f7-4fb5-ad02-78c75383b104",
+    "esrs": "E3",
+    "disclosureRequirement": "E3.IRO-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e19227-3-1",
+    "topic": "Water and Marine Resources",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Description of the processes to identify and assess material water and marine resources-related impacts, risks and opportunities"
+  },
+  {
+    "uuid": "65180b07-73a7-dd5b-0218-105b760c4002",
+    "esrs": "E4",
+    "disclosureRequirement": "E4-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e21231-3-1",
+    "topic": "Biodiversity and Ecosystems",
+    "reportingArea": "Strategy",
+    "drName": "Transition plan and consideration of biodiversity and ecosystems in strategy and business model"
+  },
+  {
+    "uuid": "b7773cfa-6340-8fad-ceda-dc2bf00ed761",
+    "esrs": "E4",
+    "disclosureRequirement": "E4-2",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e21662-3-1",
+    "topic": "Biodiversity and Ecosystems",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Policies related to biodiversity and ecosystems"
+  },
+  {
+    "uuid": "0d4f4190-188a-066f-bb35-c6a823af97e7",
+    "esrs": "E4",
+    "disclosureRequirement": "E4-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e21876-3-1",
+    "topic": "Biodiversity and Ecosystems",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Actions and resources related to biodiversity and ecosystems"
+  },
+  {
+    "uuid": "5d2c1338-c278-0836-46ec-073019cbc769",
+    "esrs": "E4",
+    "disclosureRequirement": "E4-4",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e21988-3-1",
+    "topic": "Biodiversity and Ecosystems",
+    "reportingArea": "Metrics and targets",
+    "drName": "Targets related to biodiversity and ecosystems"
+  },
+  {
+    "uuid": "fd6e15e3-26ce-065b-80d6-00ca50d6ed1a",
+    "esrs": "E4",
+    "disclosureRequirement": "E4-5",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e22132-3-1",
+    "topic": "Biodiversity and Ecosystems",
+    "reportingArea": "Metrics and targets",
+    "drName": "Impact metrics related to biodiversity and ecosystems change"
+  },
+  {
+    "uuid": "b7ba4c1f-ac09-7516-3759-072dbdb7c7ca",
+    "esrs": "E4",
+    "disclosureRequirement": "E4-6",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e22384-3-1",
+    "topic": "Biodiversity and Ecosystems",
+    "reportingArea": "Metrics and targets",
+    "drName": "Anticipated financial effects from material biodiversity and ecosystem-related risks and opportunities"
+  },
+  {
+    "uuid": "cf68833b-f94a-1927-01a3-dfdc40079828",
+    "esrs": "E4",
+    "disclosureRequirement": "E4.IRO-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e21462-3-1",
+    "topic": "Biodiversity and Ecosystems",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Description of processes to identify and assess material biodiversity and ecosystem-related impacts, risks, dependencies and opportunities"
+  },
+  {
+    "uuid": "dfcf8017-11f2-1777-ac31-6f11d1e60751",
+    "esrs": "E4",
+    "disclosureRequirement": "E4.SBM-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e21347-3-1",
+    "topic": "Biodiversity and Ecosystems",
+    "reportingArea": "Strategy",
+    "drName": "Material impacts, risks and opportunities and their interaction with strategy and business model"
+  },
+  {
+    "uuid": "4becc40b-6092-b92b-7c54-96b4b32c454b",
+    "esrs": "E5",
+    "disclosureRequirement": "E5-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e24815-3-1",
+    "topic": "Resource Use and Circular Economy",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Policies related to resource use and circular economy"
+  },
+  {
+    "uuid": "e5686bb2-a7c6-f854-578f-804080ee44a6",
+    "esrs": "E5",
+    "disclosureRequirement": "E5-2",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e24900-3-1",
+    "topic": "Resource Use and Circular Economy",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Actions and resources related to resource use and circular economy"
+  },
+  {
+    "uuid": "452b5c2c-71da-bac5-1dca-a6ee4f9303cf",
+    "esrs": "E5",
+    "disclosureRequirement": "E5-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e25013-3-1",
+    "topic": "Resource Use and Circular Economy",
+    "reportingArea": "Metrics and targets",
+    "drName": "Targets related to resource use and circular economy"
+  },
+  {
+    "uuid": "b5ebd187-8bda-54f0-16a0-1e9f32ac0b2b",
+    "esrs": "E5",
+    "disclosureRequirement": "E5-4",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e25174-3-1",
+    "topic": "Resource Use and Circular Economy",
+    "reportingArea": "Metrics and targets",
+    "drName": "Resource inflows"
+  },
+  {
+    "uuid": "821a6d99-f9de-9858-ddbf-1ca55e4a4ff5",
+    "esrs": "E5",
+    "disclosureRequirement": "E5-5",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e25238-3-1",
+    "topic": "Resource Use and Circular Economy",
+    "reportingArea": "Metrics and targets",
+    "drName": "Resource outflows"
+  },
+  {
+    "uuid": "d3b4b2fb-288c-da22-4c01-96992d3c463d",
+    "esrs": "E5",
+    "disclosureRequirement": "E5-6",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e25503-3-1",
+    "topic": "Resource Use and Circular Economy",
+    "reportingArea": "Metrics and targets",
+    "drName": "Anticipated financial effects from material resource use and circular economy-related risks and opportunities"
+  },
+  {
+    "uuid": "1e526fb4-194c-dd1f-83b8-dd6dfc721af4",
+    "esrs": "E5",
+    "disclosureRequirement": "E5.IRO-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e24761-3-1",
+    "topic": "Resource Use and Circular Economy",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Description of the processes to identify and assess material resource use and circular economy-related impacts, risks and opportunities"
+  },
+  {
+    "uuid": "b83a1566-31a2-6fef-7b80-1b81bbcf66eb",
+    "esrs": "ESRS 2",
+    "disclosureRequirement": "BP-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e5626-3-1",
+    "topic": "General Disclosures",
+    "reportingArea": "Basis for preparation",
+    "drName": "General basis for preparation of the sustainability statement"
+  },
+  {
+    "uuid": "e65f135c-619c-2c08-9edd-325ef0a62228",
+    "esrs": "ESRS 2",
+    "disclosureRequirement": "BP-2",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e5717-3-1",
+    "topic": "General Disclosures",
+    "reportingArea": "Basis for preparation",
+    "drName": "Disclosures in relation to specific circumstances"
+  },
+  {
+    "uuid": "56882425-284e-b15a-4002-12a39db777e3",
+    "esrs": "ESRS 2",
+    "disclosureRequirement": "E1-4",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e11246-3-1",
+    "topic": "Climate Change",
+    "reportingArea": "Metrics and targets",
+    "drName": "Targets related to climate change mitigation and adaptation"
+  },
+  {
+    "uuid": "7199e8b5-b875-9742-1a56-a32ba3eadb6c",
+    "esrs": "ESRS 2",
+    "disclosureRequirement": "GOV-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e6065-3-1",
+    "topic": "General Disclosures",
+    "reportingArea": "Governance",
+    "drName": "The role of the administrative, management and supervisory bodies"
+  },
+  {
+    "uuid": "ddbf4cff-4d68-7bf6-60c8-5470b4e769af",
+    "esrs": "ESRS 2",
+    "disclosureRequirement": "GOV-2",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e6295-3-1",
+    "topic": "General Disclosures",
+    "reportingArea": "Governance",
+    "drName": "Information provided to and sustainability matters addressed by the undertaking\u2019s administrative, management and supervisory bodies"
+  },
+  {
+    "uuid": "7fd34463-6b24-8487-ddd4-06957c9d72b7",
+    "esrs": "ESRS 2",
+    "disclosureRequirement": "GOV-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e6374-3-1",
+    "topic": "General Disclosures",
+    "reportingArea": "Governance",
+    "drName": "Integration of sustainability-related performance in incentive schemes"
+  },
+  {
+    "uuid": "ab867154-8797-b0d5-8b70-268789aa970f",
+    "esrs": "ESRS 2",
+    "disclosureRequirement": "GOV-4",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e6457-3-1",
+    "topic": "General Disclosures",
+    "reportingArea": "Governance",
+    "drName": "Statement on due diligence"
+  },
+  {
+    "uuid": "a4c1b9b9-f855-4d5a-f9e7-0df0896ed350",
+    "esrs": "ESRS 2",
+    "disclosureRequirement": "GOV-5",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e6508-3-1",
+    "topic": "General Disclosures",
+    "reportingArea": "Governance",
+    "drName": "Risk management and internal controls over sustainability reporting"
+  },
+  {
+    "uuid": "451f3e91-0e7c-2a70-770f-58e7b9c8c749",
+    "esrs": "ESRS 2",
+    "disclosureRequirement": "IRO-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e7275-3-1",
+    "topic": "General Disclosures",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Description of the process to identify and assess material impacts, risks and opportunities"
+  },
+  {
+    "uuid": "ae018d21-c3ee-6cc4-2759-ce629535ac3b",
+    "esrs": "ESRS 2",
+    "disclosureRequirement": "IRO-2",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e7443-3-1",
+    "topic": "General Disclosures",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Disclosure Requirements in ESRS covered by the undertaking\u2019s sustainability statement"
+  },
+  {
+    "uuid": "b904d4bc-4118-da94-700b-d81c1f2aae07",
+    "esrs": "ESRS 2",
+    "disclosureRequirement": "SBM-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e6625-3-1",
+    "topic": "General Disclosures",
+    "reportingArea": "Strategy",
+    "drName": "Strategy, business model and value chain"
+  },
+  {
+    "uuid": "1d67748a-0815-3e79-af1e-e78c5793883f",
+    "esrs": "ESRS 2",
+    "disclosureRequirement": "SBM-2",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e6898-3-1",
+    "topic": "General Disclosures",
+    "reportingArea": "Strategy",
+    "drName": "Interests and views of stakeholders"
+  },
+  {
+    "uuid": "2646952d-7d9a-7c28-8f35-0d340bd956ea",
+    "esrs": "ESRS 2",
+    "disclosureRequirement": "SBM-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e7031-3-1",
+    "topic": "General Disclosures",
+    "reportingArea": "Strategy",
+    "drName": "Material impacts, risks and opportunities and their interaction with strategy and business model"
+  },
+  {
+    "uuid": "d6198217-9a8e-63d1-8a2c-eca56775f0d1",
+    "esrs": "G1",
+    "disclosureRequirement": "G1-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e39460-3-1",
+    "topic": "Business Conduct",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Business conduct policies and corporate culture"
+  },
+  {
+    "uuid": "27644e43-3714-63d8-2a44-e54fd00532fc",
+    "esrs": "G1",
+    "disclosureRequirement": "G1-2",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e39645-3-1",
+    "topic": "Business Conduct",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Management of relationships with suppliers"
+  },
+  {
+    "uuid": "9e7df461-9761-556d-ffcb-d5a76369187d",
+    "esrs": "G1",
+    "disclosureRequirement": "G1-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e39710-3-1",
+    "topic": "Business Conduct",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Prevention and detection of corruption and bribery"
+  },
+  {
+    "uuid": "c7de5997-f6fa-dd17-4a45-04ce8cc77191",
+    "esrs": "G1",
+    "disclosureRequirement": "G1-4",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e39833-3-1",
+    "topic": "Business Conduct",
+    "reportingArea": "Metrics and targets",
+    "drName": "Incidents of corruption or bribery"
+  },
+  {
+    "uuid": "41e3199f-a00c-4527-a05c-5f1832c77614",
+    "esrs": "G1",
+    "disclosureRequirement": "G1-5",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e39965-3-1",
+    "topic": "Business Conduct",
+    "reportingArea": "Metrics and targets",
+    "drName": "Political influence and lobbying activities"
+  },
+  {
+    "uuid": "d19d7486-cb68-6094-667e-87c1100a344b",
+    "esrs": "G1",
+    "disclosureRequirement": "G1-6",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e40052-3-1",
+    "topic": "Business Conduct",
+    "reportingArea": "Metrics and targets",
+    "drName": "Payment practices"
+  },
+  {
+    "uuid": "a54c29b4-fccc-87b4-b4bc-94cc8958c67e",
+    "esrs": "G1",
+    "disclosureRequirement": "G1.GOV-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e39408-3-1",
+    "topic": "Business Conduct",
+    "reportingArea": "Governance",
+    "drName": "The role of the administrative, management and supervisory bodies"
+  },
+  {
+    "uuid": "9a797c4d-3609-c291-8c50-db4aada9cde5",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e27417-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Impacts, risks and opportunities management",
+    "drName": "Policies related to own workforce"
+  },
+  {
+    "uuid": "fcd555e2-f44f-a0e7-c448-cb031da1269e",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-10",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e28602-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Metrics and targets",
+    "drName": "Adequate wages"
+  },
+  {
+    "uuid": "cc852878-d3e1-ac48-e1ab-3fc6e07e87d6",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-11",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e28663-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Metrics and targets",
+    "drName": "Social protection"
+  },
+  {
+    "uuid": "d25c6951-02cf-23b8-cd9e-0e66eb921d8a",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-12",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e28758-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Metrics and targets",
+    "drName": "Persons with disabilities"
+  },
+  {
+    "uuid": "23207251-fcf9-9e84-0bd9-33d76aaf6809",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-13",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e28806-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Metrics and targets",
+    "drName": "Training and skills development metrics"
+  },
+  {
+    "uuid": "0a0525c9-d690-6487-b153-627feb837b70",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-14",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e28881-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Metrics and targets",
+    "drName": "Health and safety metrics"
+  },
+  {
+    "uuid": "c52dec07-47a0-1451-ca3d-d927e1d0bf86",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-15",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e29014-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Metrics and targets",
+    "drName": "Work-life balance metrics"
+  },
+  {
+    "uuid": "8e1daf52-96df-1024-23e6-05504913e2f3",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-16",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e29076-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Metrics and targets",
+    "drName": "Remuneration metrics (pay gap and total remuneration)"
+  },
+  {
+    "uuid": "7d3af402-75c9-513a-04a4-b04900f72213",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-17",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e29173-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Metrics and targets",
+    "drName": "Incidents, complaints and severe human rights impacts"
+  },
+  {
+    "uuid": "94b6a202-6c1e-49ba-031f-7e0e9996e415",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-2",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e27650-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Impacts, risks and opportunities management",
+    "drName": "Processes for engaging with own workforce and workers\u2019 representatives about impacts"
+  },
+  {
+    "uuid": "f69a0a7f-7fcc-992b-7efa-7f4ef9e7de44",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e27751-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Impacts, risks and opportunities management",
+    "drName": "Processes to remediate negative impacts and channels for own workforce to raise concerns"
+  },
+  {
+    "uuid": "71e282d7-e25c-7c54-839b-0e0d249e98ec",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-4",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e27868-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Impacts, risks and opportunities management",
+    "drName": "Taking action on material impacts on own workforce, and approaches to managing material risks and pursuing material opportunities related to own workforce, and effectiveness of those actions"
+  },
+  {
+    "uuid": "b75fa092-fb4e-f2ce-6b70-a5c32496d968",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-5",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e28068-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Metrics and targets",
+    "drName": "Targets related to managing material negative impacts, advancing positive impacts, and managing material risks and opportunities"
+  },
+  {
+    "uuid": "95480c8d-3400-ea8a-5029-3edb9009298e",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-6",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e28187-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Metrics and targets",
+    "drName": "Characteristics of the undertaking\u2019s employees"
+  },
+  {
+    "uuid": "85fc212f-ebfc-b3ab-a97f-89f1c43d1405",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-7",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e28325-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Metrics and targets",
+    "drName": "Characteristics of non-employees in the undertaking\u2019s own workforce"
+  },
+  {
+    "uuid": "896089e8-9b17-9a67-f8cc-b8cd03ccf82c",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-8",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e28429-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Metrics and targets",
+    "drName": "Collective bargaining coverage and social dialogue"
+  },
+  {
+    "uuid": "029ff209-5511-5af8-967e-e50e40811c36",
+    "esrs": "S1",
+    "disclosureRequirement": "S1-9",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e28557-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Metrics and targets",
+    "drName": "Diversity metrics"
+  },
+  {
+    "uuid": "554cd069-8ecf-2071-f862-d68a5ae12620",
+    "esrs": "S1",
+    "disclosureRequirement": "S1.SBM-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e27143-3-1",
+    "topic": "Own Workforce",
+    "reportingArea": "Strategy",
+    "drName": "Material impacts, risks and opportunities and their interaction with strategy and business model"
+  },
+  {
+    "uuid": "f87c113d-66c3-60b6-439b-bcdb840c83b0",
+    "esrs": "S1",
+    "disclosureRequirement": "S2-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e33180-3-1",
+    "topic": "Workers in the Value Chain",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Policies related to value chain workers"
+  },
+  {
+    "uuid": "f87c113d-66c3-60b6-439b-bcdb840c83b0",
+    "esrs": "S2",
+    "disclosureRequirement": "S2-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e33180-3-1",
+    "topic": "Workers in the Value Chain",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Policies related to value chain workers"
+  },
+  {
+    "uuid": "59c354df-a3bf-bfec-1371-95fb5c9b0235",
+    "esrs": "S2",
+    "disclosureRequirement": "S2-2",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e33360-3-1",
+    "topic": "Workers in the Value Chain",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Processes for engaging with value chain workers about impacts"
+  },
+  {
+    "uuid": "ed37de61-91ff-da9e-bfd4-9d192f3863bf",
+    "esrs": "S2",
+    "disclosureRequirement": "S2-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e33444-3-1",
+    "topic": "Workers in the Value Chain",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Processes to remediate negative impacts and channels for value chain workers to raise concerns"
+  },
+  {
+    "uuid": "41b5b94d-fd11-7af3-0094-29b519555e3d",
+    "esrs": "S2",
+    "disclosureRequirement": "S2-4",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e33534-3-1",
+    "topic": "Workers in the Value Chain",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Taking action on material impacts on value chain workers, and approaches to managing material risks and pursuing material opportunities related to value chain workers, and effectiveness of those actions"
+  },
+  {
+    "uuid": "2d44e25b-1a55-285d-2360-198951098b19",
+    "esrs": "S2",
+    "disclosureRequirement": "S2-5",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e33769-3-1",
+    "topic": "Workers in the Value Chain",
+    "reportingArea": "Metrics and targets",
+    "drName": "Targets related to managing material negative impacts, advancing positive impacts, and managing material risks and opportunities"
+  },
+  {
+    "uuid": "41844114-062c-6e1b-48b4-451e7c228a21",
+    "esrs": "S2",
+    "disclosureRequirement": "S2.SBM-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e32961-3-1",
+    "topic": "Workers in the Value Chain",
+    "reportingArea": "Strategy",
+    "drName": "Material impacts, risks and opportunities and their interaction with strategy and business model"
+  },
+  {
+    "uuid": "81f5171e-29ea-4d4d-5831-ba18985bce1c",
+    "esrs": "S3",
+    "disclosureRequirement": "S3-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e35366-3-1",
+    "topic": "Affected Communities",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Policies related to affected communities"
+  },
+  {
+    "uuid": "b30e9cde-12c2-eb06-fe5d-fc50f1cffc78",
+    "esrs": "S3",
+    "disclosureRequirement": "S3-2",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e35508-3-1",
+    "topic": "Affected Communities",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Processes for engaging with affected communities about impacts"
+  },
+  {
+    "uuid": "55a7b6e8-af71-7e6a-cbe8-f1a7f1eaab23",
+    "esrs": "S3",
+    "disclosureRequirement": "S3-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e35616-3-1",
+    "topic": "Affected Communities",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Processes to remediate negative impacts and channels for affected communities to raise concerns"
+  },
+  {
+    "uuid": "fe01596a-de10-e4d6-4748-8aabe0897d2c",
+    "esrs": "S3",
+    "disclosureRequirement": "S3-4",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e35707-3-1",
+    "topic": "Affected Communities",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Taking action on material impacts on affected communities, and approaches to managing material risks and pursuing material opportunities related to affected communities, and effectiveness of those actions"
+  },
+  {
+    "uuid": "4fa6bafb-a34b-280b-979b-29d49bf9539d",
+    "esrs": "S3",
+    "disclosureRequirement": "S3-5",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e35909-3-1",
+    "topic": "Affected Communities",
+    "reportingArea": "Metrics and targets",
+    "drName": "Targets related to managing material negative impacts, advancing positive impacts, and managing material risks and opportunities"
+  },
+  {
+    "uuid": "0ee0aec4-ab0d-dd62-9770-a2b5858e1abd",
+    "esrs": "S3",
+    "disclosureRequirement": "S3.SBM-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e35189-3-1",
+    "topic": "Affected Communities",
+    "reportingArea": "Strategy",
+    "drName": "Material impacts, risks and opportunities and their interaction with strategy and business model"
+  },
+  {
+    "uuid": "778b5529-2c37-9c68-1f4b-4d20de97a144",
+    "esrs": "S4",
+    "disclosureRequirement": "S4-1",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e37568-3-1",
+    "topic": "Consumers and End-users",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Policies related to consumers and end-users"
+  },
+  {
+    "uuid": "86cde5a1-66e3-6f8f-e93a-3a86794b9e7d",
+    "esrs": "S4",
+    "disclosureRequirement": "S4-2",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e37700-3-1",
+    "topic": "Consumers and End-users",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Processes for engaging with consumers and end-users about impacts"
+  },
+  {
+    "uuid": "4ce01d67-da00-f42e-517f-0b05afb73649",
+    "esrs": "S4",
+    "disclosureRequirement": "S4-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e37803-3-1",
+    "topic": "Consumers and End-users",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Processes to remediate negative impacts and channels for consumers and end-users to raise concerns"
+  },
+  {
+    "uuid": "76ca2062-1243-1613-5800-a60349839124",
+    "esrs": "S4",
+    "disclosureRequirement": "S4-4",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e37898-3-1",
+    "topic": "Consumers and End-users",
+    "reportingArea": "Impact, risk and opportunity management",
+    "drName": "Taking action on material impacts on consumers and end- users, and approaches to managing material risks and pursuing material opportunities related to consumers and end-users, and effectiveness of those actions"
+  },
+  {
+    "uuid": "c38c030c-9502-8ef2-8361-c339a3336f11",
+    "esrs": "S4",
+    "disclosureRequirement": "S4-5",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e38137-3-1",
+    "topic": "Consumers and End-users",
+    "reportingArea": "Metrics and targets",
+    "drName": "Targets related to managing material negative impacts, advancing positive impacts, and managing material risks and opportunities"
+  },
+  {
+    "uuid": "fa6b5c2c-d10e-7852-1179-afd5ed2e55c1",
+    "esrs": "S4",
+    "disclosureRequirement": "S4.SBM-3",
+    "drLink": "https://xbrl.efrag.org/e-esrs/esrs-set1-2023.html#d1e37389-3-1",
+    "topic": "Consumers and End-users",
+    "reportingArea": "Strategy",
+    "drName": "Material impacts, risks and opportunities and their interaction with strategy and business model"
+  }
+]
