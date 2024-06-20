@@ -31,7 +31,7 @@ type TranslatorProps = {
   translations: Translation[];
   answerId: number | undefined;
   questionId: number | undefined;
-  handleTranslateFunc: (
+  handleTranslate: (
     content: string,
     targetLangName: string,
   ) => Promise<{ translation: string }>;
@@ -43,7 +43,7 @@ const Translator = ({
   translations: existingTranslations,
   answerId,
   questionId,
-  handleTranslateFunc,
+  handleTranslate,
 }: TranslatorProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -78,7 +78,7 @@ const Translator = ({
 
     if (existingTranslation === null) {
       setIsLoading(true);
-      const translation = await handleTranslateFunc(content, lang);
+      const translation = await handleTranslate(content, lang);
       if (translation === undefined) {
         setIsLoading(false);
         return;

@@ -4,7 +4,7 @@ const NotProtectedLayout = async ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className="flex h-[100vh] bg-gradientBackdrop">
+    <div className="flex h-[100vh] max-h-[100vh] overflow-hidden bg-gradientBackdrop">
       <div className="flex h-full w-full">{children}</div>
     </div>
   );

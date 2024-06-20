@@ -69,7 +69,7 @@ const ValidateQuestions = ({
   return (
     <div>
       <h1 className="p-2">Validate your survey</h1>
-      <ScrollArea className="w-full rounded-md border">
+      <ScrollArea className="h-full w-full rounded-md border">
         {questions.map((q, index) => (
           <>
             <div
