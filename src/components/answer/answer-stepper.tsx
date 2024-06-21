@@ -5,15 +5,12 @@ import { useRouter } from "next/navigation";
 
 import AnswerStepForm from "@/components/forms/answer-step-form";
 import { type Question } from "@/types/question";
+import { type handleUpsertAnswerParams } from "@/server/actions/answer/actions";
 
 type AnswerStepperProps = {
   questions: Question[];
-  handleDeleteFileFunc: (
-    filePaths: string[],
-    answerId: number,
-  ) => Promise<void>;
-  handleUpsertFileFunc: (formData: FormData) => Promise<void>;
-  handleTranslateFunc: (
+  handleUpsertAnswer: (params: handleUpsertAnswerParams) => Promise<number>;
+  handleTranslate: (
     content: string,
     targetLangName: string,
   ) => Promise<{ translation: string }>;
@@ -21,9 +18,8 @@ type AnswerStepperProps = {
 
 const AnswerStepper = ({
   questions,
-  handleDeleteFileFunc,
-  handleUpsertFileFunc,
-  handleTranslateFunc,
+  handleUpsertAnswer,
+  handleTranslate,
 }: AnswerStepperProps) => {
   const [answerIndex, setAnswerIndex] = useState(0);
   const router = useRouter();
@@ -42,7 +38,7 @@ const AnswerStepper = ({
     if (newIdx < questionsLength) {
       setAnswerIndex((prev) => prev + 1);
     } else if (newIdx == questionsLength) {
-      router.push("/survey");
+      router.push("/respond/identified/survey/validate");
     }
   };
 
@@ -55,9 +51,8 @@ const AnswerStepper = ({
             question={currentQuestion}
             nextFunc={Next}
             backFunc={Back}
-            handleDeleteFileFunc={handleDeleteFileFunc}
-            handleUpsertFileFunc={handleUpsertFileFunc}
-            handleTranslateFunc={handleTranslateFunc}
+            handleUpsertAnswer={handleUpsertAnswer}
+            handleTranslate={handleTranslate}
           ></AnswerStepForm>
         </div>
       )}

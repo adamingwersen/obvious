@@ -12,7 +12,6 @@ const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
   if (user) {
     const dbUser = await api.user.getByEmail({ email: user?.email ?? "" });
 
-    console.log("db-user", dbUser);
     if (dbUser !== undefined) redirect("/home");
   }
 

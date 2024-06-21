@@ -25,7 +25,7 @@ const ValidateSurveyPage = async ({
           className="absolute bottom-2 right-2"
         >
           <Button variant="outline" className="flex flex-row space-x-2">
-            <p>Start survey</p> <ArrowRight className="h-4 w-4" />
+            <p>Share survey</p> <ArrowRight className="h-4 w-4" />
           </Button>
         </Link>
       </div>

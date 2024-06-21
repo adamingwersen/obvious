@@ -5,29 +5,42 @@ import { Form, FormField, FormFieldTextArea } from "@/components/ui/form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { ArrowRight, File, Trash } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { ArrowRight } from "lucide-react";
 
 import FilePicker from "@/components/files/file-picker";
-import Spinner from "@/components/ui/spinner";
+
 import Translator from "@/components/translate/translator";
 import { type Question } from "@/types/question";
 import {
   type CreateAnswerFormFields,
   formSchema,
 } from "@/components/forms/schemas/answer-step";
+import FileDisplayComponent, {
+  type FileDisplayComponentRef,
+} from "../files/file-display";
+import { useToast } from "../ui/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
+import { transliterateFileName } from "@/lib/utils";
+import { useFiles } from "@/hooks/use-files";
+import { type handleUpsertAnswerParams } from "@/server/actions/answer/actions";
 
 type AnswerStepFormProps = {
   stepIndex: number;
   question: Question;
   nextFunc: () => void;
   backFunc: () => void;
-  handleDeleteFileFunc: (
-    filePaths: string[],
-    answerId: number,
-  ) => Promise<void>;
-  handleUpsertFileFunc: (formData: FormData) => Promise<void>;
-  handleTranslateFunc: (
+  handleUpsertAnswer: (params: handleUpsertAnswerParams) => Promise<number>;
+  handleTranslate: (
     content: string,
     targetLangName: string,
   ) => Promise<{ translation: string }>;
@@ -38,15 +51,24 @@ const AnswerStepForm = ({
   question,
   nextFunc,
   backFunc,
-  handleDeleteFileFunc,
-  handleUpsertFileFunc,
-  handleTranslateFunc,
+  handleUpsertAnswer,
+  handleTranslate,
 }: AnswerStepFormProps) => {
-  const existingAnswer = question.existingAnswer;
+  const answer = question.existingAnswer;
+  const { uploadFile } = useFiles();
 
+  const fileRefs = useRef<Record<string, FileDisplayComponentRef | null>>({});
+
+  const { toast } = useToast();
   // File states
-  const [answerFiles, setAnswerFiles] = useState<File[]>([]);
-  const [loadingFiles, setLoadingFiles] = useState<Record<number, boolean>>({});
+  const [answerFilesPaths, setAnswerFilesPaths] = useState<string[]>(
+    answer.documentUrls ?? [],
+  );
+  // Confirmation states
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
+  const [confirmationResult, setConfirmationResult] = useState<boolean | null>(
+    null,
+  );
 
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<CreateAnswerFormFields>({
@@ -56,53 +78,124 @@ const AnswerStepForm = ({
     },
   });
 
+  useEffect(() => {
+    const filePaths = answer?.documentUrls ?? [];
+
+    const newRefs: Record<string, FileDisplayComponentRef | null> = {};
+    setTimeout(() => {
+      filePaths.forEach((fp) => {
+        const newRef = fileRefs.current[fp] ?? null;
+        newRef?.updateProgress(100);
+        newRefs[fp] = newRef;
+      });
+      fileRefs.current = newRefs;
+    }, 0);
+
+    setAnswerFilesPaths(filePaths);
+  }, [answer]);
+
   const onBack = () => {
     setIsLoading(true);
     backFunc();
     setIsLoading(false);
   };
 
+  const onUploadFiles = async (files: File[]) => {
+    // Make filename to ASCII
+    const fileNames = files.map((f) => transliterateFileName(f.name));
+
+    const overlapping = fileNames.filter((f) => answerFilesPaths.includes(f));
+    const newFileNames = fileNames.filter((f) => !overlapping.includes(f));
+    if (overlapping.length > 0) {
+      setConfirmDialogOpen(true);
+      // Wait for user confirmation
+      const result = await new Promise((resolve) => {
+        const interval = setInterval(() => {
+          if (confirmationResult !== null) {
+            clearInterval(interval);
+            resolve(confirmationResult);
+          }
+        }, 100);
+      });
+
+      setConfirmationResult(null);
+      if (!result) return;
+    }
+
+    setAnswerFilesPaths((prevPaths) => {
+      const newPaths = [...prevPaths, ...newFileNames];
+      setTimeout(() => {
+        for (let idx = 0; idx < files.length; idx++) {
+          const file = files[idx];
+          if (!file) throw new Error("Accesing file outside of range");
+          const fn = fileNames[idx];
+          if (!fn) throw new Error("Cant find filename?");
+
+          const ref = fileRefs.current[fn];
+          if (!ref) {
+            console.error("Missing inner ref?");
+            return;
+          }
+
+          uploadFile({
+            fileName: fn,
+            file: file,
+            answerId: answer.id,
+            onProgress: (p) => {
+              ref.updateProgress(p);
+            },
+            onError: onFileUploadError,
+            onSuccess: () => ref.updateProgress(100),
+          })
+            .then()
+            .catch((error) => {
+              onFileUploadError(error as Error);
+            });
+        }
+      }, 0);
+      return newPaths;
+    });
+  };
+
   const onSubmit = async (data: CreateAnswerFormFields) => {
     setIsLoading(true);
 
-    // Only plain objects, and a few built-ins, can be passed to Server Actions.
-    // Classes or null prototypes are not supported.
-    // So in order to pass Files we do it through FormData
-    const fd = new FormData();
-    fd.append("content", data.content);
-    fd.append("questionId", question.id.toString());
-    fd.append("answerId", existingAnswer?.id?.toString() ?? "");
-    answerFiles.forEach((file) => fd.append("files", file));
-
-    await handleUpsertFileFunc(fd);
-
-    setAnswerFiles([]);
+    await handleUpsertAnswer({
+      content: data.content,
+      questionId: question.id,
+      answerId: answer.id,
+      filePaths: answerFilesPaths,
+    });
     form.reset();
-    nextFunc();
     setIsLoading(false);
+    nextFunc();
   };
 
-  const onDeleteFile = async (index: number) => {
-    if (existingAnswer === null) {
-      console.error("You cant delete file without an answer?!?");
-      return;
+  const onFileUploadError = (error: Error) => {
+    const errMsg = error.message;
+    if (errMsg.includes("response code: 415")) {
+      toast({ title: "File type not supported" });
+    } else if (errMsg.includes("response code: 413")) {
+      toast({ title: "File too big, maximum size is 50mb" });
+    } else {
+      toast({ title: "Something went wrong uploading file" });
+      console.error(error);
     }
-    const filePaths = existingAnswer.filePaths ?? [];
-    if (filePaths.length <= index) {
-      console.error("Cant find answer path");
-      return;
-    }
-    const filePath = filePaths[index] ?? null;
-    if (filePath === null) {
-      console.error("Cant find entry with index in doc paths");
-      return;
-    }
-
-    // Show file processing
-    setLoadingFiles((prev) => ({ ...prev, [index]: true }));
-    await handleDeleteFileFunc([filePath], existingAnswer.id);
-    setLoadingFiles((prev) => ({ ...prev, [index]: false }));
+    setAnswerFilesPaths((prev) => {
+      const newList = [...prev];
+      newList.pop();
+      return newList;
+    });
   };
+
+  function onOpenDialogChange(confirmed: boolean) {
+    setConfirmDialogOpen(false);
+    if (confirmed) {
+      setConfirmationResult(true);
+    } else {
+      setConfirmationResult(false);
+    }
+  }
 
   return (
     <div className="w-full p-5 text-left">
@@ -113,7 +206,7 @@ const AnswerStepForm = ({
           content={question.content}
           answerId={undefined}
           questionId={question.id}
-          handleTranslateFunc={handleTranslateFunc}
+          handleTranslate={handleTranslate}
         >
           <p className="w-full text-left text-base font-extralight tracking-tight">
             {question.content}
@@ -134,47 +227,32 @@ const AnswerStepForm = ({
                   className="min-h-40"
                   placeholder="Your answer..."
                   {...field}
+                  // @ts-expect-error Removes an error in the console
+                  ref={null}
                 />
               )}
             />
 
-            {(existingAnswer?.filePaths ?? []).length > 0 && (
+            {answerFilesPaths.length > 0 && (
               <div className="font-medium">
-                Existing documents
+                Documents
                 <div className="flex flex-col gap-2">
-                  {existingAnswer?.filePaths?.map((p, index) => {
+                  {answerFilesPaths.map((f: string, index: number) => {
                     return (
-                      <div
-                        key={p}
-                        className="flex items-center justify-between rounded-lg border px-2 py-1"
-                      >
-                        <div className="flex items-center justify-center gap-2">
-                          <File size={15}></File>
-                          <p className="text-sm">{p}</p>
-                        </div>
-                        <Button
-                          variant="destructive"
-                          type="button"
-                          onClick={async () => {
-                            await onDeleteFile(index);
-                          }}
-                        >
-                          {loadingFiles[index] ? (
-                            <Spinner className="size-4"></Spinner>
-                          ) : (
-                            <Trash size={12}></Trash>
-                          )}
-                        </Button>
-                      </div>
+                      <FileDisplayComponent
+                        key={index}
+                        fileName={f}
+                        answerId={answer.id}
+                        ref={(el) => {
+                          fileRefs.current[f] = el;
+                        }}
+                      ></FileDisplayComponent>
                     );
                   })}
                 </div>
               </div>
             )}
-            <FilePicker
-              files={answerFiles}
-              setFiles={setAnswerFiles}
-            ></FilePicker>
+            <FilePicker uploadFiles={onUploadFiles}></FilePicker>
             <div className="flex flex-row justify-between">
               <Button
                 variant="outline"
@@ -198,6 +276,28 @@ const AnswerStepForm = ({
           </form>
         </Form>
       </div>
+      <AlertDialog
+        open={confirmDialogOpen}
+        onOpenChange={(open) => setConfirmDialogOpen(open)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Overwrite existing files?</AlertDialogTitle>
+            <AlertDialogDescription>
+              There seem to be one or more existing files with same names. Do
+              you want to overwrite?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => onOpenDialogChange(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={() => onOpenDialogChange(true)}>
+              Overwrite
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { createTRPCRouter, procedures } from "@/server/api/trpc";
 import { and, eq, isNull, schema, inArray } from "@/server/db";
 import { answerInsertSchema, answerSelectSchema } from "@/server/db/schema";
 import { z } from "zod";
+import { sql } from "drizzle-orm";
 
 const answerCreateSchema = answerInsertSchema.pick({
   content: true,
@@ -28,6 +29,10 @@ const deleteByQuestionIdSchema = answerSelectSchema.pick({
   questionId: true,
 });
 
+const addFilePathToAnswerSchema = answerSelectSchema
+  .pick({ id: true })
+  .extend({ newPath: z.string() });
+
 export const answerRouter = createTRPCRouter({
   findById: procedures.jwtProtected
     .input(answerFindByIdSchema)
@@ -42,6 +47,9 @@ export const answerRouter = createTRPCRouter({
   create: procedures.jwtProtected
     .input(answerCreateSchema)
     .mutation(async ({ ctx, input }) => {
+      if (!ctx.respondentUser)
+        throw new Error("Need respondent session to get answers");
+
       const respondentUserId = ctx.respondentUser.respondentUserId;
       return ctx.db
         .insert(schema.answer)
@@ -83,18 +91,8 @@ export const answerRouter = createTRPCRouter({
   findManyByQuestionIdsForRespondent: procedures.jwtProtected
     .input(findUserAnswersForQuestionsSchema)
     .mutation(async ({ ctx, input }) => {
-      const respondentUserId = ctx.respondentUser.respondentUserId;
-      return ctx.db.query.answer.findMany({
-        where: and(
-          eq(schema.answer.createdById, respondentUserId),
-          inArray(schema.answer.questionId, input.questionIds),
-          isNull(schema.answer.deletedAt),
-        ),
-      });
-    }),
-  findManyByQuesitionIds: procedures.jwtProtected
-    .input(findUserAnswersForQuestionsSchema)
-    .mutation(async ({ ctx, input }) => {
+      if (!ctx.respondentUser)
+        throw new Error("Need respondent session to get answers");
       const respondentUserId = ctx.respondentUser.respondentUserId;
       return ctx.db.query.answer.findMany({
         where: and(
@@ -116,5 +114,17 @@ export const answerRouter = createTRPCRouter({
       return ctx.db
         .delete(schema.answer)
         .where(eq(schema.answer.questionId, input.questionId));
+    }),
+
+  addFilePath: procedures.protected
+    .input(addFilePathToAnswerSchema)
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.execute(
+        sql`
+        UPDATE answer SET 
+        document_urls = array_append(document_urls, ${input.newPath}) 
+        WHERE ${schema.answer.id} = ${input.id} 
+        `,
+      );
     }),
 });

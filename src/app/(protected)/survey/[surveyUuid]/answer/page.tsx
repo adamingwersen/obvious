@@ -1,7 +1,11 @@
 import { api } from "@/trpc/server";
 
 import ViewAnswers from "@/components/answer/view-answers";
-import { handleCreateSignedLink } from "./actions";
+import { FileActionsProvider } from "@/hooks/use-files";
+import {
+  handleAddFilePath,
+  handleDownloadFile,
+} from "@/server/actions/answer/actions";
 
 const AnswerSurveyIdPage = async ({
   params,
@@ -19,11 +23,17 @@ const AnswerSurveyIdPage = async ({
 
   return (
     <div className="mx-auto h-full w-2/3 pt-10 ">
-      <ViewAnswers
-        questions={survey.questions}
-        respondents={respondents}
-        handleCreateDownloadLink={handleCreateSignedLink}
-      ></ViewAnswers>
+      <FileActionsProvider
+        downloadFile={handleDownloadFile}
+        deleteFile={null}
+        addFileToAnswer={handleAddFilePath}
+      >
+        <ViewAnswers
+          asOriginator={true}
+          questions={survey.questions}
+          respondents={respondents}
+        ></ViewAnswers>
+      </FileActionsProvider>
     </div>
   );
 };
