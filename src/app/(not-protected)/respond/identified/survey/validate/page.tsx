@@ -6,7 +6,7 @@ import { getRespondent } from "../../../actions";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-// import { handleDeleteFilesFromAnswer, handleDownloadFile } from "../actions";
+
 import { FileActionsProvider } from "@/hooks/use-files";
 
 import {

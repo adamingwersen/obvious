@@ -43,11 +43,6 @@ export const handleGetQuestionsAnswers = async (questionIds: number[]) => {
   return respondentAnswers;
 };
 
-export async function handleDownloadFile(fileName: string, answerId: number) {
-  const url = await createSignedDownloadUrl(fileName, answerId);
-  redirect(url, RedirectType.replace);
-}
-
 export async function handleUpsertAnswer(formData: FormData) {
   const content = formData.get("content") as string | null;
   if (content === null) throw new Error("Content is required");
