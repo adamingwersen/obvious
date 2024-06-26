@@ -3,16 +3,9 @@
 import { api } from "@/trpc/server";
 
 import { revalidatePath } from "next/cache";
-import { DeleteFiles, UploadFiles } from "@/server/supabase/server";
+import { createSignedDownloadUrl, DeleteFiles } from "@/server/supabase/server";
 import { type CreateAnswerFormFields } from "@/components/forms/schemas/answer-step";
-
-// const getRespondent = async () => {
-//   const respondent_uuid = cookies().get("respondent-identifier")?.value;
-//   if (!respondent_uuid)
-//     throw new Error("Whoops. Unable to identify respondent");
-//   const respondent = await api.respondent.findByUuid({ uuid: respondent_uuid });
-//   return respondent;
-// };
+import { redirect, RedirectType } from "next/navigation";
 
 const upsertAnswer = async (
   data: CreateAnswerFormFields,
@@ -52,7 +45,7 @@ export const handleGetQuestionsAnswers = async (questionIds: number[]) => {
 
 export async function handleUpsertAnswer(formData: FormData) {
   const content = formData.get("content") as string | null;
-  if (!content) throw new Error("Content is required");
+  if (content === null) throw new Error("Content is required");
 
   const questionId =
     parseInt(formData.get("questionId") as string, 10) || undefined;
@@ -61,40 +54,18 @@ export async function handleUpsertAnswer(formData: FormData) {
   const answerId =
     parseInt(formData.get("answerId") as string, 10) || undefined;
 
-  const files = formData.getAll("files") as unknown as File[] | [];
-  try {
-    // Upsert answer to get ID and existing filepaths used for potential file upload
-    const insertedAnswer = await upsertAnswer(
-      { content },
-      questionId,
-      answerId,
-      undefined,
-    );
-    if (insertedAnswer === null)
-      throw new Error("Didnt recieve object from db when upserting");
+  const filePaths = formData.getAll("filePath") as string[] | undefined;
 
-    // Upload potential files
-    if (files.length > 0) {
-      const newFilePaths = await UploadFiles(insertedAnswer.id, files);
+  // Upsert answer to get ID and existing filepaths used for potential file upload
+  const insertedAnswer = await upsertAnswer(
+    { content },
+    questionId,
+    answerId,
+    filePaths,
+  );
 
-      // Handle existing paths and make sure there is no duplicates
-      let paths = undefined;
-      if (insertedAnswer.documentUrls === null) {
-        paths = newFilePaths;
-      } else {
-        // Add unique new to exisiting
-        paths = insertedAnswer.documentUrls.concat(
-          newFilePaths.filter((x) => !insertedAnswer.documentUrls?.includes(x)),
-        );
-      }
-
-      await upsertAnswer({ content }, questionId, insertedAnswer.id, paths);
-    }
-  } catch (error) {
-    console.error("Failed to upload file", error);
-    throw new Error("Error upserting answer from form");
-  }
   revalidatePath(`/(not-protected)/respond/identified/survey`, "page");
+  return insertedAnswer.id;
 }
 
 export async function handleDeleteFilesFromAnswer(
@@ -103,7 +74,6 @@ export async function handleDeleteFilesFromAnswer(
 ) {
   // Remove file from Supabase
   await DeleteFiles(answerId, filePaths);
-
   // Fetch answer from db
   const answer = await api.answer.findById({ id: answerId });
   if (answer.documentUrls === null)

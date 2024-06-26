@@ -139,7 +139,11 @@ export const surveyRouter = createTRPCRouter({
           isNull(schema.survey.deletedAt),
         ),
         with: {
-          questions: true,
+          questions: {
+            with: {
+              answers: true,
+            },
+          },
           user: true,
         },
       });

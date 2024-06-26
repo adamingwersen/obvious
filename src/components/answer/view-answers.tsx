@@ -9,30 +9,25 @@ import {
 import { Button } from "@/components/ui/button";
 import { type UserModel } from "@/server/db/schema";
 import { type QuestionWithAnswers } from "@/types/question";
-import { DownloadCloud } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { FoldVerticalIcon, UnfoldVerticalIcon } from "lucide-react";
 import { useState } from "react";
-import Spinner from "../ui/spinner";
-import DynamicFileIcon from "../files/file-icon";
+
+import { ScrollArea } from "@radix-ui/react-scroll-area";
+import FileDisplayComponent from "@/components/files/file-display";
 
 type ViewAnswersProps = {
+  asOriginator: boolean;
   questions: QuestionWithAnswers[];
   respondents: UserModel[];
-  handleCreateDownloadLink: (
-    filePath: string,
-    answerId: number,
-  ) => Promise<string>;
 };
 
 const ViewAnswers = ({
+  asOriginator,
   questions,
   respondents,
-  handleCreateDownloadLink,
 }: ViewAnswersProps) => {
-  const router = useRouter();
-  const [isDownloading, setIsDownloading] = useState<Record<string, boolean>>(
-    {},
-  );
+  const [openElements, setOpenElements] = useState<string[]>([]);
+
   const respondentLookup: Record<number, UserModel> = respondents.reduce(
     (acc, res) => {
       acc[res.id] = res;
@@ -41,89 +36,118 @@ const ViewAnswers = ({
     {} as Record<number, UserModel>,
   );
 
-  const onDownloadFileClicked = async (fileUrl: string, answerId: number) => {
-    setIsDownloading((prev) => ({ ...prev, [fileUrl]: true }));
-    const downloadUrl = await handleCreateDownloadLink(fileUrl, answerId);
-    setIsDownloading((prev) => ({ ...prev, [fileUrl]: false }));
-    router.push(downloadUrl);
+  const onAccordionValueChange = (elements: string[]) => {
+    setOpenElements(elements);
+  };
+
+  const onToggleOpenClose = () => {
+    if (openElements.length > 0) {
+      setOpenElements([]);
+    } else {
+      setOpenElements(questions.map((_, i) => `item-${i}`));
+    }
   };
 
   return (
-    <Accordion type="multiple" className="w-full">
-      {questions.map((question, i) => {
-        return (
-          <AccordionItem value={`item-${i}`} key={`item-${i}`}>
-            <AccordionTrigger>
-              <div className="flex w-full items-center justify-between gap-2 p-2">
-                <p className="text-left text-sm">{question.content}</p>
-                <p className="whitespace-nowrap text-xs font-light">
-                  {question.answers.length}{" "}
-                  {question.answers.length > 1 ? "answers" : "answer"}
-                </p>
+    <div className="h-full">
+      <div className="flex max-h-full flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <h1 className="font-extralight">Questions</h1>
+          <Button variant="outline" onClick={onToggleOpenClose}>
+            {openElements.length === 0 ? (
+              <div className="flex items-center gap-2">
+                <UnfoldVerticalIcon size={15}></UnfoldVerticalIcon>
+                <p>Expand all</p>
               </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              {question.answers.map((a) => {
-                return (
-                  <div
-                    key={a.id}
-                    className="grid grid-cols-3 gap-4 rounded-md border border-gray-200 p-2 text-left text-sm"
-                  >
-                    <div>
-                      Created by: {respondentLookup[a.createdById]?.email}
+            ) : (
+              <div className="flex items-center gap-2">
+                <FoldVerticalIcon size={15}></FoldVerticalIcon>
+                <p>Collapse all</p>
+              </div>
+            )}
+          </Button>
+        </div>
+        <ScrollArea className="max-h-5/6 overflow-y-auto rounded-lg border">
+          <Accordion
+            type="multiple"
+            value={openElements}
+            onValueChange={onAccordionValueChange}
+          >
+            {questions.map((question, i) => {
+              return (
+                <AccordionItem
+                  value={`item-${i}`}
+                  key={`item-${i}`}
+                  className="p-3"
+                >
+                  <AccordionTrigger>
+                    <div className="flex w-full items-center justify-between gap-2 p-2">
+                      <p className="text-left text-sm">{question.content}</p>
+                      <p className="whitespace-nowrap text-xs font-light">
+                        {asOriginator
+                          ? question.answers.length > 1
+                            ? `${question.answers.length} answers`
+                            : `${question.answers.length} answer`
+                          : " "}
+                      </p>
                     </div>
-                    <div>
-                      <span>Created at: </span>
-                      <span className="font-extralight">
-                        {a.createdAt?.toDateString()}
-                      </span>
-                    </div>
-                    <div>Attachments</div>
-                    <div className="col-span-2 font-extralight">
-                      {a.content}
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      {a.documentUrls && a.documentUrls.length > 0 && a.id ? (
-                        a.documentUrls.map((url) => {
-                          return (
-                            <div
-                              key={url}
-                              className="flex items-center justify-between rounded-lg border px-2 py-1"
-                            >
-                              <div className="flex items-center gap-1">
-                                <DynamicFileIcon filename={url} size={15} />
-                                <p className="text-xs font-extralight">{url}</p>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                disabled={isDownloading[url]}
-                                onClick={async () => {
-                                  if (!a.id) return;
-                                  await onDownloadFileClicked(url, a.id);
-                                }}
-                              >
-                                {isDownloading[url] ? (
-                                  <Spinner className="size-3"></Spinner>
-                                ) : (
-                                  <DownloadCloud size={12}></DownloadCloud>
-                                )}
-                              </Button>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    {question.answers.map((a) => {
+                      return (
+                        <div
+                          key={a.id}
+                          className="grid grid-cols-3 gap-4 rounded-md border border-gray-200 p-2 text-left text-sm"
+                        >
+                          {asOriginator ? (
+                            <div>
+                              Created by:{" "}
+                              {respondentLookup[a.createdById]?.email}
                             </div>
-                          );
-                        })
-                      ) : (
-                        <p className="text-xs font-extralight">No files</p>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </AccordionContent>
-          </AccordionItem>
-        );
-      })}
-    </Accordion>
+                          ) : (
+                            <div>Your answer</div>
+                          )}
+
+                          <div>
+                            <span>Created at: </span>
+                            <span className="font-extralight">
+                              {a.createdAt?.toDateString()}
+                            </span>
+                          </div>
+                          <div>Attachments</div>
+                          <div className="col-span-2 font-extralight">
+                            {a.content}
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            {a.documentUrls &&
+                            a.documentUrls.length > 0 &&
+                            a.id ? (
+                              a.documentUrls.map((filePath, i) => {
+                                return (
+                                  <FileDisplayComponent
+                                    key={i}
+                                    fileName={filePath}
+                                    answerId={a.id}
+                                  ></FileDisplayComponent>
+                                );
+                              })
+                            ) : (
+                              <p className="text-xs font-extralight">
+                                No files
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
+        </ScrollArea>
+      </div>
+    </div>
   );
 };
 

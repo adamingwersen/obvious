@@ -121,12 +121,13 @@ const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
 
 const enforceUserHasJwt = t.middleware(async ({ ctx, next }) => {
   if (!ctx.respondentUser && !ctx.user?.id) {
+
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
     ctx: {
-      // infers the `user` as non-nullable
       respondentUser: ctx.respondentUser,
+      user: ctx.user,
     },
   });
 });
