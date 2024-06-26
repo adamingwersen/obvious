@@ -26,7 +26,6 @@ const CreateSurveyIdPage = async ({
         <CreateQuestionsView
           survey={survey}
           questions={questions}
-          handleDeleteQuestion={handleDeleteQuestion}
           handleHelpESRSDatapoint={handleESRSDatapoint}
         ></CreateQuestionsView>
       </QuestionActionProvider>
