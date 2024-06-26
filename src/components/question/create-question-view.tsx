@@ -17,7 +17,6 @@ import { useState } from "react";
 type CreateQuestionViewProps = {
   survey: SurveyModel;
   questions: QuestionModel[];
-  handleDeleteQuestion: (questionId: number) => Promise<void>;
   handleHelpESRSDatapoint: (dp: EsrsDataPoint) => Promise<string>;
 };
 
@@ -30,7 +29,6 @@ export type ESRSTags = {
 const CreateQuestionsView = ({
   survey,
   questions,
-  handleDeleteQuestion,
   handleHelpESRSDatapoint,
 }: CreateQuestionViewProps) => {
   const [tags, setTags] = useState<ESRSTags>({});
@@ -44,10 +42,9 @@ const CreateQuestionsView = ({
             surveyUuid={survey.uuid}
             question={question}
             key={question.id}
-            handleDeleteQuestion={handleDeleteQuestion}
           />
         ))}
-        {/* <QuestionRow surveyUuid={survey.uuid}></QuestionRow> */}
+        <QuestionRow surveyUuid={survey.uuid}></QuestionRow>
       </ScrollArea>
       <div className="relative w-full max-w-3xl flex-col px-4 pt-10">
         <div className=" mx-auto rounded-md border px-16 py-4 ">

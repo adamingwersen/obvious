@@ -5,6 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -12,6 +21,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 import { type SurveyWithRelationsModel } from "@/server/db/schema";
 import { type ColumnDef } from "@tanstack/react-table";
@@ -117,40 +133,46 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      const surveyName = row.original.title;
+
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {/* <DropdownMenuItem>Change survey name</DropdownMenuItem> */}
-            <Link href={`/survey/${row.original.uuid}/answer`}>
-              <DropdownMenuItem>Go to answers</DropdownMenuItem>
-            </Link>
-            <Link href={`/survey/${row.original.uuid}/create`}>
-              <DropdownMenuItem>Edit questions</DropdownMenuItem>
-            </Link>
+        <Dialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DialogTrigger asChild>
+                <DropdownMenuItem>Change name</DropdownMenuItem>
+              </DialogTrigger>
 
-            <Link href={`/survey/${row.original.uuid}/metadata`}>
-              <DropdownMenuItem>Edit metadata</DropdownMenuItem>
-            </Link>
+              <Link href={`/survey/${row.original.uuid}/answer`}>
+                <DropdownMenuItem>Go to answers</DropdownMenuItem>
+              </Link>
+              <Link href={`/survey/${row.original.uuid}/create`}>
+                <DropdownMenuItem>Edit questions</DropdownMenuItem>
+              </Link>
 
-            <DropdownMenuSeparator />
-            {/* TODO: Fix URL with env or somehting */}
-            <DropdownMenuItem
-              onClick={() =>
-                navigator.clipboard.writeText(
-                  `https://app.obvious.earth/respond/${row.original.uuid}`,
-                )
-              }
-            >
-              Copy link to survey
-            </DropdownMenuItem>
-            {/* <DropdownMenuItem
+              <Link href={`/survey/${row.original.uuid}/metadata`}>
+                <DropdownMenuItem>Edit metadata</DropdownMenuItem>
+              </Link>
+
+              <DropdownMenuSeparator />
+              {/* TODO: Fix URL with env or somehting */}
+              <DropdownMenuItem
+                onClick={() =>
+                  navigator.clipboard.writeText(
+                    `https://app.obvious.earth/respond/${row.original.uuid}`,
+                  )
+                }
+              >
+                Copy link to survey
+              </DropdownMenuItem>
+              {/* <DropdownMenuItem
               onClick={() =>
                 navigator.clipboard.writeText(
                   `SurveyID: ${row.original.id} // CreatedByID: ${row.original.createdById}`,
@@ -159,21 +181,38 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
             >
               Copy data fields for sharing
             </DropdownMenuItem> */}
-            <Link href={`/survey/${row.original.uuid}/sharing`}>
-              <DropdownMenuItem>Share</DropdownMenuItem>
-            </Link>
+              <Link href={`/survey/${row.original.uuid}/sharing`}>
+                <DropdownMenuItem>Share</DropdownMenuItem>
+              </Link>
 
-            <DropdownMenuItem>Pause</DropdownMenuItem>
+              <DropdownMenuItem>Pause</DropdownMenuItem>
 
-            <DropdownMenuItem
-              className="text-red-500"
-              // TODO: Figure out a way to handleArchiveSurvey for selectedRows in table model
-              onClick={() => handleArchiveSurvey(row.original.id)}
-            >
-              Archive
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <DropdownMenuItem
+                className="text-red-500"
+                // TODO: Figure out a way to handleArchiveSurvey for selectedRows in table model
+                onClick={() => handleArchiveSurvey(row.original.id)}
+              >
+                Archive
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Change survey name</DialogTitle>
+            </DialogHeader>
+            <div className="items-center">
+              <Label htmlFor="new-survey-name">New name</Label>
+              <Input
+                id="new-survey-name"
+                defaultValue={surveyName}
+                className="col-span-2 h-8"
+              />
+            </div>
+            <DialogFooter>
+              <Button type="submit">Save changes</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       );
     },
   },

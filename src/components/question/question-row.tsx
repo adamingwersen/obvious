@@ -7,24 +7,23 @@ import { type QuestionModel } from "@/server/db/schema";
 import { PencilIcon, Plus, Trash, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
+import { useQuestionActions } from "@/hooks/server-actions/questions";
 
 type QuestionRowProps = {
   surveyUuid: string;
   question?: QuestionModel;
-  handleDeleteQuestion?: (questionId: number) => Promise<void>;
 };
 
-const QuestionRow = ({
-  surveyUuid,
-  question,
-  handleDeleteQuestion,
-}: QuestionRowProps) => {
+const QuestionRow = ({ surveyUuid, question }: QuestionRowProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { removeQueryParam } = useUrlHelpers();
+  const { deleteQuestion } = useQuestionActions();
+
   const questionId = Number(searchParams.get("questionId"));
 
   const { getNewUrlParams } = useUrlHelpers();
-  if (!question || !handleDeleteQuestion) {
+  if (!question) {
     return (
       <>
         <div className="flex w-full items-center justify-center gap-2 bg-aquamarine-400 px-1 py-2">
@@ -32,7 +31,8 @@ const QuestionRow = ({
             className="flex items-center gap-2"
             variant="ghost"
             onClick={() => {
-              router.push(`/survey/${surveyUuid}/create`);
+              router.replace(removeQueryParam("questionId"));
+              // router.refresh();
             }}
           >
             <Plus size={16} />
@@ -65,7 +65,7 @@ const QuestionRow = ({
           <Trash
             size={16}
             onClick={async () => {
-              await handleDeleteQuestion(question.id);
+              await deleteQuestion(question.id);
             }}
           />
         </Button>

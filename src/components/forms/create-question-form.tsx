@@ -56,6 +56,14 @@ const CreateQuestionForm = ({
     { enabled: !!questionId },
   );
 
+  useEffect(() => {
+    if (!searchParams.has("questionId")) {
+      // console.log("I changed search params", searchParams);
+      form.reset();
+      setTags({});
+    }
+  }, [searchParams]);
+
   const form = useForm<CreateQuestionFormFields>({
     resolver: zodResolver(formSchema),
     defaultValues: {

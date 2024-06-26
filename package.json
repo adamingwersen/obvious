@@ -63,6 +63,7 @@
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
+    "transliterate": "^1.0.1",
     "transliteration": "^2.3.5",
     "tus-js-client": "^4.1.0",
     "uuid": "^9.0.1",
