@@ -59,6 +59,21 @@ export type DisclosureRequirementType = {
   topic: EsrsTopicTypes | "";
   reportingArea: string;
 };
+
+export type EsrsDataPoint = {
+  uuid: string;
+  datapointId: string;
+  datapointName: string;
+  esrs: string;
+  disclosureRequirement: EsrsDRTypes | "";
+  drName: string;
+  drLink: string;
+  paragraph: string;
+  topic: EsrsTopicTypes | "";
+  xbrlDataType: XbrlDataTypeTypes | "";
+  reportingArea: string;
+};
+
 export const drData: DisclosureRequirementType[] = [
   {
     uuid: "18e374be-79ce-07c3-2e0f-7b150cc57c76",
@@ -974,20 +989,6 @@ export const drData: DisclosureRequirementType[] = [
       "Material impacts, risks and opportunities and their interaction with strategy and business model",
   },
 ];
-
-export type EsrsDataPoint = {
-  uuid: string;
-  datapointId: string;
-  datapointName: string;
-  esrs: string;
-  disclosureRequirement: EsrsDRTypes | "";
-  drName: string;
-  drLink: string;
-  paragraph: string;
-  topic: EsrsTopicTypes | "";
-  xbrlDataType: XbrlDataTypeTypes | "";
-  reportingArea: string;
-};
 
 export const esrsData: EsrsDataPoint[] = [
   {
