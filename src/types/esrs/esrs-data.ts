@@ -17165,3 +17165,41 @@ export const esrsData: EsrsDataPoint[] = [
     reportingArea: "Metrics and targets",
   },
 ] as const;
+
+export const DRStoreData = drData.reduce((acc, dr) => {
+  const repAreaObj = acc.filter((x) => x.reportingArea === dr.reportingArea);
+  if (repAreaObj.length === 0) {
+    acc.push({
+      reportingArea: dr.reportingArea,
+      disclosureRequirements: [dr],
+    });
+  } else if (repAreaObj.length === 1) {
+    const firstObj = repAreaObj[0];
+    if (!firstObj) throw new Error("This shouldn't happen");
+    firstObj.disclosureRequirements.push(dr);
+  } else {
+    throw new Error("This shouldn't happen2");
+  }
+
+  return acc;
+}, [] as DisclosureRequirementReportAreaType[]);
+
+export const DPStoreData = esrsData.reduce((acc, dp) => {
+  const drObjs = acc.filter(
+    (x) => x.disclosureReqirement === dp.disclosureRequirement,
+  );
+  if (drObjs.length === 0) {
+    acc.push({
+      disclosureReqirement: dp.disclosureRequirement,
+      esrsDataPoints: [dp],
+    });
+  } else if (drObjs.length === 1) {
+    const firstObj = drObjs[0];
+    if (!firstObj) throw new Error("This shouldn't happen");
+    firstObj.esrsDataPoints.push(dp);
+  } else {
+    throw new Error("This shouldn't happen2");
+  }
+
+  return acc;
+}, [] as DatapointDisclosureRequirementType[]);

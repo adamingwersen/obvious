@@ -1,7 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import {
-  drData,
+  DRStoreData,
+  DPStoreData,
   esrsData,
   TopicStoreData,
   EsrsDataPoint,
@@ -32,50 +33,11 @@ import Spinner from "../ui/spinner";
 import { GippityESRSHelp } from "@/types/question";
 import { ESRSTags } from "./create-question-view";
 
-const newDRStoreData = drData.reduce((acc, dr) => {
-  const repAreaObj = acc.filter((x) => x.reportingArea === dr.reportingArea);
-  if (repAreaObj.length === 0) {
-    acc.push({
-      reportingArea: dr.reportingArea,
-      disclosureRequirements: [dr],
-    });
-  } else if (repAreaObj.length === 1) {
-    const firstObj = repAreaObj[0];
-    if (!firstObj) throw new Error("This shouldn't happen");
-    firstObj.disclosureRequirements.push(dr);
-  } else {
-    throw new Error("This shouldn't happen2");
-  }
-
-  return acc;
-}, [] as DisclosureRequirementReportAreaType[]);
-
-const newDPStoreData = esrsData.reduce((acc, dp) => {
-  const drObjs = acc.filter(
-    (x) => x.disclosureReqirement === dp.disclosureRequirement,
-  );
-  if (drObjs.length === 0) {
-    acc.push({
-      disclosureReqirement: dp.disclosureRequirement,
-      esrsDataPoints: [dp],
-    });
-  } else if (drObjs.length === 1) {
-    const firstObj = drObjs[0];
-    if (!firstObj) throw new Error("This shouldn't happen");
-    firstObj.esrsDataPoints.push(dp);
-  } else {
-    throw new Error("This shouldn't happen2");
-  }
-
-  return acc;
-}, [] as DatapointDisclosureRequirementType[]);
-
 type ESRSSelectorParams = {
   gippity: (datapoint: EsrsDataPoint) => Promise<string>;
   tags: ESRSTags;
   setTags: React.Dispatch<React.SetStateAction<ESRSTags>>;
 };
-
 const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
   const getDataPointFromTags = (t: ESRSTags) => {
     if (!t) return null;
@@ -89,9 +51,9 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
   const [loadingHelp, setLoadingHelp] = useState<boolean>(false);
   const [help, setHelp] = useState<GippityESRSHelp | null>(null);
   const [drStore, setDrStore] =
-    useState<DisclosureRequirementReportAreaType[]>(newDRStoreData);
+    useState<DisclosureRequirementReportAreaType[]>(DRStoreData);
   const [esrsStore, setEsrsStore] =
-    useState<DatapointDisclosureRequirementType[]>(newDPStoreData);
+    useState<DatapointDisclosureRequirementType[]>(DPStoreData);
 
   const [topicOpen, setTopicOpen] = useState<boolean>(false);
   const [drOpen, setDrOpen] = useState<boolean>(false);
@@ -114,12 +76,12 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
 
     // Reset case
     if (newTopic === undefined) {
-      setDrStore(newDRStoreData);
-      setEsrsStore(newDPStoreData);
+      setDrStore(DRStoreData);
+      setEsrsStore(DPStoreData);
     } else {
       // Find subset of DPs that match topic
       const _newDRStoreData: DisclosureRequirementReportAreaType[] = [];
-      newDRStoreData.forEach((dr) => {
+      DRStoreData.forEach((dr) => {
         const drs = dr.disclosureRequirements.filter((x) => x.topic === topic);
         if (drs.length > 0) {
           _newDRStoreData.push({
@@ -131,7 +93,7 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
 
       // Find subset of DPs that match topic
       const _newDpStoreData: DatapointDisclosureRequirementType[] = [];
-      newDPStoreData.forEach((dp) => {
+      DPStoreData.forEach((dp) => {
         const dps = dp.esrsDataPoints.filter((x) => x.topic === topic);
         if (dps.length > 0) {
           _newDpStoreData.push({
@@ -161,8 +123,8 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
         };
       });
 
-      setDrStore(newDRStoreData);
-      setEsrsStore(newDPStoreData);
+      setDrStore(DRStoreData);
+      setEsrsStore(DPStoreData);
     } else {
       setTags({
         topic: selectedDr.topic,
@@ -172,7 +134,7 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
       // Update possible datapoints
       // Find subset of DPs that match topic
       const _newDpStoreData: DatapointDisclosureRequirementType[] = [];
-      newDPStoreData.forEach((dp) => {
+      DPStoreData.forEach((dp) => {
         const dps = dp.esrsDataPoints.filter(
           (x) => x.disclosureRequirement === selectedDr.disclosureRequirement,
         );
@@ -216,8 +178,8 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
     setTags({});
 
     setHelp(null);
-    setDrStore(newDRStoreData);
-    setEsrsStore(newDPStoreData);
+    setDrStore(DRStoreData);
+    setEsrsStore(DPStoreData);
   };
   function parse(body: string): GippityESRSHelp {
     return JSON.parse(body) as GippityESRSHelp;
