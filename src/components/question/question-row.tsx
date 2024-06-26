@@ -2,41 +2,75 @@
 
 import { Separator } from "@/components/ui/separator";
 import useUrlHelpers from "@/hooks/useUrlHelpers";
+import { cn } from "@/lib/utils";
 import { type QuestionModel } from "@/server/db/schema";
-import { PencilIcon, X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { PencilIcon, Plus, Trash, X } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "../ui/button";
 
 type QuestionRowProps = {
-  question: QuestionModel;
-  handleDeleteQuestion: (questionId: number) => Promise<void>;
+  surveyUuid: string;
+  question?: QuestionModel;
+  handleDeleteQuestion?: (questionId: number) => Promise<void>;
 };
 
-const QuestionRow = ({ question, handleDeleteQuestion }: QuestionRowProps) => {
+const QuestionRow = ({
+  surveyUuid,
+  question,
+  handleDeleteQuestion,
+}: QuestionRowProps) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const questionId = Number(searchParams.get("questionId"));
+
   const { getNewUrlParams } = useUrlHelpers();
+  if (!question || !handleDeleteQuestion) {
+    return (
+      <>
+        <div className="flex w-full items-center justify-center gap-2 bg-aquamarine-400 px-1 py-2">
+          <Button
+            className="flex items-center gap-2"
+            variant="ghost"
+            onClick={() => {
+              router.push(`/survey/${surveyUuid}/create`);
+            }}
+          >
+            <Plus size={16} />
+            Add new question
+          </Button>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <div
-        key={question.id}
-        className="flex flex-row justify-between p-1 text-sm"
+        className={cn(
+          "flex items-center justify-between gap-2 px-1 py-2",
+          question.id === questionId && " bg-gray-200",
+        )}
       >
-        {question.title}
-        <div className="flex flex-row space-x-2">
-          <PencilIcon
-            className="size-4"
-            onClick={() =>
-              router.push(getNewUrlParams(`questionId=${question.id}`))
+        <button
+          onClick={() => {
+            if (questionId !== question.id) {
+              router.push(getNewUrlParams(`questionId=${question.id}`));
             }
-          />
-          <X
-            className="size-4"
+          }}
+          className="flex-grow p-1 text-left text-sm"
+        >
+          {question.title}
+        </button>
+        <Button variant="ghost" size="icon">
+          <Trash
+            size={16}
             onClick={async () => {
               await handleDeleteQuestion(question.id);
             }}
           />
-        </div>
+        </Button>
       </div>
-      <Separator className="my-2" />
+      <Separator className="" />
     </>
   );
 };

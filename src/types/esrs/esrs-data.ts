@@ -4,6 +4,52 @@ import {
   type XbrlDataTypeTypes,
 } from "@/types/esrs/esrs-types";
 
+type esrsUtilityType = {
+  esrs: string;
+  name: string;
+};
+
+export type TopicType = {
+  name: string;
+  topics: esrsUtilityType[];
+};
+
+export const TopicStoreData: TopicType[] = [
+  {
+    name: "Environment",
+    topics: [
+      { esrs: "E1", name: "Climate Change" },
+      { esrs: "E2", name: "Pollution" },
+      { esrs: "E3", name: "Water and Marine Resources" },
+      { esrs: "E4", name: "Biodiversity and Ecosystems" },
+      { esrs: "E5", name: "Resource Use and Circular Economy" },
+    ],
+  },
+  {
+    name: "Social",
+    topics: [
+      { esrs: "S1", name: "Own Workforce" },
+      { esrs: "S2", name: "Workers in the Value Chain" },
+      { esrs: "S3", name: "Affected Communities" },
+      { esrs: "S4", name: "Consumers and End-users" },
+    ],
+  },
+  {
+    name: "Governance",
+    topics: [{ esrs: "G1", name: "Business Conduct" }],
+  },
+];
+
+export type DisclosureRequirementReportAreaType = {
+  reportingArea: string;
+  disclosureRequirements: DisclosureRequirementType[];
+};
+
+export type DatapointDisclosureRequirementType = {
+  disclosureReqirement: string;
+  esrsDataPoints: EsrsDataPoint[];
+};
+
 export type DisclosureRequirementType = {
   uuid: string;
   esrs: string;

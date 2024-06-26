@@ -42,6 +42,8 @@ export const answerRouter = createTRPCRouter({
   create: procedures.jwtProtected
     .input(answerCreateSchema)
     .mutation(async ({ ctx, input }) => {
+      if (!ctx.respondentUser)
+        throw new Error("Cant create answer without respondent");
       const respondentUserId = ctx.respondentUser.respondentUserId;
       return ctx.db
         .insert(schema.answer)
@@ -83,6 +85,7 @@ export const answerRouter = createTRPCRouter({
   findManyByQuestionIdsForRespondent: procedures.jwtProtected
     .input(findUserAnswersForQuestionsSchema)
     .mutation(async ({ ctx, input }) => {
+      if (!ctx.respondentUser) throw new Error("Missing respondent");
       const respondentUserId = ctx.respondentUser.respondentUserId;
       return ctx.db.query.answer.findMany({
         where: and(
@@ -95,6 +98,7 @@ export const answerRouter = createTRPCRouter({
   findManyByQuesitionIds: procedures.jwtProtected
     .input(findUserAnswersForQuestionsSchema)
     .mutation(async ({ ctx, input }) => {
+      if (!ctx.respondentUser) throw new Error("Missing respondent");
       const respondentUserId = ctx.respondentUser.respondentUserId;
       return ctx.db.query.answer.findMany({
         where: and(

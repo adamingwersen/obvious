@@ -52,4 +52,5 @@ export type SurveyModel = z.infer<typeof surveySelectSchema>;
 export type SurveyWithRelationsModel = SurveyModel & {
   user: UserModel;
   questions: QuestionModel[];
+  // updateSurveyName: (surveyId: number, newName: string) => Promise<void>;
 };

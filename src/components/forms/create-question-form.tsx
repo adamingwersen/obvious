@@ -6,6 +6,8 @@ import {
   FormField,
   FormFieldInput,
   FormFieldTextArea,
+  FormItem,
+  FormLabel,
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -19,21 +21,25 @@ import {
   type CreateQuestionFormFields,
   formSchema,
 } from "@/components/forms/schemas/create-question";
+import { Badge } from "../ui/badge";
+import { ESRSTags } from "../question/create-question-view";
+import { useQuestionActions } from "@/hooks/server-actions/questions";
 
 type CreateQuestionFormProps = {
   surveyId: number;
-  handleUpsertQuestion: (
-    data: CreateQuestionFormFields,
-    surveyId: number,
-    questionId: number,
-  ) => Promise<void>;
+  setTags: (tag: ESRSTags) => void;
+  tags: ESRSTags;
 };
 
 const CreateQuestionForm = ({
   surveyId,
-  handleUpsertQuestion,
+  setTags,
+  tags,
 }: CreateQuestionFormProps) => {
   const router = useRouter();
+
+  const { upsertQuestion } = useQuestionActions();
+
   const searchParams = useSearchParams();
   const { removeQueryParam } = useUrlHelpers();
   const questionId = searchParams.get("questionId");
@@ -59,19 +65,36 @@ const CreateQuestionForm = ({
   });
 
   const onAddQuestion = async (data: CreateQuestionFormFields) => {
+    questionId;
     setIsLoading(true);
-    await handleUpsertQuestion(data, surveyId, Number(questionId));
+    const qId = questionId ? Number(questionId) : undefined;
+
+    const fullData = {
+      surveyId,
+      id: qId,
+      topicTag: tags.topic ?? null,
+      disclosureRequirementTag: tags.disclosureRequirement ?? null,
+      datapointTag: tags.datapoint ?? null,
+      ...data,
+    };
+
+    await upsertQuestion(fullData);
     form.reset();
     router.replace(removeQueryParam("questionId"));
     router.refresh();
+    setTags({});
     setIsLoading(false);
   };
 
   useEffect(() => {
     if (!data) return;
-
     form.setValue("title", data.title);
     form.setValue("content", data.content);
+    setTags({
+      topic: data.topicTag ?? undefined,
+      disclosureRequirement: data.disclosureRequirementTag ?? undefined,
+      datapoint: data.datapointTag ?? undefined,
+    });
   }, [data, form]);
 
   if (isQueryLoading && !data) {
@@ -85,19 +108,24 @@ const CreateQuestionForm = ({
   if (error) throw new Error(error.message);
 
   return (
-    <div className="mx-auto flex flex-col items-center gap-6">
+    <div className="mx-auto flex w-full flex-col items-center gap-6">
       <Form {...form}>
-        <form className="flex w-1/4 flex-col gap-4">
+        <form className="flex w-full flex-col gap-4">
           <FormField
             control={form.control}
             name="title"
             defaultValue={data ? data.title : undefined}
             render={({ field }) => (
-              <FormFieldInput
-                type="text"
-                placeholder="Question title..."
-                {...field}
-              />
+              <FormItem>
+                <FormLabel>Question</FormLabel>
+                <FormFieldInput
+                  type="text"
+                  placeholder="Question.."
+                  {...field}
+                  // @ts-expect-error Removes an error in the console
+                  ref={null}
+                />
+              </FormItem>
             )}
           />
           <FormField
@@ -105,9 +133,37 @@ const CreateQuestionForm = ({
             name="content"
             defaultValue={data ? data.content : undefined}
             render={({ field }) => (
-              <FormFieldTextArea placeholder="Make it precise.." {...field} />
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormFieldTextArea
+                  placeholder="Make it precise.."
+                  {...field}
+                  // @ts-expect-error Removes an error in the console
+                  ref={null}
+                />
+              </FormItem>
             )}
           />
+          <div className="flex flex-col items-center space-y-4">
+            <h1 className="text-center font-extralight">Question tags</h1>
+            <div className="mx-auto flex space-x-2">
+              {tags.topic && (
+                <Badge className="whitespace-nowrap bg-sand-200">
+                  {tags.topic}
+                </Badge>
+              )}
+              {tags.disclosureRequirement && (
+                <Badge className="whitespace-nowrap bg-aquamarine-500">
+                  {tags.disclosureRequirement}
+                </Badge>
+              )}
+              {tags.datapoint && (
+                <Badge className="whitespace-nowrap bg-nightsky-500">
+                  {tags.datapoint}
+                </Badge>
+              )}
+            </div>
+          </div>
           <div className="flex flex-row justify-end">
             <Button
               variant="default"
