@@ -48,8 +48,7 @@ export const answerRouter = createTRPCRouter({
     .input(answerCreateSchema)
     .mutation(async ({ ctx, input }) => {
       if (!ctx.respondentUser)
-        throw new Error("Need respondent session to get answers");
-
+        throw new Error("Cant create answer without respondent");
       const respondentUserId = ctx.respondentUser.respondentUserId;
       return ctx.db
         .insert(schema.answer)

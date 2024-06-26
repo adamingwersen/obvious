@@ -11,7 +11,7 @@ import { survey } from "./survey.schema";
 import { relations, sql } from "drizzle-orm";
 import { createdUpdatedTime } from "./shared";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
+import { type z } from "zod";
 
 // This models the respondents to a survey
 export const surveyToRespondentUser = pgTable(

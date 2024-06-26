@@ -19,6 +19,9 @@ export const question = pgTable("question", {
   surveyId: integer("survey_id")
     .notNull()
     .references(() => survey.id),
+  topicTag: text("topic_tag"),
+  disclosureRequirementTag: text("disclosure_requirement_tag"), // Disclosure requiremenet
+  datapointTag: text("datapoint_tag"), // Datapoint id
 });
 
 export const questionRelations = relations(question, ({ one, many }) => ({
@@ -35,4 +38,5 @@ export const questionRelations = relations(question, ({ one, many }) => ({
 
 export const questionInsertSchema = createInsertSchema(question);
 export const questionSelectSchema = createSelectSchema(question);
+
 export type QuestionModel = z.infer<typeof questionSelectSchema>;

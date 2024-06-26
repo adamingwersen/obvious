@@ -29,6 +29,20 @@ const findManyBySurveyIdSchema = questionSelectSchema.pick({
 });
 
 export const questionRouter = createTRPCRouter({
+  upsert: procedures.protected
+    .input(questionInsertSchema.omit({ createdById: true }))
+    .mutation(async ({ ctx, input }) => {
+      const authUserId = ctx.user.id;
+      const user = await ctx.db.query.user.findFirst({
+        where: eq(schema.user.authId, authUserId),
+      });
+      if (!user) throw new Error("No user found");
+      return await ctx.db
+        .insert(schema.question)
+        .values({ ...input, createdById: user.id })
+        .onConflictDoUpdate({ target: schema.question.id, set: input });
+    }),
+
   create: procedures.protected
     .input(questionCreateSchema)
     .mutation(async ({ ctx, input }) => {

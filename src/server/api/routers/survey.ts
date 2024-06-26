@@ -18,6 +18,11 @@ const surveyArchiveByIdSchema = surveySelectSchema.pick({
   id: true,
 });
 
+const updateSurveyNameSchema = surveySelectSchema.pick({
+  id: true,
+  title: true,
+});
+
 export const surveyRouter = createTRPCRouter({
   create: procedures.protected
     .input(surveyCreateSchema)
@@ -43,6 +48,15 @@ export const surveyRouter = createTRPCRouter({
       const newSurvey = newSurveys[0];
       if (!newSurvey) throw new Error("Error creating new survey");
       return newSurvey;
+    }),
+
+  updateSurvey: procedures.protected
+    .input(updateSurveyNameSchema)
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .update(schema.survey)
+        .set(input)
+        .where(eq(schema.survey.id, input.id));
     }),
 
   findAllByCurrentUser: procedures.protected.query(async ({ ctx }) => {

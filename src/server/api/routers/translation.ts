@@ -82,8 +82,7 @@ export const translationRouter = createTRPCRouter({
   findManyByQuestionIdsWithJwt: procedures.jwtProtected
     .input(translationFindManyByQuestionIdSchema)
     .query(async ({ ctx, input }) => {
-      if (!ctx.respondentUser)
-        throw new Error("Need respondent session to get translations");
+      if (!ctx.respondentUser) throw new Error("TODO: Clean up");
       const respondentUserId = ctx.respondentUser.respondentUserId;
       const translations = await ctx.db.query.translation.findMany({
         where: and(

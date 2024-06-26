@@ -13,7 +13,6 @@ const SurveyPage = async () => {
         <Link href="/survey/create" className="self-end">
           <Button>Create new survey</Button>
         </Link>
-
         <DataTable columns={DataTableColumns} data={surveys} />
       </div>
     </div>

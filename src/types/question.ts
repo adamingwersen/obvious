@@ -12,3 +12,8 @@ export type Question = {
 export type QuestionWithAnswers = QuestionModel & {
   answers: AnswerModel[];
 };
+
+export type GippityESRSHelp = {
+  questions: string[];
+  explanation: string;
+};
