@@ -990,6 +990,117 @@ export const drData: DisclosureRequirementType[] = [
   },
 ];
 
+type dataType = "text" | "number" | "date" | "table";
+
+export type esrsDataType = {
+  xbrlDataType: XbrlDataTypeTypes | "";
+  displayName: string;
+  dataType: dataType;
+  unit?: string;
+};
+
+export const esrsDataTypes: esrsDataType[] = [
+  {
+    xbrlDataType: "Narrative",
+    displayName: "Narrative",
+    dataType: "text",
+  },
+  {
+    xbrlDataType: "None",
+    displayName: "None",
+    dataType: "text",
+  },
+  {
+    xbrlDataType: "Integer",
+    displayName: "Whole number",
+    dataType: "number",
+  },
+  {
+    xbrlDataType: "Decimal",
+    displayName: "Decimal number",
+    dataType: "number",
+  },
+  {
+    xbrlDataType: "Percent",
+    displayName: "Percent",
+    unit: "%",
+    dataType: "number",
+  },
+  {
+    xbrlDataType: "Monetary",
+    displayName: "Monetary",
+    unit: "€",
+    dataType: "number",
+  },
+  {
+    xbrlDataType: "Table",
+    displayName: "Table",
+    dataType: "text",
+  },
+  {
+    xbrlDataType: "Gyear",
+    displayName: "Year",
+    unit: "year",
+    dataType: "number",
+  },
+  {
+    xbrlDataType: "Date",
+    displayName: "Date",
+    unit: "date",
+    dataType: "date",
+  },
+  {
+    xbrlDataType: "ghgemissions",
+    displayName: "GHG Emissions",
+    unit: "Ton/CO2e",
+    dataType: "number",
+  },
+  {
+    xbrlDataType: "Energy",
+    displayName: "Energy",
+    unit: "MWh",
+    dataType: "number",
+  },
+  {
+    xbrlDataType: "Intensity",
+    displayName: "Intensity",
+    unit: "CO2e/revenue unit",
+    dataType: "number",
+  },
+  {
+    xbrlDataType: "Mass",
+    displayName: "Mass",
+    unit: "kg",
+    dataType: "number",
+  },
+  {
+    xbrlDataType: "Volume",
+    displayName: "Volume",
+    unit: "m\u00B3",
+    dataType: "number",
+  },
+  {
+    xbrlDataType: "Area",
+    displayName: "Area",
+    unit: "km\u00B2",
+    dataType: "number",
+  },
+];
+
+export const getEsrsDataType = (
+  dataType: string | null,
+  dataUnit: string | null,
+) => {
+  if (!dataType) return undefined;
+  const dt = esrsDataTypes.find((x) => x.xbrlDataType === dataType);
+  if (!dt) return undefined;
+  // Data unit might be user specificed so we cant use default
+  if (dataUnit !== null) {
+    dt.unit = dataUnit;
+  }
+  return dt;
+};
+
 export const esrsData: EsrsDataPoint[] = [
   {
     uuid: "264441fe-63e5-1e4c-e618-591ff645981d",

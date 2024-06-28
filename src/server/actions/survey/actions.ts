@@ -1,7 +1,8 @@
+"use server";
 import { api } from "@/trpc/server";
 import { revalidatePath } from "next/cache";
 
-export const handleChangeSurveyName = async (
+export const handleRenameSurveyName = async (
   surveyId: number,
   newName: string,
   pathToRevalidate?: string,

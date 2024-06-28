@@ -22,12 +22,13 @@ import {
   formSchema,
 } from "@/components/forms/schemas/create-question";
 import { Badge } from "../ui/badge";
-import { ESRSTags } from "../question/create-question-view";
+import { type ESRSTags } from "../question/create-question-view";
 import { useQuestionActions } from "@/hooks/server-actions/questions";
+import { getEsrsDataType } from "@/types/esrs/esrs-data";
 
 type CreateQuestionFormProps = {
   surveyId: number;
-  setTags: (tag: ESRSTags) => void;
+  setTags: React.Dispatch<React.SetStateAction<ESRSTags>>;
   tags: ESRSTags;
 };
 
@@ -58,10 +59,10 @@ const CreateQuestionForm = ({
 
   useEffect(() => {
     if (!searchParams.has("questionId")) {
-      // console.log("I changed search params", searchParams);
       form.reset();
       setTags({});
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   const form = useForm<CreateQuestionFormFields>({
@@ -83,9 +84,11 @@ const CreateQuestionForm = ({
       topicTag: tags.topic ?? null,
       disclosureRequirementTag: tags.disclosureRequirement ?? null,
       datapointTag: tags.datapoint ?? null,
+      dataType: tags.dataType?.xbrlDataType ?? null,
+      dataUnit: tags.dataType?.unit ?? null,
       ...data,
     };
-
+    console.log(fullData);
     await upsertQuestion(fullData);
     form.reset();
     router.replace(removeQueryParam("questionId"));
@@ -102,6 +105,7 @@ const CreateQuestionForm = ({
       topic: data.topicTag ?? undefined,
       disclosureRequirement: data.disclosureRequirementTag ?? undefined,
       datapoint: data.datapointTag ?? undefined,
+      dataType: getEsrsDataType(data.dataType, data.dataUnit),
     });
   }, [data, form]);
 
@@ -156,18 +160,23 @@ const CreateQuestionForm = ({
             <h1 className="text-center font-extralight">Question tags</h1>
             <div className="mx-auto flex space-x-2">
               {tags.topic && (
-                <Badge className="whitespace-nowrap bg-sand-200">
+                <Badge className="whitespace-nowrap bg-nightsky-700">
                   {tags.topic}
                 </Badge>
               )}
               {tags.disclosureRequirement && (
-                <Badge className="whitespace-nowrap bg-aquamarine-500">
+                <Badge className="whitespace-nowrap bg-nightsky-500">
                   {tags.disclosureRequirement}
                 </Badge>
               )}
               {tags.datapoint && (
-                <Badge className="whitespace-nowrap bg-nightsky-500">
+                <Badge className="whitespace-nowrap bg-aquamarine-400">
                   {tags.datapoint}
+                </Badge>
+              )}
+              {tags.dataType && tags.dataType.xbrlDataType != "None" && (
+                <Badge className="whitespace-nowrap bg-sand-200">
+                  {tags.dataType.displayName}
                 </Badge>
               )}
             </div>
