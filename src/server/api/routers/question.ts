@@ -2,12 +2,6 @@ import { createTRPCRouter, procedures } from "@/server/api/trpc";
 import { eq, schema } from "@/server/db";
 import { questionInsertSchema, questionSelectSchema } from "@/server/db/schema";
 
-const questionCreateSchema = questionInsertSchema.pick({
-  title: true,
-  content: true,
-  surveyId: true,
-});
-
 const questionUpsertSchema = questionInsertSchema.omit({ createdById: true });
 
 const questionDeleteByIdSchema = questionSelectSchema.pick({
@@ -26,7 +20,6 @@ export const questionRouter = createTRPCRouter({
   upsert: procedures.protected
     .input(questionUpsertSchema)
     .mutation(async ({ ctx, input }) => {
-      console.log(input);
       const authUserId = ctx.user.id;
       const user = await ctx.db.query.user.findFirst({
         where: eq(schema.user.authId, authUserId),

@@ -22,13 +22,13 @@ import {
   formSchema,
 } from "@/components/forms/schemas/create-question";
 import { Badge } from "../ui/badge";
-import { ESRSTags } from "../question/create-question-view";
+import { type ESRSTags } from "../question/create-question-view";
 import { useQuestionActions } from "@/hooks/server-actions/questions";
 import { getEsrsDataType } from "@/types/esrs/esrs-data";
 
 type CreateQuestionFormProps = {
   surveyId: number;
-  setTags: (tag: ESRSTags) => void;
+  setTags: React.Dispatch<React.SetStateAction<ESRSTags>>;
   tags: ESRSTags;
 };
 
@@ -62,6 +62,7 @@ const CreateQuestionForm = ({
       form.reset();
       setTags({});
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   const form = useForm<CreateQuestionFormFields>({

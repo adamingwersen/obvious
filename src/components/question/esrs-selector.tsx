@@ -58,7 +58,7 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
   // console.log(Array.from(new Set(esrsData.map((item) => item.xbrlDataType))));
   const groupedDataTypes = esrsDataTypes.reduce(
     (acc, x) => {
-      (acc[x["dataType"]] = acc[x["dataType"]] || []).push(x);
+      (acc[x.dataType] = acc[x.dataType] ?? []).push(x);
       return acc;
     },
     {} as Record<string, esrsDataType[]>,

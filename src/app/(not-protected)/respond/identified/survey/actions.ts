@@ -3,9 +3,8 @@
 import { api } from "@/trpc/server";
 
 import { revalidatePath } from "next/cache";
-import { createSignedDownloadUrl, DeleteFiles } from "@/server/supabase/server";
+import { DeleteFiles } from "@/server/supabase/server";
 import { type CreateAnswerFormFields } from "@/components/forms/schemas/answer-step";
-import { redirect, RedirectType } from "next/navigation";
 
 const upsertAnswer = async (
   data: CreateAnswerFormFields,
