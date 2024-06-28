@@ -1,6 +1,8 @@
 import { DataTable } from "@/components/tables/survey-table/data-table";
 import { DataTableColumns } from "@/components/tables/survey-table/data-table-columns";
 import { Button } from "@/components/ui/button";
+import { SurveyActionsProvider } from "@/hooks/server-actions/survey";
+import { handleRenameSurveyName } from "@/server/actions/survey/actions";
 import { api } from "@/trpc/server";
 import Link from "next/link";
 
@@ -13,7 +15,9 @@ const SurveyPage = async () => {
         <Link href="/survey/create" className="self-end">
           <Button>Create new survey</Button>
         </Link>
-        <DataTable columns={DataTableColumns} data={surveys} />
+        <SurveyActionsProvider handleRenameSurvey={handleRenameSurveyName}>
+          <DataTable columns={DataTableColumns} data={surveys} />
+        </SurveyActionsProvider>
       </div>
     </div>
   );

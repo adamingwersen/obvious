@@ -7,7 +7,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -23,16 +22,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { useSurveyActions } from "@/hooks/server-actions/survey";
 
 import { type SurveyWithRelationsModel } from "@/server/db/schema";
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
+import { useRef } from "react";
 
 export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
   {
@@ -134,7 +130,7 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
     id: "actions",
     cell: ({ row }) => {
       const surveyName = row.original.title;
-
+      const { rename } = useSurveyActions();
       return (
         <Dialog>
           <DropdownMenu>
@@ -164,29 +160,18 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
               <DropdownMenuSeparator />
               {/* TODO: Fix URL with env or somehting */}
               <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(
+                onClick={async () =>
+                  await navigator.clipboard.writeText(
                     `https://app.obvious.earth/respond/${row.original.uuid}`,
                   )
                 }
               >
                 Copy link to survey
               </DropdownMenuItem>
-              {/* <DropdownMenuItem
-              onClick={() =>
-                navigator.clipboard.writeText(
-                  `SurveyID: ${row.original.id} // CreatedByID: ${row.original.createdById}`,
-                )
-              }
-            >
-              Copy data fields for sharing
-            </DropdownMenuItem> */}
               <Link href={`/survey/${row.original.uuid}/sharing`}>
                 <DropdownMenuItem>Share</DropdownMenuItem>
               </Link>
-
               <DropdownMenuItem>Pause</DropdownMenuItem>
-
               <DropdownMenuItem
                 className="text-red-500"
                 // TODO: Figure out a way to handleArchiveSurvey for selectedRows in table model
@@ -209,7 +194,9 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
               />
             </div>
             <DialogFooter>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit" onClick={() => {}}>
+                Save changes
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

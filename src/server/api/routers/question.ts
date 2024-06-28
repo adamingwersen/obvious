@@ -8,13 +8,7 @@ const questionCreateSchema = questionInsertSchema.pick({
   surveyId: true,
 });
 
-const questionUpdateSchema = questionInsertSchema
-  .pick({
-    title: true,
-    content: true,
-    id: true,
-  })
-  .partial({ content: true });
+const questionUpsertSchema = questionInsertSchema.omit({ createdById: true });
 
 const questionDeleteByIdSchema = questionSelectSchema.pick({
   id: true,
@@ -30,53 +24,22 @@ const findManyBySurveyIdSchema = questionSelectSchema.pick({
 
 export const questionRouter = createTRPCRouter({
   upsert: procedures.protected
-    .input(questionInsertSchema.omit({ createdById: true }))
+    .input(questionUpsertSchema)
     .mutation(async ({ ctx, input }) => {
+      console.log(input);
       const authUserId = ctx.user.id;
       const user = await ctx.db.query.user.findFirst({
         where: eq(schema.user.authId, authUserId),
       });
+
       if (!user) throw new Error("No user found");
+      const values = { ...input, createdById: user.id };
+
+      console.log("DB - upserting", values, input);
       return await ctx.db
         .insert(schema.question)
-        .values({ ...input, createdById: user.id })
+        .values(values)
         .onConflictDoUpdate({ target: schema.question.id, set: input });
-    }),
-
-  create: procedures.protected
-    .input(questionCreateSchema)
-    .mutation(async ({ ctx, input }) => {
-      const authUserId = ctx.user.id;
-      const user = await ctx.db.query.user.findFirst({
-        where: eq(schema.user.authId, authUserId),
-      });
-      if (!user) throw new Error("No user found");
-      return ctx.db
-        .insert(schema.question)
-        .values({ ...input, createdById: user.id });
-    }),
-
-  update: procedures.protected
-    .input(questionUpdateSchema)
-    .mutation(async ({ ctx, input }) => {
-      const authUserId = ctx.user.id;
-      const user = await ctx.db.query.user.findFirst({
-        where: eq(schema.user.authId, authUserId),
-      });
-      if (!user) throw new Error("No user found");
-      const updatedQuestion = ctx.db
-        .update(schema.question)
-        .set(input)
-        .where(eq(schema.question.id, input.id!))
-        .returning();
-      // If content is set we assume its new content
-      // We remove previous translations for question
-      if (input.content !== undefined) {
-        await ctx.db
-          .delete(schema.translation)
-          .where(eq(schema.translation.questionId, input.id!));
-      }
-      return updatedQuestion;
     }),
 
   deleteById: procedures.protected

@@ -22,6 +22,8 @@ export const question = pgTable("question", {
   topicTag: text("topic_tag"),
   disclosureRequirementTag: text("disclosure_requirement_tag"), // Disclosure requiremenet
   datapointTag: text("datapoint_tag"), // Datapoint id
+  dataType: text("data_type"),
+  dataUnit: text("data_unit"),
 });
 
 export const questionRelations = relations(question, ({ one, many }) => ({

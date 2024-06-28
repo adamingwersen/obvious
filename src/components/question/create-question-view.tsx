@@ -1,7 +1,7 @@
 "use client";
 
 import { QuestionModel, SurveyModel } from "@/server/db/schema";
-import { EsrsDataPoint } from "@/types/esrs/esrs-data";
+import { EsrsDataPoint, esrsDataType } from "@/types/esrs/esrs-data";
 import { ScrollArea } from "../ui/scroll-area";
 import QuestionRow from "./question-row";
 import CreateQuestionForm from "../forms/create-question-form";
@@ -24,6 +24,7 @@ export type ESRSTags = {
   topic?: string;
   disclosureRequirement?: string;
   datapoint?: string;
+  dataType?: esrsDataType;
 };
 
 const CreateQuestionsView = ({
@@ -32,7 +33,6 @@ const CreateQuestionsView = ({
   handleHelpESRSDatapoint,
 }: CreateQuestionViewProps) => {
   const [tags, setTags] = useState<ESRSTags>({});
-  console.log(survey);
   return (
     <div className="mx-auto flex w-full">
       <ScrollArea className="absolute h-full w-1/3 rounded-md border px-4 py-2">

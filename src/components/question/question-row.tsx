@@ -61,14 +61,16 @@ const QuestionRow = ({ surveyUuid, question }: QuestionRowProps) => {
         >
           {question.title}
         </button>
-        <Button variant="ghost" size="icon">
-          <Trash
-            size={16}
-            onClick={async () => {
-              await deleteQuestion(question.id);
-            }}
-          />
-        </Button>
+        <div className="flex-shrink-0">
+          <Button variant="ghost" size="icon">
+            <Trash
+              size={16}
+              onClick={async () => {
+                await deleteQuestion(question.id);
+              }}
+            />
+          </Button>
+        </div>
       </div>
       <Separator className="" />
     </>

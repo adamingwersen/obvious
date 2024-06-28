@@ -6,6 +6,8 @@ import {
   esrsData,
   TopicStoreData,
   EsrsDataPoint,
+  esrsDataTypes,
+  type esrsDataType,
   type DisclosureRequirementType,
   type DatapointDisclosureRequirementType,
   type TopicType,
@@ -13,6 +15,16 @@ import {
 } from "@/types/esrs/esrs-data";
 
 import { useEffect, useState } from "react";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import {
   Popover,
@@ -32,6 +44,9 @@ import { cn } from "@/lib/utils";
 import Spinner from "../ui/spinner";
 import { GippityESRSHelp } from "@/types/question";
 import { ESRSTags } from "./create-question-view";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Separator } from "../ui/separator";
 
 type ESRSSelectorParams = {
   gippity: (datapoint: EsrsDataPoint) => Promise<string>;
@@ -39,6 +54,16 @@ type ESRSSelectorParams = {
   setTags: React.Dispatch<React.SetStateAction<ESRSTags>>;
 };
 const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
+  // console.log(esrsData.find((x) => x.xbrlDataType === "Intensity"));
+  // console.log(Array.from(new Set(esrsData.map((item) => item.xbrlDataType))));
+  const groupedDataTypes = esrsDataTypes.reduce(
+    (acc, x) => {
+      (acc[x["dataType"]] = acc[x["dataType"]] || []).push(x);
+      return acc;
+    },
+    {} as Record<string, esrsDataType[]>,
+  );
+
   const getDataPointFromTags = (t: ESRSTags) => {
     if (!t) return null;
     if (!t.datapoint) return null;
@@ -46,10 +71,30 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
     if (!dpObject) return null;
     return dpObject;
   };
+
+  const getDataType = (xbrlName: string) => {
+    const datatype = esrsDataTypes.find((x) => x.xbrlDataType === xbrlName);
+    if (!datatype)
+      return {
+        xbrlDataType: "",
+        displayName: "",
+        dataType: "text",
+      } as esrsDataType;
+    return datatype;
+  };
+  const selectedDataPoint = getDataPointFromTags(tags);
   const [topicStore, setTopicStore] = useState<TopicType[]>(TopicStoreData);
 
   const [loadingHelp, setLoadingHelp] = useState<boolean>(false);
   const [help, setHelp] = useState<GippityESRSHelp | null>(null);
+
+  const [unit, setUnit] = useState<string>(() => {
+    if (!selectedDataPoint) return "";
+    const datapointType = getDataType(selectedDataPoint.xbrlDataType);
+    const unit = datapointType.unit ?? "";
+    return unit;
+  });
+
   const [drStore, setDrStore] =
     useState<DisclosureRequirementReportAreaType[]>(DRStoreData);
   const [esrsStore, setEsrsStore] =
@@ -60,11 +105,22 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
   const [dpOpen, setDpOpen] = useState<boolean>(false);
 
   const [selectedDPObject, setSelectedDPObject] =
-    useState<EsrsDataPoint | null>(getDataPointFromTags(tags));
+    useState<EsrsDataPoint | null>(selectedDataPoint);
 
   useEffect(() => {
     setSelectedDPObject(getDataPointFromTags(tags));
+    console.log("tags", tags);
+    if (tags.datapoint === undefined) {
+      setHelp(null);
+    }
+    console.log(tags);
   }, [tags]);
+
+  const onDataTypeSelected = (value: string) => {
+    setTags((prev) => {
+      return { ...prev, dataType: getDataType(value) };
+    });
+  };
 
   const onTopicSelected = (topic: string) => {
     const newTopic = topic !== tags.topic ? topic : undefined;
@@ -169,14 +225,28 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
         topic: selectedDp.topic,
         disclosureRequirement: selectedDp.disclosureRequirement,
         datapoint: selectedDp.datapointId,
+        dataType: getDataType(selectedDp.xbrlDataType),
       });
     }
     setDpOpen(false);
   };
 
+  const onUnitChange = (value: string) => {
+    setTags((prev) => {
+      return {
+        ...prev,
+        dataType: {
+          xbrlDataType: prev.dataType?.xbrlDataType ?? "None",
+          displayName: prev.dataType?.displayName ?? "None",
+          dataType: prev.dataType?.dataType ?? "text",
+          unit: value,
+        },
+      };
+    });
+  };
+
   const onClear = () => {
     setTags({});
-
     setHelp(null);
     setDrStore(DRStoreData);
     setEsrsStore(DPStoreData);
@@ -196,7 +266,7 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
 
   return (
     <div className=" mx-auto flex w-full flex-col space-y-10">
-      <div className="flex h-full flex-col items-center justify-start space-y-2">
+      <div className="flex h-full flex-col items-center justify-start">
         <div className="w-full">
           <div className="flex items-center justify-between py-2">
             <h1 className="text-xl font-light">Align with standard</h1>
@@ -206,17 +276,23 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
           </div>
           <Popover open={topicOpen} onOpenChange={setTopicOpen}>
             <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                className={cn(
-                  "w-full justify-between",
-                  tags.topic ? "border-2 border-sand-300" : "",
-                )}
-              >
-                {tags.topic ?? "Sustainability Topic"}
-                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
+              <div>
+                <Label htmlFor="topic" className="text-gray-500">
+                  Topic
+                </Label>
+                <Button
+                  id="topic"
+                  variant="outline"
+                  role="combobox"
+                  className={cn(
+                    "w-full justify-between",
+                    tags.topic ? "border-2 border-nightsky-700" : "",
+                  )}
+                >
+                  {tags.topic ?? "Sustainability Topic"}
+                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </div>
             </PopoverTrigger>
             <PopoverContent className="w-full p-0">
               <Command>
@@ -262,20 +338,29 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
         <div className="w-full">
           <Popover open={drOpen} onOpenChange={setDrOpen}>
             <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                // aria-expanded={topicOpen}
-                className={cn(
-                  "w-full justify-between",
-                  tags.disclosureRequirement
-                    ? "border-2 border-aquamarine-500"
-                    : "",
-                )}
-              >
-                {tags.disclosureRequirement ?? "Disclosure requirements"}
-                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
+              <div>
+                <Label
+                  htmlFor="disclosure-requirement"
+                  className="text-gray-500"
+                >
+                  Disclosure requirement
+                </Label>
+                <Button
+                  id="disclosure-requirement"
+                  variant="outline"
+                  role="combobox"
+                  // aria-expanded={topicOpen}
+                  className={cn(
+                    "w-full justify-between",
+                    tags.disclosureRequirement
+                      ? "border-2 border-nightsky-500"
+                      : "",
+                  )}
+                >
+                  {tags.disclosureRequirement ?? "Disclosure requirements"}
+                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </div>
             </PopoverTrigger>
             <PopoverContent className="w-96 p-0">
               <Command>
@@ -336,18 +421,23 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
         <div className="w-full">
           <Popover open={dpOpen} onOpenChange={setDpOpen}>
             <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                // aria-expanded={topicOpen}
-                className={cn(
-                  "w-full justify-between",
-                  tags.datapoint ? "border-2 border-nightsky-500" : "",
-                )}
-              >
-                {tags.datapoint ?? "Data points"}
-                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
+              <div>
+                <Label className="text-gray-500" htmlFor="datapoint">
+                  Datapoint
+                </Label>
+                <Button
+                  id="datapoint"
+                  variant="outline"
+                  role="combobox"
+                  className={cn(
+                    "w-full justify-between",
+                    tags.datapoint ? "border-2 border-aquamarine-400" : "",
+                  )}
+                >
+                  {tags.datapoint ?? "Data points"}
+                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </div>
             </PopoverTrigger>
             <PopoverContent className="w-96 p-0">
               <Command>
@@ -400,6 +490,63 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
           <p className="flex w-full justify-end text-xs text-gray-300">
             {esrsStore.reduce((acc, x) => acc + x.esrsDataPoints.length, 0)}
           </p>
+        </div>
+        <div className="w-full py-2">
+          <Separator />
+        </div>
+        <div id="data-type" className="w-full items-center py-1">
+          <Label htmlFor="data-type" className="text-gray-500">
+            Data type
+          </Label>
+          <Select
+            defaultValue={"None"}
+            onValueChange={onDataTypeSelected}
+            value={tags.dataType?.xbrlDataType ?? "None"}
+          >
+            <SelectTrigger
+              className={cn(
+                "w-full focus:ring-0 focus:ring-offset-0",
+                (tags.dataType?.xbrlDataType ?? "None") !== "None" &&
+                  "border-2 border-sand-200",
+              )}
+            >
+              <SelectValue placeholder="Select data type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem key={"None"} value={"None"}>
+                {"None"}
+              </SelectItem>
+              {Object.keys(groupedDataTypes).map((groupKey) => {
+                return (
+                  <SelectGroup key={groupKey}>
+                    <SelectLabel className="-ml-4 text-left text-xs capitalize text-gray-300">
+                      {groupKey}
+                    </SelectLabel>
+                    {(groupedDataTypes[groupKey] ?? []).map((x) => {
+                      if (x.xbrlDataType === "None") return null;
+                      return (
+                        <SelectItem key={x.xbrlDataType} value={x.xbrlDataType}>
+                          {x.displayName}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectGroup>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="w-full py-1" id="unit">
+          <Label htmlFor="unit" className="text-gray-500">
+            Unit
+          </Label>
+          <Input
+            type="text"
+            className="focus-visible:ring-0 focus-visible:ring-offset-0"
+            placeholder="e.g. CO2e"
+            value={tags.dataType?.unit ?? ""}
+            onChange={(e) => onUnitChange(e.target.value)}
+          ></Input>
         </div>
       </div>
       {selectedDPObject !== null && (
