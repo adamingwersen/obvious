@@ -1,8 +1,8 @@
+import { questionUpsertSchema } from "@/components/forms/schemas/create-question";
+import { keysFromObject } from "@/lib/utils";
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
-import { eq, schema } from "@/server/db";
-import { questionInsertSchema, questionSelectSchema } from "@/server/db/schema";
-
-const questionUpsertSchema = questionInsertSchema.omit({ createdById: true });
+import { eq, schema, sql } from "@/server/db";
+import { type QuestionModel, questionSelectSchema } from "@/server/db/schema";
 
 const questionDeleteByIdSchema = questionSelectSchema.pick({
   id: true,
@@ -26,13 +26,24 @@ export const questionRouter = createTRPCRouter({
       });
 
       if (!user) throw new Error("No user found");
-      const values = { ...input, createdById: user.id };
+      const values = input.map((x) => {
+        return { ...x, createdById: user.id };
+      });
 
-      console.log("DB - upserting", values, input);
+      if (values.length === 0 || !values[0]) return;
+
       return await ctx.db
         .insert(schema.question)
         .values(values)
-        .onConflictDoUpdate({ target: schema.question.id, set: input });
+        .onConflictDoUpdate({
+          target: schema.question.id,
+          set: Object.assign(
+            {},
+            ...keysFromObject(values[0])
+              .filter((k) => k !== "id")
+              .map((k) => ({ [k]: sql`excluded.${k}` })),
+          ) as Partial<QuestionModel>,
+        });
     }),
 
   deleteById: procedures.protected

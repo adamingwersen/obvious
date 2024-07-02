@@ -109,11 +109,9 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
 
   useEffect(() => {
     setSelectedDPObject(getDataPointFromTags(tags));
-    console.log("tags", tags);
     if (tags.datapoint === undefined) {
       setHelp(null);
     }
-    console.log(tags);
   }, [tags]);
 
   const onDataTypeSelected = (value: string) => {

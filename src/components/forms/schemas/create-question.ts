@@ -8,4 +8,8 @@ export const formSchema = questionInsertSchema.extend({
   createdById: z.number().positive().optional(), // This will be infered from requester
 });
 
-export type CreateQuestionFormFields = z.infer<typeof formSchema>;
+export type upsertQuestionType = z.infer<typeof formSchema>;
+
+export const questionUpsertSchema = z.array(formSchema);
+
+export type upsertQuestionsType = z.infer<typeof questionUpsertSchema>;

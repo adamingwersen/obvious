@@ -1,4 +1,11 @@
-import { boolean, integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  integer,
+  pgTable,
+  serial,
+  text,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 import { defaultRows } from "./shared";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -19,6 +26,7 @@ export const question = pgTable("question", {
   surveyId: integer("survey_id")
     .notNull()
     .references(() => survey.id),
+  surveyIndex: integer("survey_index"),
   topicTag: text("topic_tag"),
   disclosureRequirementTag: text("disclosure_requirement_tag"), // Disclosure requiremenet
   datapointTag: text("datapoint_tag"), // Datapoint id

@@ -1,5 +1,5 @@
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
-import { and, eq, isNull, schema } from "@/server/db";
+import { and, desc, eq, isNull, schema } from "@/server/db";
 import { surveySelectSchema } from "@/server/db/schema";
 
 const surveyCreateSchema = surveySelectSchema.pick({
@@ -122,7 +122,9 @@ export const surveyRouter = createTRPCRouter({
           isNull(schema.survey.deletedAt),
         ),
         with: {
-          questions: true,
+          questions: {
+            orderBy: (questions, { asc }) => [asc(questions.surveyIndex)],
+          },
           user: true,
         },
       });

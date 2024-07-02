@@ -2,7 +2,7 @@ import { api } from "@/trpc/server";
 import { handleESRSDatapoint } from "@/server/actions/ai/open-ai";
 
 import {
-  handleUpsertQuestion,
+  handleUpsertQuestions,
   handleDeleteQuestion,
 } from "@/server/actions/questions/actions";
 import CreateQuestionsView from "@/components/question/create-question-view";
@@ -21,11 +21,11 @@ const CreateSurveyIdPage = async ({
       <QuestionActionProvider
         pathToRevalidate="/(protected)/survey/[surveyUuid]/create"
         handleDeleteQuestion={handleDeleteQuestion}
-        handleUpsertQuestion={handleUpsertQuestion}
+        handleUpsertQuestions={handleUpsertQuestions}
       >
         <CreateQuestionsView
           survey={survey}
-          questions={questions}
+          initialQuestions={questions}
           handleHelpESRSDatapoint={handleESRSDatapoint}
         ></CreateQuestionsView>
       </QuestionActionProvider>
