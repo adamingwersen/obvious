@@ -5,16 +5,15 @@ import {
   DPStoreData,
   esrsData,
   TopicStoreData,
-  EsrsDataPoint,
   esrsDataTypes,
+  type EsrsDataPoint,
   type esrsDataType,
   type DisclosureRequirementType,
   type DatapointDisclosureRequirementType,
-  type TopicType,
   type DisclosureRequirementReportAreaType,
 } from "@/types/esrs/esrs-data";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   Select,
@@ -42,8 +41,8 @@ import {
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import Spinner from "../ui/spinner";
-import { GippityESRSHelp } from "@/types/question";
-import { ESRSTags } from "./create-question-view";
+import { type GippityESRSHelp } from "@/types/question";
+import { type ESRSTags } from "./create-question-view";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
@@ -63,14 +62,16 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
     },
     {} as Record<string, esrsDataType[]>,
   );
-
-  const getDataPointFromTags = (t: ESRSTags) => {
-    if (!t) return null;
-    if (!t.datapoint) return null;
-    const dpObject = esrsData.find((x) => x.datapointId == tags.datapoint);
-    if (!dpObject) return null;
-    return dpObject;
-  };
+  const getDataPointFromTags = useCallback(
+    (t: ESRSTags) => {
+      if (!t) return null;
+      if (!t.datapoint) return null;
+      const dpObject = esrsData.find((x) => x.datapointId == tags.datapoint);
+      if (!dpObject) return null;
+      return dpObject;
+    },
+    [tags],
+  );
 
   const getDataType = (xbrlName: string) => {
     const datatype = esrsDataTypes.find((x) => x.xbrlDataType === xbrlName);
@@ -83,17 +84,9 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
     return datatype;
   };
   const selectedDataPoint = getDataPointFromTags(tags);
-  const [topicStore, setTopicStore] = useState<TopicType[]>(TopicStoreData);
 
   const [loadingHelp, setLoadingHelp] = useState<boolean>(false);
   const [help, setHelp] = useState<GippityESRSHelp | null>(null);
-
-  const [unit, setUnit] = useState<string>(() => {
-    if (!selectedDataPoint) return "";
-    const datapointType = getDataType(selectedDataPoint.xbrlDataType);
-    const unit = datapointType.unit ?? "";
-    return unit;
-  });
 
   const [drStore, setDrStore] =
     useState<DisclosureRequirementReportAreaType[]>(DRStoreData);
@@ -109,12 +102,11 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
 
   useEffect(() => {
     setSelectedDPObject(getDataPointFromTags(tags));
-    console.log("tags", tags);
+
     if (tags.datapoint === undefined) {
       setHelp(null);
     }
-    console.log(tags);
-  }, [tags]);
+  }, [tags, getDataPointFromTags]);
 
   const onDataTypeSelected = (value: string) => {
     setTags((prev) => {
@@ -300,7 +292,7 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
                 <CommandList>
                   <CommandEmpty>No option found.</CommandEmpty>
 
-                  {topicStore.map((t) => {
+                  {TopicStoreData.map((t) => {
                     return (
                       <CommandGroup heading={t.name} key={t.name}>
                         {t.topics.map((es) => {
@@ -332,7 +324,7 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
             </PopoverContent>
           </Popover>
           <p className="flex w-full justify-end text-xs text-gray-300">
-            {topicStore.reduce((acc, x) => acc + x.topics.length, 0)}
+            {TopicStoreData.reduce((acc, x) => acc + x.topics.length, 0)}
           </p>
         </div>
         <div className="w-full">

@@ -86,13 +86,13 @@ const ValidateQuestions = ({
                 </p>
               </div>
               <Button
-                variant="destructive"
+                variant="ghost"
                 onClick={async () => await onDeleteQuestion(q.id, index)}
               >
                 {loadingFiles[index] ? (
                   <Spinner className="size-4"></Spinner>
                 ) : (
-                  <Trash size={12}></Trash>
+                  <Trash size={14}></Trash>
                 )}
               </Button>
             </div>
