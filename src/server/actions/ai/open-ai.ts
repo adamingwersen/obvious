@@ -1,13 +1,12 @@
 "use server";
 
 import { api } from "@/trpc/server";
-import { EsrsDataPoint } from "@/types/esrs/esrs-data";
-import { MessagesSquare } from "lucide-react";
+import { type EsrsDataPoint } from "@/types/esrs/esrs-data";
+
 import OpenAI from "openai";
 import {
-  ChatCompletionAssistantMessageParam,
-  ChatCompletionCreateParamsNonStreaming,
-  ChatCompletionMessageParam,
+  type ChatCompletionCreateParamsNonStreaming,
+  type ChatCompletionMessageParam,
 } from "openai/resources/index.mjs";
 import { ESRSMessages } from "./prompts";
 
@@ -17,17 +16,6 @@ interface createTranslationInDbParams {
   answerId?: number;
   questionId?: number;
 }
-
-interface Msg {
-  role: "system" | "user" | "assistant";
-  content: string;
-}
-
-// interface chatCompletionParams {
-//   messages: ChatCompletionAssistantMessageParam[];
-//   model?: string;
-//   responseType: "text" | "json_object";
-// }
 
 const chatCompletion = async (
   params: ChatCompletionCreateParamsNonStreaming,

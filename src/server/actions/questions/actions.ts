@@ -10,15 +10,19 @@ export const handleUpsertQuestion = async (
 ) => {
   const surveyId = data.surveyId;
   if (!surveyId) throw new Error("No survey id provided to usert question");
-  console.log(data);
   await api.question.upsert({ surveyId, ...data });
   if (pathToRevalidate) revalidatePath(pathToRevalidate, "page");
 };
 
 export const handleDeleteQuestion = async (
   questionId: number,
+  allowAnswerCascading: boolean,
   pathToRevalidate?: string,
 ) => {
+  // Delete associated answers
+  if (allowAnswerCascading) {
+    await api.answer.deleteByQuestionId({ questionId: questionId });
+  }
   await api.question.deleteById({ id: questionId });
   if (pathToRevalidate) revalidatePath(pathToRevalidate, "page");
 };

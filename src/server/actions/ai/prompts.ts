@@ -10,10 +10,10 @@ The JSON schema should include: {'summary': string, 'key_points': array of strin
 
 */
 
-import { EsrsDataPoint } from "@/types/esrs/esrs-data";
-import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
+import { type EsrsDataPoint } from "@/types/esrs/esrs-data";
+import { type ChatCompletionMessageParam } from "openai/resources/index.mjs";
 
-const ESRSPrompt = (datapoint: EsrsDataPoint) => {
+const ESRSSytemPrompt = () => {
   return `
 You are an ESG expert. 
 Explain ESRS data points so it easy to understand to a layman. 
@@ -25,7 +25,7 @@ The JSON schema should include: {'questions': string[], explanation: string}
 `;
 };
 
-const ESRSPrompt2 = (dp: EsrsDataPoint) => {
+const ESRSPrompt2 = () => {
   return `
 You are an ESG expert. 
 You are going to write a JSON. Explain ESRS data points so it easy to understand to a layman. 
@@ -89,7 +89,7 @@ export const ESRSMessages = (dp: EsrsDataPoint) => {
   const messages: ChatCompletionMessageParam[] = [
     {
       role: "system",
-      content: ESRSPrompt(dp),
+      content: ESRSSytemPrompt(),
     },
   ];
   const fewShotExamples = ESRSFewShot();

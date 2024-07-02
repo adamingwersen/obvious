@@ -11,12 +11,8 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
-import { api } from "@/trpc/react";
+import { useState } from "react";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import Spinner from "@/components/ui/spinner";
-import useUrlHelpers from "@/hooks/useUrlHelpers";
 import {
   type CreateQuestionFormFields,
   formSchema,
@@ -24,60 +20,35 @@ import {
 import { Badge } from "../ui/badge";
 import { type ESRSTags } from "../question/create-question-view";
 import { useQuestionActions } from "@/hooks/server-actions/questions";
-import { getEsrsDataType } from "@/types/esrs/esrs-data";
+import { type QuestionModel } from "@/server/db/schema";
 
 type CreateQuestionFormProps = {
+  question: QuestionModel | null;
   surveyId: number;
-  setTags: React.Dispatch<React.SetStateAction<ESRSTags>>;
   tags: ESRSTags;
+  resetTags: () => void;
 };
 
 const CreateQuestionForm = ({
+  question,
   surveyId,
-  setTags,
   tags,
+  resetTags,
 }: CreateQuestionFormProps) => {
-  const router = useRouter();
-
   const { upsertQuestion } = useQuestionActions();
-
-  const searchParams = useSearchParams();
-  const { removeQueryParam } = useUrlHelpers();
-  const questionId = searchParams.get("questionId");
   const [isLoading, setIsLoading] = useState(false);
-
-  const {
-    data,
-    error,
-    isLoading: isQueryLoading,
-  } = api.question.findById.useQuery(
-    {
-      id: Number(questionId),
-    },
-    { enabled: !!questionId },
-  );
-
-  useEffect(() => {
-    if (!searchParams.has("questionId")) {
-      form.reset();
-      setTags({});
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
 
   const form = useForm<CreateQuestionFormFields>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      content: "",
+    values: {
+      title: question?.title ?? "",
+      content: question?.content ?? "",
     },
   });
 
   const onAddQuestion = async (data: CreateQuestionFormFields) => {
-    questionId;
     setIsLoading(true);
-    const qId = questionId ? Number(questionId) : undefined;
-
+    const qId = question?.id;
     const fullData = {
       surveyId,
       id: qId,
@@ -88,36 +59,16 @@ const CreateQuestionForm = ({
       dataUnit: tags.dataType?.unit ?? null,
       ...data,
     };
-    console.log(fullData);
+
     await upsertQuestion(fullData);
-    form.reset();
-    router.replace(removeQueryParam("questionId"));
-    router.refresh();
-    setTags({});
+    // We are creating a new question, move on to create another one
+    if (!qId) {
+      form.reset();
+      resetTags();
+    }
+
     setIsLoading(false);
   };
-
-  useEffect(() => {
-    if (!data) return;
-    form.setValue("title", data.title);
-    form.setValue("content", data.content);
-    setTags({
-      topic: data.topicTag ?? undefined,
-      disclosureRequirement: data.disclosureRequirementTag ?? undefined,
-      datapoint: data.datapointTag ?? undefined,
-      dataType: getEsrsDataType(data.dataType, data.dataUnit),
-    });
-  }, [data, form]);
-
-  if (isQueryLoading && !data) {
-    return (
-      <div className="mx-auto flex flex-col items-center gap-6">
-        <Spinner className="size-10" />
-      </div>
-    );
-  }
-
-  if (error) throw new Error(error.message);
 
   return (
     <div className="mx-auto flex w-full flex-col items-center gap-6">
@@ -126,7 +77,6 @@ const CreateQuestionForm = ({
           <FormField
             control={form.control}
             name="title"
-            defaultValue={data ? data.title : undefined}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Question</FormLabel>
@@ -143,7 +93,6 @@ const CreateQuestionForm = ({
           <FormField
             control={form.control}
             name="content"
-            defaultValue={data ? data.content : undefined}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Description</FormLabel>
@@ -177,6 +126,7 @@ const CreateQuestionForm = ({
               {tags.dataType && tags.dataType.xbrlDataType != "None" && (
                 <Badge className="whitespace-nowrap bg-sand-200">
                   {tags.dataType.displayName}
+                  {tags.dataType.unit ? ` : ${tags.dataType.unit}` : ""}
                 </Badge>
               )}
             </div>

@@ -1094,11 +1094,14 @@ export const getEsrsDataType = (
   if (!dataType) return undefined;
   const dt = esrsDataTypes.find((x) => x.xbrlDataType === dataType);
   if (!dt) return undefined;
+
   // Data unit might be user specificed so we cant use default
-  if (dataUnit !== null) {
-    dt.unit = dataUnit;
-  }
-  return dt;
+  return {
+    xbrlDataType: dt.xbrlDataType,
+    displayName: dt.displayName,
+    dataType: dt.dataType,
+    unit: dataUnit ?? dt.unit,
+  } as esrsDataType;
 };
 
 export const esrsData: EsrsDataPoint[] = [

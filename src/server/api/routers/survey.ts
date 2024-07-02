@@ -122,7 +122,7 @@ export const surveyRouter = createTRPCRouter({
           isNull(schema.survey.deletedAt),
         ),
         with: {
-          questions: true,
+          questions: { orderBy: (questions, { asc }) => [asc(questions.id)] },
           user: true,
         },
       });
@@ -143,6 +143,7 @@ export const surveyRouter = createTRPCRouter({
             with: {
               answers: true,
             },
+            orderBy: (questions, { asc }) => [asc(questions.id)],
           },
           user: true,
         },

@@ -1,7 +1,11 @@
 "use client";
 
-import { QuestionModel, SurveyModel } from "@/server/db/schema";
-import { EsrsDataPoint, esrsDataType } from "@/types/esrs/esrs-data";
+import { type QuestionModel, type SurveyModel } from "@/server/db/schema";
+import {
+  getEsrsDataType,
+  type EsrsDataPoint,
+  type esrsDataType,
+} from "@/types/esrs/esrs-data";
 import { ScrollArea } from "../ui/scroll-area";
 import QuestionRow from "./question-row";
 import CreateQuestionForm from "../forms/create-question-form";
@@ -10,7 +14,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "../ui/button";
 import ESRSSelector from "./esrs-selector";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 //Top level component to handle the states between the question list, the current form and the esrs selector
 
@@ -33,25 +37,55 @@ const CreateQuestionsView = ({
   handleHelpESRSDatapoint,
 }: CreateQuestionViewProps) => {
   const [tags, setTags] = useState<ESRSTags>({});
+
+  const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number>(
+    questions.length - 1,
+  );
+  const selectedQuestion = questions[selectedQuestionIndex] ?? null;
+
+  useEffect(() => {
+    if (!selectedQuestion) {
+      setTags({});
+    } else {
+      setTags({
+        topic: selectedQuestion.topicTag ?? undefined,
+        disclosureRequirement:
+          selectedQuestion.disclosureRequirementTag ?? undefined,
+        datapoint: selectedQuestion.datapointTag ?? undefined,
+        dataType: getEsrsDataType(
+          selectedQuestion.dataType,
+          selectedQuestion.dataUnit,
+        ),
+      });
+    }
+  }, [selectedQuestionIndex, selectedQuestion]);
+
   return (
     <div className="mx-auto flex w-full">
       <ScrollArea className="absolute h-full w-1/3 rounded-md border px-4 py-2">
         <h1 className="mb-4 text-xl font-light">Questions</h1>
-        {questions.map((question) => (
+        {questions.map((question, i) => (
           <QuestionRow
-            surveyUuid={survey.uuid}
             question={question}
             key={question.id}
+            isSelected={i === selectedQuestionIndex}
+            selectQuestion={() => setSelectedQuestionIndex(i)}
           />
         ))}
-        <QuestionRow surveyUuid={survey.uuid}></QuestionRow>
+        <QuestionRow
+          selectQuestion={() => {
+            setSelectedQuestionIndex(-1);
+          }}
+          isSelected={false}
+        ></QuestionRow>
       </ScrollArea>
       <div className="relative w-full max-w-3xl flex-col px-4 pt-10">
         <div className=" mx-auto rounded-md border px-16 py-4 ">
           <CreateQuestionForm
+            question={selectedQuestion}
             surveyId={survey.id}
-            setTags={setTags}
             tags={tags}
+            resetTags={() => setTags({})}
           />
           <div className="absolute bottom-16 right-4">
             <Link href={`/survey/${survey.uuid}/validate`}>
