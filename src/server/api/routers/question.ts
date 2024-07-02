@@ -28,7 +28,6 @@ export const questionRouter = createTRPCRouter({
       if (!user) throw new Error("No user found");
       const values = { ...input, createdById: user.id };
 
-      console.log("DB - upserting", values, input);
       return await ctx.db
         .insert(schema.question)
         .values(values)

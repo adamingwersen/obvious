@@ -53,8 +53,6 @@ type ESRSSelectorParams = {
   setTags: React.Dispatch<React.SetStateAction<ESRSTags>>;
 };
 const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
-  // console.log(esrsData.find((x) => x.xbrlDataType === "Intensity"));
-  // console.log(Array.from(new Set(esrsData.map((item) => item.xbrlDataType))));
   const groupedDataTypes = esrsDataTypes.reduce(
     (acc, x) => {
       (acc[x.dataType] = acc[x.dataType] ?? []).push(x);
