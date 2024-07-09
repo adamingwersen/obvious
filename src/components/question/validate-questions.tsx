@@ -86,7 +86,8 @@ const ValidateQuestions = ({
                 </p>
               </div>
               <Button
-                variant="ghost"
+                variant="outline"
+                size="icon"
                 onClick={async () => await onDeleteQuestion(q.id, index)}
               >
                 {loadingFiles[index] ? (

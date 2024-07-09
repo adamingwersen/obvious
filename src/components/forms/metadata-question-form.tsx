@@ -100,9 +100,9 @@ const MetadataQuestionForm = ({
       <form
         action=""
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex w-full flex-col space-y-5  px-10"
+        className="flex w-full flex-col space-y-5 px-5"
       >
-        <div className="metadataFields w-full ">
+        <div className="w-full">
           <FormField
             control={form.control}
             name="metadataQuestionFields"
@@ -110,7 +110,7 @@ const MetadataQuestionForm = ({
               <div>
                 {fields.map((field, index) => {
                   return (
-                    <div key={index} className="">
+                    <div key={index}>
                       <div className="flex gap-x-4 py-1">
                         <FormField
                           control={form.control}
@@ -159,7 +159,8 @@ const MetadataQuestionForm = ({
                         {index > 0 && (
                           <Button
                             type="button"
-                            variant="destructive"
+                            size="icon"
+                            variant="outline"
                             onClick={() => onDelete(index)}
                           >
                             <Trash className="size-4" />

@@ -54,7 +54,7 @@ const CreateSurveyForm = ({ handleCreateSurvey }: CreateSurveyFormProps) => {
       </h1>
       <Form {...form}>
         <form
-          className=" flex  w-1/4 flex-col gap-3"
+          className="flex w-2/3 flex-col gap-3 lg:w-1/3 xl:w-1/4"
           onSubmit={form.handleSubmit((data) => onSubmit(data))}
         >
           <FormLabel>Title</FormLabel>

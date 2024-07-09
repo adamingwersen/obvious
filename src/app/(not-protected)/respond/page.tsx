@@ -22,13 +22,13 @@ const RespondPage = async () => {
 
   return (
     <div className="flex h-full w-full flex-col justify-center space-y-4 pb-10 pt-10 ">
-      <div className="relative flex h-5/6 w-2/5 flex-col self-center rounded-md border bg-white p-4">
-        <div className="flex h-1/6 w-full flex-col items-center justify-center gap-6 self-center bg-lilla-700">
-          <div className="font-light text-white">
+      <div className="relative flex h-5/6 w-4/5 flex-col self-center bg-white p-4 lg:w-3/5">
+        <div className="flex h-fit w-full flex-col items-center justify-center gap-6 self-center bg-lilla-700 py-8">
+          <div className="px-4 font-light text-white">
             <b>
               {originator?.firstName} {originator.lastName}
             </b>{" "}
-            wants you to complete a Due Diligence survey
+            has requested you to complete a Due Diligence survey
           </div>
           <div className="">
             {nextQuestionToAnswer === 0 ? ( // First question is unanswered
@@ -39,14 +39,14 @@ const RespondPage = async () => {
               </Link>
             ) : nextQuestionToAnswer !== -1 ? ( // Some question is answered
               <div className="space-y-2 font-light text-white">
-                <p>{`Looks like you already completed [${nextQuestionToAnswer}/${nQuestions}] of this survey`}</p>
+                <div className="text-center">{`Looks like you already completed [${nextQuestionToAnswer}/${nQuestions}] of this survey`}</div>
                 <div className="flex items-center justify-center gap-3">
                   <Link href="/respond/identified">
                     <Button className="rounded-none bg-lilla-100 text-lilla-900 hover:bg-lilla-900 hover:text-white">
                       Start from the top
                     </Button>
                   </Link>
-                  <p>or</p>
+
                   <Link
                     href={`/respond/identified/survey?startIndex=${nextQuestionToAnswer}`}
                   >
@@ -58,15 +58,15 @@ const RespondPage = async () => {
               </div>
             ) : (
               // All questions are answered
-              <div className="space-y-2 font-light text-white">
-                <p>{`Looks like you already completed this survey`}</p>
-                <div className="flex items-center justify-center gap-3">
+              <div className="space-y-2 text-center font-light text-white">
+                <div className="text-center">{`Looks like you already completed this survey`}</div>
+                <div className="flex flex-col items-center justify-center gap-3 md:flex-row">
                   <Link href="/respond/identified">
                     <Button className="rounded-none bg-lilla-100 text-lilla-900 hover:bg-lilla-900 hover:text-white">
                       Go through the survey again
                     </Button>
                   </Link>
-                  <p>or</p>
+
                   <Link href="/respond/identified/survey/validate">
                     <Button className="rounded-none bg-lilla-100 text-lilla-900 hover:bg-lilla-900 hover:text-white">
                       Go to review your answers
@@ -78,10 +78,10 @@ const RespondPage = async () => {
           </div>
         </div>
         <div className="flex flex-col gap-6 pt-5">
-          <div className="mx-10 rounded-md bg-gray-100 px-2 py-2">
+          <div className="mx-10 bg-gray-100 px-2 py-2">
             This survey contains <b>{nQuestions} questions</b>
           </div>
-          <div className="mx-10 rounded-md bg-gray-100 px-2 py-2">
+          <div className="mx-10 bg-gray-100 px-2 py-2">
             {!survey.dueAt && <p>There is no due date</p>}
             {survey.dueAt && (
               <p>
@@ -92,7 +92,7 @@ const RespondPage = async () => {
         </div>
         <div className="absolute bottom-6 self-center font-light">
           This survey was built with <b className="font-bold">Obvious</b>.{" "}
-          <a href="www.obvious.earth" className="underline">
+          <a href="https://www.obvious.earth" className="underline">
             Visit website
           </a>
         </div>

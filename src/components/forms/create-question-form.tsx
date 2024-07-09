@@ -131,9 +131,9 @@ const CreateQuestionForm = ({
               )}
             </div>
           </div>
-          <div className="flex flex-row justify-end">
+          <div className="flex flex-row justify-center">
             <Button
-              variant="default"
+              variant="outline"
               isLoading={isLoading}
               onClick={form.handleSubmit((data) => onAddQuestion(data))}
             >

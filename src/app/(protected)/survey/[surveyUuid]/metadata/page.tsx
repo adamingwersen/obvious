@@ -13,7 +13,7 @@ const MetadataQuestionPage = async ({
 
   return (
     <div className="flex h-full flex-col space-y-4 pt-10">
-      <div className="relative h-full w-1/3 self-center rounded-md border p-4">
+      <div className="relative h-full w-2/3 self-center rounded-md border p-4 xl:w-1/2 2xl:w-1/3">
         <p className="flex justify-center pb-5">
           Basic information for respondent to disclose
         </p>

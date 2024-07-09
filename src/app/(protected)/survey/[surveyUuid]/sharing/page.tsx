@@ -25,8 +25,10 @@ const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
 
   return (
     <div className="flex h-full flex-col space-y-4 pt-10">
-      <div className="relative h-full w-2/5 items-center self-center rounded-md border p-4">
-        <p className="flex justify-center py-5">Send to email</p>
+      <div className="relative h-full w-4/5 items-center self-center rounded-md border p-4 md:w-3/5 lg:w-2/5">
+        <p className="flex justify-center py-5 text-xl font-extralight">
+          Send to email
+        </p>
         <ShareForm
           surveyId={survey.id}
           surveyUuid={params.surveyUuid}
@@ -37,10 +39,10 @@ const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
           handleDeleteRespondent={handleDeleteRespondent}
         />
         <div className="flex justify-center pt-5">
-          <Separator className="flex w-2/3" />
+          <Separator />
         </div>
         <div className="flex flex-col items-center justify-center">
-          <p className=" py-5">Copy link</p>
+          <p className="py-5 text-xl font-extralight">Copy link</p>
           <CopyToClipboardButton
             text={`respond/${params.surveyUuid}`}
             url={`${process.env.BASE_URL}/respond/${params.surveyUuid}`}
@@ -48,7 +50,7 @@ const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
         </div>
         <div className="absolute bottom-6 right-6">
           <Link href="/survey">
-            <Button variant="outline" className="gap-2">
+            <Button variant="default" className="gap-2">
               Finish
               <ArrowRight className="size-4" />
             </Button>

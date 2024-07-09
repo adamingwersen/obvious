@@ -20,9 +20,8 @@ const AnswerSurveyIdPage = async ({
   });
   if (!respondentIds) throw new Error("No respondents");
   const respondents = await api.user.findManyById(respondentIds);
-
   return (
-    <div className="mx-auto h-full w-2/3 pt-10 ">
+    <div className="mx-auto h-full w-4/5 pt-10 lg:w-2/3 ">
       <FileActionsProvider
         downloadFile={handleDownloadFile}
         deleteFile={null}

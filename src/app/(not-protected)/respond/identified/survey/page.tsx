@@ -13,7 +13,6 @@ import {
   handleUpsertAnswer,
 } from "@/server/actions/answer/actions";
 import { AnswerActionProvider } from "@/hooks/server-actions/answers";
-// Answer page data types
 
 const RespondentSurveyPage = async () => {
   const respondentUser = await getRespondent();
@@ -21,10 +20,9 @@ const RespondentSurveyPage = async () => {
   // Fetch survey with questions
   const survey = await api.survey.findById({ id: respondentUser.surveyId });
   const questions = survey.questions;
-  // Fetch existing answers for survey questions
-  const questionIds = questions.map((question) => question.id);
 
   // Fetch translations for questions in survey
+  const questionIds = questions.map((question) => question.id);
   const questionsTranslations =
     await api.translation.findManyByQuestionIdsWithJwt({
       questionIds: questionIds,
@@ -59,8 +57,8 @@ const RespondentSurveyPage = async () => {
   );
 
   return (
-    <div className="flex h-full w-full flex-col justify-center space-y-4 pb-10 pt-10 ">
-      <div className="relative flex  w-2/5 flex-col self-center rounded-md border bg-white p-4 pb-10">
+    <div className="flex h-full w-full flex-col justify-center space-y-4">
+      <div className="relative h-5/6 w-4/5 self-center bg-white p-8 lg:w-3/5 xl:w-2/5">
         <FileActionsProvider
           downloadFile={handleDownloadFile}
           deleteFile={handleDeleteFile}
