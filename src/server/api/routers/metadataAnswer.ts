@@ -34,7 +34,6 @@ export const metadataAnswerRouter = createTRPCRouter({
       );
       if (!isCreatedByIdsEqual)
         throw new Error("Multiple respondent IDs in input");
-      console.log("inserting", input);
       return ctx.db
         .insert(schema.metadataAnswer)
         .values(input)
