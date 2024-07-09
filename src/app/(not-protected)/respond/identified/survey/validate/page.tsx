@@ -23,7 +23,7 @@ const RespondentSurveyValidatePage = async () => {
 
   return (
     <div className="flex h-full w-full flex-col justify-center space-y-4 pb-10 pt-10 ">
-      <div className="mx-auto flex max-h-[90svh] w-3/5 flex-col gap-5 rounded-md bg-white p-4 pb-10">
+      <div className="mx-auto flex max-h-[90svh] w-3/5 flex-col justify-center gap-5 rounded-md bg-white p-4">
         <h1 className="text-center">Review your answers</h1>
         <div className="h-5/6">
           <FileActionsProvider

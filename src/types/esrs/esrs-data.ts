@@ -990,12 +990,12 @@ export const drData: DisclosureRequirementType[] = [
   },
 ];
 
-type dataType = "text" | "number" | "date" | "table";
+export type formDataTypes = "text" | "number" | "date" | "table";
 
 export type esrsDataType = {
   xbrlDataType: XbrlDataTypeTypes | "";
   displayName: string;
-  dataType: dataType;
+  formDataType: formDataTypes;
   unit?: string;
 };
 
@@ -1003,87 +1003,86 @@ export const esrsDataTypes: esrsDataType[] = [
   {
     xbrlDataType: "Narrative",
     displayName: "Narrative",
-    dataType: "text",
+    formDataType: "text",
   },
   {
     xbrlDataType: "None",
     displayName: "None",
-    dataType: "text",
+    formDataType: "text",
   },
   {
     xbrlDataType: "Integer",
     displayName: "Whole number",
-    dataType: "number",
+    formDataType: "number",
   },
   {
     xbrlDataType: "Decimal",
     displayName: "Decimal number",
-    dataType: "number",
+    formDataType: "number",
   },
   {
     xbrlDataType: "Percent",
     displayName: "Percent",
     unit: "%",
-    dataType: "number",
+    formDataType: "number",
   },
   {
     xbrlDataType: "Monetary",
     displayName: "Monetary",
     unit: "€",
-    dataType: "number",
+    formDataType: "number",
   },
   {
     xbrlDataType: "Table",
     displayName: "Table",
-    dataType: "text",
+    formDataType: "text",
   },
   {
     xbrlDataType: "Gyear",
     displayName: "Year",
     unit: "year",
-    dataType: "number",
+    formDataType: "number",
   },
   {
     xbrlDataType: "Date",
     displayName: "Date",
-    unit: "date",
-    dataType: "date",
+    formDataType: "date",
   },
   {
     xbrlDataType: "ghgemissions",
     displayName: "GHG Emissions",
     unit: "Ton/CO2e",
-    dataType: "number",
+    formDataType: "number",
   },
   {
     xbrlDataType: "Energy",
     displayName: "Energy",
     unit: "MWh",
-    dataType: "number",
+    formDataType: "number",
   },
   {
     xbrlDataType: "Intensity",
     displayName: "Intensity",
     unit: "CO2e/revenue unit",
-    dataType: "number",
+    formDataType: "number",
   },
   {
     xbrlDataType: "Mass",
     displayName: "Mass",
     unit: "kg",
-    dataType: "number",
+    formDataType: "number",
   },
   {
     xbrlDataType: "Volume",
     displayName: "Volume",
     unit: "m\u00B3",
-    dataType: "number",
+    formDataType: "number",
   },
   {
     xbrlDataType: "Area",
     displayName: "Area",
     unit: "km\u00B2",
-    dataType: "number",
+    formDataType: "number",
   },
 ];
 
@@ -1099,7 +1098,7 @@ export const getEsrsDataType = (
   return {
     xbrlDataType: dt.xbrlDataType,
     displayName: dt.displayName,
-    dataType: dt.dataType,
+    formDataType: dt.formDataType,
     unit: dataUnit ?? dt.unit,
   } as esrsDataType;
 };
@@ -3481,7 +3480,7 @@ export const esrsData: EsrsDataPoint[] = [
   {
     uuid: "8faadd84-c469-3672-af23-ea2af10120b5",
     datapointId: "E1.SBM-3_04",
-    datapointName: "Disclosure of how resilience analysis has been conducted ",
+    datapointName: "Disclosure of when resilience analysis has been conducted ",
     esrs: "E1",
     disclosureRequirement: "E1.SBM-3",
     drName:

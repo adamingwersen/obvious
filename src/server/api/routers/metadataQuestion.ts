@@ -65,6 +65,9 @@ export const metadataQuestionRouter = createTRPCRouter({
           target: schema.metadataQuestion.id,
           set: {
             title: sql.raw(`excluded.${schema.metadataQuestion.title.name}`),
+            metadataType: sql.raw(
+              `excluded.${schema.metadataQuestion.metadataType.name}`,
+            ),
           },
         })
         .returning({ id: schema.metadataQuestion.id });
@@ -99,7 +102,7 @@ export const metadataQuestionRouter = createTRPCRouter({
       if (!survey) throw new Error("No survey found");
       const metadataQuestions = await ctx.db.query.metadataQuestion.findMany({
         where: eq(schema.metadataQuestion.surveyId, survey.id),
-        orderBy: asc(schema.metadataQuestion.createdAt),
+        orderBy: asc(schema.metadataQuestion.id),
       });
       if (!metadataQuestions) return [];
       return metadataQuestions;
@@ -109,8 +112,9 @@ export const metadataQuestionRouter = createTRPCRouter({
     .input(findManyBySurveyIdSchema)
     .query(async ({ ctx, input }) => {
       const metadataQuestions = await ctx.db.query.metadataQuestion.findMany({
+        with: { metadataAnswer: true },
         where: eq(schema.metadataQuestion.surveyId, input.surveyId),
-        orderBy: asc(schema.metadataQuestion.createdAt),
+        orderBy: asc(schema.metadataQuestion.id),
       });
       if (!metadataQuestions) return [];
       return metadataQuestions;

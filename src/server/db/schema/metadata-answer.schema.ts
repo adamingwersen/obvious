@@ -5,7 +5,6 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import type { z } from "zod";
 import { relations } from "drizzle-orm";
 import { survey } from "@/server/db/schema/survey.schema";
-import { METADATA_TYPES_SCHEMA } from "@/server/db/schema/enums";
 import { metadataQuestion } from "@/server/db/schema/metadata-question.schema";
 import { user } from "./user.schema";
 
@@ -21,7 +20,6 @@ export const metadataAnswer = pgTable("metadata_answer", {
     .notNull()
     .references(() => user.id),
   response: varchar("response").notNull(),
-  metadataType: METADATA_TYPES_SCHEMA("metadata_type").notNull(),
 });
 
 export const metadataAnswerRelations = relations(metadataAnswer, ({ one }) => ({

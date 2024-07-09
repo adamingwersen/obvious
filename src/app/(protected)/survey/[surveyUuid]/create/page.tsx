@@ -15,7 +15,6 @@ const CreateSurveyIdPage = async ({
 }) => {
   const survey = await api.survey.findByUuid({ uuid: params.surveyUuid });
   const questions = survey.questions;
-
   return (
     <div className="flex h-full">
       <QuestionActionProvider

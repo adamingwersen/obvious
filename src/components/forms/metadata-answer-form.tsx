@@ -1,71 +1,69 @@
 "use client";
 
 import {
-  metadataAnswerFormSchema,
-  type CreateMetadataAnswerFormFields,
+  type FormSchema,
+  getFieldRules,
 } from "@/components/forms/schemas/metadata-answer";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
-  FormField,
-  FormFieldInput,
   FormItem,
+  FormField,
   FormControl,
   FormDescription,
   FormMessage,
+  FormLabel,
 } from "@/components/ui/form";
-import {
-  type MetadataType,
-  type MetadataQuestionModel,
-  type SurveyRespondentModel,
-} from "@/server/db/schema";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { type MetadataQuestionWithRespondentAnswer } from "@/types/metadata";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { Input } from "../ui/input";
+import { useRouter } from "next/navigation";
 
 // TODO: Restrict on types and render form fields accordingly
 
 type MetadataAnswerFormProps = {
-  surveyUuid: string;
-  respondent: SurveyRespondentModel;
-  metadataQuestions: MetadataQuestionModel[];
+  metadataQuestions: MetadataQuestionWithRespondentAnswer[];
+  surveyId: number;
+  respondentUserId: number;
   handleSubmitMetadataAnswer: (
-    surveyUuid: string,
+    surveyId: number,
     respondentUserId: number,
-    data: CreateMetadataAnswerFormFields,
+    data: FormSchema,
   ) => Promise<void>;
 };
 
 const MetadataAnswerForm = ({
   metadataQuestions,
-  surveyUuid,
-  respondent,
+  surveyId,
+  respondentUserId,
   handleSubmitMetadataAnswer,
 }: MetadataAnswerFormProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<CreateMetadataAnswerFormFields>({
-    resolver: zodResolver(metadataAnswerFormSchema),
+  const router = useRouter();
+
+  const existingValues = metadataQuestions.map((mq) => {
+    return {
+      metadataAnswerId: mq.answer?.id,
+      questionId: mq.id,
+      question: mq.title,
+      fieldType: mq.metadataType,
+      value: mq.answer?.response ?? "",
+    };
   });
 
-  const onSubmit = async (data: CreateMetadataAnswerFormFields) => {
-    setIsLoading(true);
-    await handleSubmitMetadataAnswer(
-      surveyUuid,
-      respondent.respondentUserId,
-      data,
-    );
-    setIsLoading(false);
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
-  const setQuestionData = (
-    index: number,
-    questionId: number,
-    metadataType: MetadataType,
-  ) => {
-    form.setValue(`data.${index}.questionId`, questionId);
-    form.setValue(`data.${index}.metadataType`, metadataType);
+  const form = useForm<FormSchema>({
+    values: { fields: existingValues, isTocChecked: false },
+  });
+
+  const onSubmit = async (data: FormSchema) => {
+    setIsLoading(true);
+    await handleSubmitMetadataAnswer(surveyId, respondentUserId, data);
+    setIsLoading(false);
+    router.push("/respond/identified/survey");
   };
 
   return (
@@ -75,27 +73,26 @@ const MetadataAnswerForm = ({
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="flex w-2/3 flex-col gap-2">
-          {metadataQuestions.map((question, index) => {
+          {metadataQuestions.map((mq, index) => {
             return (
-              <div key={index}>
-                <FormField
-                  control={form.control}
-                  name={`data.${index}.response`}
-                  render={({ field }) => (
-                    <FormFieldInput
-                      placeholder={question.title}
-                      {...field}
-                      onInput={() =>
-                        setQuestionData(
-                          index,
-                          question.id,
-                          question.metadataType,
-                        )
-                      }
-                    />
-                  )}
-                />
-              </div>
+              <FormField
+                key={index}
+                control={form.control}
+                rules={getFieldRules(mq.metadataType)}
+                name={`fields.${index}.value`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{mq.title}</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={`Insert ${mq.metadataType.toLowerCase()}`}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             );
           })}
           <div className="start-0 flex flex-row items-center justify-between">
@@ -113,10 +110,10 @@ const MetadataAnswerForm = ({
                   </FormControl>
                   <div className="">
                     <FormDescription>
-                      I accept the{" "}
+                      {"I accept the "}
                       <Link
                         className="underline hover:text-nightsky-600"
-                        href="www.obvious.earth"
+                        href="https://www.obvious.earth"
                       >
                         terms and conditions
                       </Link>

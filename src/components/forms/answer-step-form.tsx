@@ -1,20 +1,43 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormField, FormFieldTextArea } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormFieldTextArea,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CalendarIcon, X } from "lucide-react";
+import { format } from "date-fns";
 
 import FilePicker from "@/components/files/file-picker";
 
-import Translator from "@/components/translate/translator";
-import { type Question } from "@/types/question";
 import {
-  type CreateAnswerFormFields,
-  formSchema,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+import Translator from "@/components/translate/translator";
+import { type QuestionWithRespondentAnswer } from "@/types/question";
+import {
+  type AnswerFormData,
+  getFormValationSchema,
 } from "@/components/forms/schemas/answer-step";
 import FileDisplayComponent, {
   type FileDisplayComponentRef,
@@ -30,16 +53,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
-import { transliterateFileName } from "@/lib/utils";
+import { cn, transliterateFileName } from "@/lib/utils";
 import { useFiles } from "@/hooks/use-files";
-import { type handleUpsertAnswerParams } from "@/server/actions/answer/actions";
+import { useAnswerActions } from "@/hooks/server-actions/answers";
+import { getEsrsDataType } from "@/types/esrs/esrs-data";
+import { Calendar } from "../ui/calendar";
 
 type AnswerStepFormProps = {
   stepIndex: number;
-  question: Question;
+  question: QuestionWithRespondentAnswer;
   nextFunc: () => void;
   backFunc: () => void;
-  handleUpsertAnswer: (params: handleUpsertAnswerParams) => Promise<number>;
   handleTranslate: (
     content: string,
     targetLangName: string,
@@ -51,11 +75,12 @@ const AnswerStepForm = ({
   question,
   nextFunc,
   backFunc,
-  handleUpsertAnswer,
   handleTranslate,
 }: AnswerStepFormProps) => {
-  const answer = question.existingAnswer;
+  const answer = question.answer;
+  const esrsDataType = getEsrsDataType(question.dataType, question.dataUnit);
   const { uploadFile } = useFiles();
+  const { upsertAnswer, cantAnswer } = useAnswerActions();
 
   const fileRefs = useRef<Record<string, FileDisplayComponentRef | null>>({});
 
@@ -64,20 +89,41 @@ const AnswerStepForm = ({
   const [answerFilesPaths, setAnswerFilesPaths] = useState<string[]>(
     answer.documentUrls ?? [],
   );
+
   // Confirmation states
   const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
   const [confirmationResult, setConfirmationResult] = useState<boolean | null>(
     null,
   );
 
-  const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<CreateAnswerFormFields>({
-    resolver: zodResolver(formSchema),
-    values: {
-      content: question.existingAnswer?.content ?? "",
-    },
-  });
+  const parseDBDataToFormDataType = () => {
+    const formType = esrsDataType?.formDataType;
+    switch (formType) {
+      case "date":
+        const newDate = answer.content ? new Date(answer.content) : null;
+        return {
+          content: newDate,
+        };
+      case "number":
+        return {
+          content: answer.content ? parseFloat(answer.content) : "",
+        };
+      case "text":
+        return {
+          content: answer.content,
+        };
+      default:
+        return {
+          content: answer.content,
+        };
+    }
+  };
 
+  const [isLoading, setIsLoading] = useState(false);
+  const form = useForm<AnswerFormData>({
+    resolver: zodResolver(getFormValationSchema(esrsDataType)),
+    values: parseDBDataToFormDataType(),
+  });
   useEffect(() => {
     const filePaths = answer?.documentUrls ?? [];
 
@@ -96,7 +142,26 @@ const AnswerStepForm = ({
 
   const onBack = () => {
     setIsLoading(true);
+    // For some reason the value of the form seems to carry over when stepping
+    // So we reset before moving back and forth
+    form.reset();
+    form.setValue("content", "");
     backFunc();
+    setIsLoading(false);
+  };
+  const onSetCantAnswerClicked = async (value: boolean) => {
+    setIsLoading(true);
+    await cantAnswer({
+      questionId: question.id,
+      answerId: answer.id,
+      cantAnswer: value,
+    });
+    // If we mark can't answer we move on otherwise we stay
+    if (value) {
+      form.reset();
+      form.setValue("content", "");
+      nextFunc();
+    }
     setIsLoading(false);
   };
 
@@ -157,18 +222,40 @@ const AnswerStepForm = ({
     });
   };
 
-  const onSubmit = async (data: CreateAnswerFormFields) => {
-    setIsLoading(true);
+  const onSubmit = async (data: AnswerFormData) => {
+    // Parse answer to string for db
+    let answerStr = null;
+    if (data.content instanceof Date) {
+      answerStr = data.content.toLocaleDateString();
+    } else if (typeof data.content === "number") {
+      answerStr = data.content.toString();
+    } else {
+      answerStr = data.content ?? "";
+    }
 
-    await handleUpsertAnswer({
-      content: data.content,
+    setIsLoading(true);
+    await upsertAnswer({
+      content: answerStr,
       questionId: question.id,
       answerId: answer.id,
       filePaths: answerFilesPaths,
     });
+
     form.reset();
+    form.setValue("content", "");
+
     setIsLoading(false);
     nextFunc();
+  };
+
+  const hasTags = (q: QuestionWithRespondentAnswer) => {
+    return !(
+      !q.topicTag &&
+      !q.disclosureRequirementTag &&
+      !q.datapointTag &&
+      !q.dataType &&
+      !q.dataUnit
+    );
   };
 
   const onFileUploadError = (error: Error) => {
@@ -197,9 +284,106 @@ const AnswerStepForm = ({
     }
   }
 
+  const renderForm = () => {
+    const formType = esrsDataType?.formDataType ?? "text";
+    switch (formType) {
+      case "text":
+        return (
+          <FormField
+            control={form.control}
+            name="content"
+            render={({ field }) => (
+              <FormFieldTextArea
+                className="min-h-40"
+                placeholder="Your answer..."
+                {...field}
+                // @ts-expect-error Removes an error in the console
+                ref={null}
+              />
+            )}
+          />
+        );
+      case "date":
+        const formType = form.getValues("content");
+        if (!(formType instanceof Date)) return null;
+        return (
+          <FormField
+            control={form.control}
+            name="content"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Date</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[240px] pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground",
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value ? new Date(field.value) : undefined}
+                      onSelect={(e) => {
+                        field.onChange(e ? e : null);
+                      }}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        );
+      case "number":
+        const label = esrsDataType?.unit
+          ? `Number of ${esrsDataType.unit}`
+          : "Provide a number";
+        return (
+          <FormField
+            control={form.control}
+            name="content"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{label}</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="your answer.."
+                    value={typeof field.value === "number" ? field.value : ""}
+                    onChange={(e) =>
+                      form.setValue("content", parseFloat(e.target.value))
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        );
+
+      case "table":
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="w-full p-5 text-left">
-      <div className="p-3">
+      <div className="space-y-2 p-3">
         <p className="text-lg font-light tracking-tight">{question.title}</p>
         <Translator
           translations={question.translations}
@@ -212,6 +396,54 @@ const AnswerStepForm = ({
             {question.content}
           </p>
         </Translator>
+        {hasTags(question) && (
+          <div>
+            <p className="text-sm font-extralight">ESRS tags</p>
+            <div className="mx-auto flex w-full flex-wrap gap-2">
+              {question.topicTag && (
+                <Badge className="whitespace-nowrap bg-nightsky-700">
+                  Topic: {question.topicTag}
+                </Badge>
+              )}
+              {question.disclosureRequirementTag && (
+                <Badge className="whitespace-nowrap bg-nightsky-500">
+                  Disclosure requirement: {question.disclosureRequirementTag}
+                </Badge>
+              )}
+              {question.datapointTag && (
+                <Badge className="whitespace-nowrap bg-aquamarine-400">
+                  Datapoint: {question.datapointTag}
+                </Badge>
+              )}
+              {esrsDataType !== undefined && (
+                <>
+                  {esrsDataType.xbrlDataType != "None" && (
+                    <Badge className="whitespace-nowrap bg-sand-200">
+                      Requested response type: {esrsDataType.displayName}
+                    </Badge>
+                  )}
+                  {esrsDataType.unit && (
+                    <Badge className="whitespace-nowrap bg-sand-200">
+                      Reporting unit: {esrsDataType.unit}
+                    </Badge>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        )}
+        {answer.cantAnswer && (
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-bold">Marked as can not answer</p>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={async () => await onSetCantAnswerClicked(false)}
+            >
+              <X size={16}></X>
+            </Button>
+          </div>
+        )}
       </div>
       <div className="mx-auto flex flex-col items-center gap-6">
         <Form {...form}>
@@ -219,20 +451,7 @@ const AnswerStepForm = ({
             className="flex w-full flex-col gap-4 "
             onSubmit={form.handleSubmit(onSubmit)}
           >
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormFieldTextArea
-                  className="min-h-40"
-                  placeholder="Your answer..."
-                  {...field}
-                  // @ts-expect-error Removes an error in the console
-                  ref={null}
-                />
-              )}
-            />
-
+            {renderForm()}
             {answerFilesPaths.length > 0 && (
               <div className="font-medium">
                 Documents
@@ -262,6 +481,23 @@ const AnswerStepForm = ({
               >
                 Back
               </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      onClick={async () => await onSetCantAnswerClicked(true)}
+                      type="button"
+                    >
+                      {"I can't answer this"}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Mark the question as you can not answer it!</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
               <Button
                 className="gap-1"
                 type="submit"

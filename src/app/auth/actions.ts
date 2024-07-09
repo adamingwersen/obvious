@@ -47,7 +47,7 @@ export const updatePassword = async (password: string) => {
     password,
   });
   // TODO - handle errors
-  if (error) console.log(error);
+  if (error) console.error(error);
   return data;
 };
 
@@ -74,7 +74,7 @@ export const inviteByEmail = async (
   const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
     data: { role: role },
   });
-  if (error) console.log(error);
+  if (error) console.error(error);
   return data;
 };
 
