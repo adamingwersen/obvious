@@ -105,7 +105,7 @@ const ShareForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex w-full flex-col space-y-2 px-10"
+        className="flex w-full flex-col space-y-2 px-5"
       >
         <FormField
           control={form.control}
@@ -114,33 +114,31 @@ const ShareForm = ({
             <>
               {fields.map((field, index) => {
                 return (
-                  <div key={index} className="flex w-full">
-                    <div className="flex w-2/3 gap-x-4 py-1">
-                      <FormField
-                        control={form.control}
-                        key={field.id}
-                        name={`emails.${index}.email`}
-                        render={({ field }) => {
-                          return (
-                            <FormItem className="w-full">
-                              <FormControl>
-                                <Input {...field} className="w-full" />
-                              </FormControl>
-                              <FormMessage className="capitalize text-red-500" />
-                            </FormItem>
-                          );
-                        }}
-                      />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        onClick={() =>
-                          onDelete(index, field?.userId, field.surveyId)
-                        }
-                      >
-                        <Trash className="size-4" />
-                      </Button>
-                    </div>
+                  <div key={index} className="flex w-full gap-x-4 py-1">
+                    <FormField
+                      control={form.control}
+                      key={field.id}
+                      name={`emails.${index}.email`}
+                      render={({ field }) => {
+                        return (
+                          <FormItem className="w-full">
+                            <FormControl>
+                              <Input {...field} className="w-full" />
+                            </FormControl>
+                            <FormMessage className="capitalize text-red-500" />
+                          </FormItem>
+                        );
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() =>
+                        onDelete(index, field?.userId, field.surveyId)
+                      }
+                    >
+                      <Trash className="size-4" />
+                    </Button>
                   </div>
                 );
               })}
@@ -148,18 +146,23 @@ const ShareForm = ({
           )}
         />
 
-        <div className="flex w-2/3 flex-row justify-between gap-4">
+        <div className="flex flex-row justify-between pt-5">
           <Button
             type="button"
             variant="outline"
-            className="mt-2 w-1/2 gap-2"
+            className="gap-2"
             onClick={() => append({ email: "", surveyId: surveyId })}
           >
             <Plus className="size-4" />
             Add email
           </Button>
 
-          <Button className="mt-2 gap-2" type="submit" isLoading={isLoading}>
+          <Button
+            variant="outline"
+            className="gap-2"
+            type="submit"
+            isLoading={isLoading}
+          >
             <Send className="size-4" />
             Send invite(s)
           </Button>

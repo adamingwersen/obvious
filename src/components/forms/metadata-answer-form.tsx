@@ -123,7 +123,7 @@ const MetadataAnswerForm = ({
                 </FormItem>
               )}
             />
-            <Button type="submit" isLoading={isLoading} className="">
+            <Button type="submit" shape="boxy" isLoading={isLoading}>
               Submit
             </Button>
           </div>

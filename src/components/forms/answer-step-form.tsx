@@ -294,7 +294,7 @@ const AnswerStepForm = ({
             name="content"
             render={({ field }) => (
               <FormFieldTextArea
-                className="min-h-40"
+                className="min-h-32 sm:min-h-40"
                 placeholder="Your answer..."
                 {...field}
                 // @ts-expect-error Removes an error in the console
@@ -382,7 +382,7 @@ const AnswerStepForm = ({
   };
 
   return (
-    <div className="w-full p-5 text-left">
+    <div className="relative h-full w-full text-left">
       <div className="space-y-2 p-3">
         <p className="text-lg font-light tracking-tight">{question.title}</p>
         <Translator
@@ -436,7 +436,8 @@ const AnswerStepForm = ({
           <div className="flex items-center gap-2">
             <p className="text-sm font-bold">Marked as can not answer</p>
             <Button
-              variant="outline"
+              variant="ghost"
+              shape="boxy"
               size="icon"
               onClick={async () => await onSetCantAnswerClicked(false)}
             >
@@ -448,66 +449,74 @@ const AnswerStepForm = ({
       <div className="mx-auto flex flex-col items-center gap-6">
         <Form {...form}>
           <form
-            className="flex w-full flex-col gap-4 "
+            className="flex h-full w-full flex-col gap-1 xl:gap-4"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             {renderForm()}
-            {answerFilesPaths.length > 0 && (
-              <div className="font-medium">
-                Documents
-                <div className="flex flex-col gap-2">
-                  {answerFilesPaths.map((f: string, index: number) => {
-                    return (
-                      <FileDisplayComponent
-                        key={index}
-                        fileName={f}
-                        answerId={answer.id}
-                        ref={(el) => {
-                          fileRefs.current[f] = el;
-                        }}
-                      ></FileDisplayComponent>
-                    );
-                  })}
+            <div className="flex flex-row justify-evenly gap-2">
+              {answerFilesPaths.length > 0 && (
+                <div className="text-lg font-extralight">
+                  Documents
+                  <div className=" flex h-24 flex-col gap-2 overflow-x-auto md:h-36">
+                    {answerFilesPaths.map((f: string, index: number) => {
+                      return (
+                        <FileDisplayComponent
+                          key={index}
+                          fileName={f}
+                          answerId={answer.id}
+                          ref={(el) => {
+                            fileRefs.current[f] = el;
+                          }}
+                        ></FileDisplayComponent>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
-            <FilePicker uploadFiles={onUploadFiles}></FilePicker>
-            <div className="flex flex-row justify-between">
-              <Button
-                variant="outline"
-                onClick={onBack}
-                type="button"
-                disabled={stepIndex === 0}
-              >
-                Back
-              </Button>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      onClick={async () => await onSetCantAnswerClicked(true)}
-                      type="button"
-                    >
-                      {"I can't answer this"}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Mark the question as you can not answer it!</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              )}
+              <FilePicker uploadFiles={onUploadFiles} />
+            </div>
 
-              <Button
-                className="gap-1"
-                type="submit"
-                variant="default"
-                disabled={isLoading}
-                isLoading={isLoading}
-              >
-                Next Question
-                <ArrowRight className="h-4 w-4" />
-              </Button>
+            <div className="absolute bottom-2 w-full">
+              <div className="flex flex-col justify-between sm:flex-row">
+                <Button
+                  variant="outline"
+                  shape="boxy"
+                  onClick={onBack}
+                  type="button"
+                  disabled={stepIndex === 0}
+                >
+                  Back
+                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="secondary"
+                        onClick={async () => await onSetCantAnswerClicked(true)}
+                        type="button"
+                        shape="boxy"
+                      >
+                        {"I can't answer this"}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Mark the question as you can not answer it!</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <Button
+                  className="gap-1"
+                  type="submit"
+                  shape="boxy"
+                  variant="default"
+                  disabled={isLoading}
+                  isLoading={isLoading}
+                >
+                  Next Question
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </form>
         </Form>

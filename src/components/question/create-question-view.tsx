@@ -89,7 +89,7 @@ const CreateQuestionsView = ({
           />
           <div className="absolute bottom-16 right-4">
             <Link href={`/survey/${survey.uuid}/validate`}>
-              <Button variant="outline" className="flex flex-row space-x-2">
+              <Button variant="default" className="flex flex-row space-x-2">
                 <p>Finish</p> <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>

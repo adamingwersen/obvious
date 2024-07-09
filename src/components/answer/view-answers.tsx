@@ -27,7 +27,7 @@ const ViewAnswers = ({
   respondents,
 }: ViewAnswersProps) => {
   const [openElements, setOpenElements] = useState<string[]>([]);
-
+  console.log(questions);
   const respondentLookup: Record<number, UserModel> = respondents.reduce(
     (acc, res) => {
       acc[res.id] = res;
@@ -53,7 +53,11 @@ const ViewAnswers = ({
       <div className="flex max-h-full flex-col gap-2">
         <div className="flex items-center justify-between">
           <h1 className="font-extralight">Questions</h1>
-          <Button variant="outline" onClick={onToggleOpenClose}>
+          <Button
+            variant="outline"
+            shape={asOriginator ? "default" : "boxy"}
+            onClick={onToggleOpenClose}
+          >
             {openElements.length === 0 ? (
               <div className="flex items-center gap-2">
                 <UnfoldVerticalIcon size={15}></UnfoldVerticalIcon>
@@ -67,7 +71,7 @@ const ViewAnswers = ({
             )}
           </Button>
         </div>
-        <ScrollArea className="max-h-5/6 overflow-y-auto rounded-lg border">
+        <ScrollArea className="max-h-5/6 overflow-y-auto border">
           <Accordion
             type="multiple"
             value={openElements}
@@ -115,7 +119,7 @@ const ViewAnswers = ({
                             </span>
                           </div>
                           <div>Attachments</div>
-                          <div className="col-span-2 font-extralight">
+                          <div className="col-span-2 whitespace-pre-wrap font-extralight">
                             {a.content}
                           </div>
                           <div className="flex flex-col gap-1">

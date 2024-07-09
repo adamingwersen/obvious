@@ -41,12 +41,12 @@ export default function FilePicker({ uploadFiles }: FilePickerProps) {
   };
 
   return (
-    <div className="mx-auto p-4">
-      <h2 className="mb-4 text-xl font-bold">Attach documents</h2>
+    <div className="">
+      <h2 className="text-center text-lg font-extralight">Attach documents</h2>
 
       <div className="flex items-center justify-center">
         <div
-          className={` w-[200px] rounded-lg border-2 border-dashed p-6 ${
+          className={` w-[200px] rounded-lg border-2 border-dashed p-4 lg:p-6 ${
             isDragging ? "border-blue-500 bg-blue-100" : "border-gray-300"
           }`}
           onDragOver={handleDragOver}
@@ -64,7 +64,7 @@ export default function FilePicker({ uploadFiles }: FilePickerProps) {
           />
           <label htmlFor="fileInput" className="cursor-pointer">
             <div className="h-full">
-              <p className="text-sm text-gray-500">
+              <p className="text-center text-sm text-gray-500">
                 Drag and drop files here, or click to select files
               </p>
             </div>

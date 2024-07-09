@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import AnswerStepForm from "@/components/forms/answer-step-form";
 import { type QuestionWithRespondentAnswer } from "@/types/question";
 import { Progress } from "../ui/progress";
+import { answer } from "@/server/db/schema";
+import Spinner from "../ui/spinner";
 
 type AnswerStepperProps = {
   questions: QuestionWithRespondentAnswer[];
@@ -39,22 +41,25 @@ const AnswerStepper = ({ questions, handleTranslate }: AnswerStepperProps) => {
 
   useEffect(() => {
     setProgress((answerIndex / questionsLength) * 100);
-  }, [questionsLength, answerIndex]);
+    if (questionsLength === answerIndex)
+      router.push("/respond/identified/survey/validate");
+  }, [questionsLength, answerIndex, router]);
 
   const Next = () => {
-    const newIdx = answerIndex + 1;
-    if (newIdx < questionsLength) {
-      setAnswerIndex((prev) => prev + 1);
-    } else if (newIdx == questionsLength) {
-      router.push("/respond/identified/survey/validate");
-    }
+    setAnswerIndex((prev) => {
+      const newIdx = prev + 1;
+      if (newIdx > questionsLength) {
+        return prev;
+      }
+      return newIdx;
+    });
   };
 
   return (
-    <div>
-      <Progress value={progress} />
-      {currentQuestion && (
-        <div className="mx-auto flex flex-col items-center gap-6">
+    <div className="h-full">
+      <Progress value={progress} className="h-2" />
+      {currentQuestion ? (
+        <div className="mx-auto flex h-full flex-col items-center gap-6">
           <AnswerStepForm
             stepIndex={answerIndex}
             question={currentQuestion}
@@ -62,6 +67,10 @@ const AnswerStepper = ({ questions, handleTranslate }: AnswerStepperProps) => {
             backFunc={Back}
             handleTranslate={handleTranslate}
           ></AnswerStepForm>
+        </div>
+      ) : (
+        <div className="flex h-full items-center justify-center">
+          <Spinner className="size-10" />
         </div>
       )}
     </div>

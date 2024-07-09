@@ -100,7 +100,7 @@ const QuestionRow = ({
         </button>
         <div className="flex-shrink-0">
           <Button
-            variant="ghost"
+            variant="outline"
             size="icon"
             onClick={async () => {
               if (!question.id) return;
