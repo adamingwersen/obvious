@@ -9,13 +9,11 @@ const answerCreateSchema = answerInsertSchema.pick({
   documentUrls: true,
   questionId: true,
 });
-const answerUpdateSchema = answerInsertSchema
-  .pick({
-    content: true,
-    documentUrls: true,
-    id: true,
-  })
-  .partial({ content: true }); // Make it possible to update without content
+const answerUpdateSchema = answerInsertSchema.partial({
+  content: true,
+  createdById: true,
+  questionId: true,
+});
 
 const findUserAnswersForQuestionsSchema = z.object({
   questionIds: z.array(z.number()),

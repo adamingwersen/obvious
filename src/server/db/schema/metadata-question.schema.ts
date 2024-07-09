@@ -7,6 +7,7 @@ import { user } from "@/server/db/schema/user.schema";
 import { relations } from "drizzle-orm";
 import { survey } from "@/server/db/schema/survey.schema";
 import { METADATA_TYPES_SCHEMA } from "@/server/db/schema/enums";
+import { metadataAnswer } from "./metadata-answer.schema";
 
 export const metadataQuestion = pgTable("metadata_question", {
   ...defaultRows,
@@ -25,7 +26,7 @@ export const metadataQuestion = pgTable("metadata_question", {
 
 export const metadataQuestionRelations = relations(
   metadataQuestion,
-  ({ one }) => ({
+  ({ one, many }) => ({
     user: one(user, {
       fields: [metadataQuestion.createdById],
       references: [user.id],
@@ -34,6 +35,7 @@ export const metadataQuestionRelations = relations(
       fields: [metadataQuestion.surveyId],
       references: [survey.id],
     }),
+    metadataAnswer: many(metadataAnswer),
   }),
 );
 

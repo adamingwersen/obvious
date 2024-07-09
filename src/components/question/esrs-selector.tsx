@@ -55,7 +55,7 @@ type ESRSSelectorParams = {
 const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
   const groupedDataTypes = esrsDataTypes.reduce(
     (acc, x) => {
-      (acc[x.dataType] = acc[x.dataType] ?? []).push(x);
+      (acc[x.formDataType] = acc[x.formDataType] ?? []).push(x);
       return acc;
     },
     {} as Record<string, esrsDataType[]>,
@@ -77,7 +77,7 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
       return {
         xbrlDataType: "",
         displayName: "",
-        dataType: "text",
+        formDataType: "text",
       } as esrsDataType;
     return datatype;
   };
@@ -228,7 +228,7 @@ const ESRSSelector = ({ gippity, tags, setTags }: ESRSSelectorParams) => {
         dataType: {
           xbrlDataType: prev.dataType?.xbrlDataType ?? "None",
           displayName: prev.dataType?.displayName ?? "None",
-          dataType: prev.dataType?.dataType ?? "text",
+          formDataType: prev.dataType?.formDataType ?? "text",
           unit: value,
         },
       };

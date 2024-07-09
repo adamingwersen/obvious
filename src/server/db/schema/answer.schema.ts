@@ -1,4 +1,4 @@
-import { integer, pgTable, text } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, boolean } from "drizzle-orm/pg-core";
 
 import { defaultRows } from "./shared";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -10,6 +10,7 @@ import { user } from "@/server/db/schema/user.schema";
 export const answer = pgTable("answer", {
   ...defaultRows,
   content: text("content").notNull(),
+  cantAnswer: boolean("cant_answer").default(false).notNull(),
   documentUrls: text("document_urls").array(),
   questionId: integer("question_id")
     .notNull()

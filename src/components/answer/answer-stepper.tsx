@@ -1,37 +1,45 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import AnswerStepForm from "@/components/forms/answer-step-form";
-import { type Question } from "@/types/question";
-import { type handleUpsertAnswerParams } from "@/server/actions/answer/actions";
+import { type QuestionWithRespondentAnswer } from "@/types/question";
+import { Progress } from "../ui/progress";
 
 type AnswerStepperProps = {
-  questions: Question[];
-  handleUpsertAnswer: (params: handleUpsertAnswerParams) => Promise<number>;
+  questions: QuestionWithRespondentAnswer[];
   handleTranslate: (
     content: string,
     targetLangName: string,
   ) => Promise<{ translation: string }>;
 };
 
-const AnswerStepper = ({
-  questions,
-  handleUpsertAnswer,
-  handleTranslate,
-}: AnswerStepperProps) => {
-  const [answerIndex, setAnswerIndex] = useState(0);
+const AnswerStepper = ({ questions, handleTranslate }: AnswerStepperProps) => {
+  const searchParams = useSearchParams();
+  const questionsLength = questions.length;
+  const startIndexParam = searchParams.get("startIndex");
+  let startIndex = parseInt(startIndexParam ?? "-1");
+
+  if (isNaN(startIndex) || startIndex < 0 || startIndex >= questionsLength) {
+    startIndex = 0;
+  }
+  const [answerIndex, setAnswerIndex] = useState(startIndex);
+  const [progress, setProgress] = useState<number>(
+    answerIndex === 0 ? 0 : (answerIndex / questionsLength) * 100,
+  );
   const router = useRouter();
   const currentQuestion = questions[answerIndex] ?? null;
-
-  const questionsLength = questions.length;
 
   const Back = () => {
     if (answerIndex > 0) {
       setAnswerIndex((prev) => prev - 1);
     }
   };
+
+  useEffect(() => {
+    setProgress((answerIndex / questionsLength) * 100);
+  }, [questionsLength, answerIndex]);
 
   const Next = () => {
     const newIdx = answerIndex + 1;
@@ -44,6 +52,7 @@ const AnswerStepper = ({
 
   return (
     <div>
+      <Progress value={progress} />
       {currentQuestion && (
         <div className="mx-auto flex flex-col items-center gap-6">
           <AnswerStepForm
@@ -51,7 +60,6 @@ const AnswerStepper = ({
             question={currentQuestion}
             nextFunc={Next}
             backFunc={Back}
-            handleUpsertAnswer={handleUpsertAnswer}
             handleTranslate={handleTranslate}
           ></AnswerStepForm>
         </div>

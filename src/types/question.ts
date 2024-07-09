@@ -1,12 +1,9 @@
 import { type AnswerModel, type QuestionModel } from "@/server/db/schema";
 import { type Translation } from "@/types/translation";
 
-export type Question = {
-  id: number;
-  title: string;
-  content: string;
+export type QuestionWithRespondentAnswer = QuestionModel & {
   translations: Translation[];
-  existingAnswer: AnswerModel;
+  answer: AnswerModel;
 };
 
 export type QuestionWithAnswers = QuestionModel & {

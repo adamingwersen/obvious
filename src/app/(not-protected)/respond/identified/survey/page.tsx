@@ -1,16 +1,18 @@
 import { api } from "@/trpc/server";
 import AnswerStepper from "@/components/answer/answer-stepper";
-import { handleGetQuestionsAnswers } from "./actions";
+
 import { handleTranslate } from "@/app/actions";
 import { getRespondent } from "@/app/(not-protected)/respond/actions";
 import { redirect } from "next/navigation";
 import { FileActionsProvider } from "@/hooks/use-files";
 import {
   handleAddFilePath,
+  handleCantAnswer,
   handleDeleteFile,
   handleDownloadFile,
   handleUpsertAnswer,
 } from "@/server/actions/answer/actions";
+import { AnswerActionProvider } from "@/hooks/server-actions/answers";
 // Answer page data types
 
 const RespondentSurveyPage = async () => {
@@ -19,11 +21,8 @@ const RespondentSurveyPage = async () => {
   // Fetch survey with questions
   const survey = await api.survey.findById({ id: respondentUser.surveyId });
   const questions = survey.questions;
-
   // Fetch existing answers for survey questions
   const questionIds = questions.map((question) => question.id);
-
-  const respondentAnswers = await handleGetQuestionsAnswers(questionIds);
 
   // Fetch translations for questions in survey
   const questionsTranslations =
@@ -35,9 +34,9 @@ const RespondentSurveyPage = async () => {
   const mappedQuestions = await Promise.all(
     questions.map(async (q) => {
       let answer = null;
-      const existingAnswer = respondentAnswers.find(
-        (a) => a.questionId === q.id,
-      );
+      const existingAnswer = q.answers
+        .filter((a) => a.createdById === respondentUser.respondentUserId)
+        .find((a) => a.questionId === q.id);
       // Construct questions in db if they dont exist
       // A bit of an antipattern, but make life so much easier
       //  when handling file uploads that needs an answer id
@@ -55,14 +54,7 @@ const RespondentSurveyPage = async () => {
       const questionTranslations = questionsTranslations.filter(
         (t) => t.questionId === q.id,
       );
-
-      return {
-        id: q.id,
-        title: q.title,
-        content: q.content,
-        translations: questionTranslations,
-        existingAnswer: answer,
-      };
+      return { ...q, answer: answer, translations: questionTranslations };
     }),
   );
 
@@ -75,11 +67,16 @@ const RespondentSurveyPage = async () => {
           addFileToAnswer={handleAddFilePath}
           pathToRevalidate="/(not-protected)/respond/identified/survey"
         >
-          <AnswerStepper
-            questions={mappedQuestions}
+          <AnswerActionProvider
             handleUpsertAnswer={handleUpsertAnswer}
-            handleTranslate={handleTranslate}
-          />
+            handleCantAnswer={handleCantAnswer}
+            pathToRevalidate="/(not-protected)/respond/identified/survey"
+          >
+            <AnswerStepper
+              questions={mappedQuestions}
+              handleTranslate={handleTranslate}
+            />
+          </AnswerActionProvider>
         </FileActionsProvider>
       </div>
     </div>

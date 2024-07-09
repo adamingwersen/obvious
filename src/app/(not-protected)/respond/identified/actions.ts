@@ -1,28 +1,26 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { api } from "@/trpc/server";
-import { type CreateMetadataAnswerFormFields } from "@/components/forms/schemas/metadata-answer";
+import { type FormSchema } from "@/components/forms/schemas/metadata-answer";
 import { type MetadataAnswerModel } from "@/server/db/schema";
+import { revalidatePath } from "next/cache";
 
 export const handleSubmitMetadataAnswer = async (
-  surveyUuid: string,
+  surveyId: number,
   respondentUserId: number,
-  data: CreateMetadataAnswerFormFields,
+  data: FormSchema,
 ) => {
-  const survey = await api.survey.findByUuid({ uuid: surveyUuid });
-  if (!survey) throw new Error("Whoops. Survey doesn't exsit");
-
-  const formattedData: MetadataAnswerModel[] = data.data.map((response) => {
+  const newData = data.fields.map((x) => {
     return {
+      surveyId,
+      id: x.metadataAnswerId,
       createdById: respondentUserId,
-      surveyId: survey.id,
-      metadataQuestionId: response.questionId,
-      response: response.response,
-      metadataType: response.metadataType,
+      metadataQuestionId: x.questionId,
+      response: x.value,
     } as MetadataAnswerModel;
   });
-  const metadataAnswers = await api.metadataAnswer.createMany(formattedData);
+  console.log("newData", newData);
+  const metadataAnswers = await api.metadataAnswer.createMany(newData);
   if (!metadataAnswers) throw new Error("Whoops. That went wrong");
-  redirect(`/respond/identified/survey`);
+  revalidatePath("/respond/identified", "page");
 };

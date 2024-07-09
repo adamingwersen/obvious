@@ -4,14 +4,6 @@ import { api } from "@/trpc/server";
 import { revalidatePath } from "next/cache";
 import { redirect, RedirectType } from "next/navigation";
 
-export type handleUpsertAnswerParams = {
-  content?: string;
-  questionId: number;
-  answerId?: number;
-  filePaths?: string[];
-  pathToRevalidate?: string;
-};
-
 export async function handleAddFilePath(
   newPath: string,
   answerId: number,
@@ -23,7 +15,23 @@ export async function handleAddFilePath(
   if (pathToRevalidate) revalidatePath(pathToRevalidate, "page");
 }
 
-export async function handleUpsertAnswer(params: handleUpsertAnswerParams) {
+export type handleUpsertAnswerParams = {
+  content?: string;
+  questionId: number;
+  answerId?: number;
+  filePaths?: string[];
+};
+export type handleCantAnswerType = Omit<
+  handleUpsertAnswerParams,
+  "filePaths" | "content"
+> & {
+  cantAnswer: boolean;
+};
+
+export async function handleUpsertAnswer(
+  params: handleUpsertAnswerParams,
+  pathToRevalidate?: string,
+) {
   // Upsert answer to get ID and existing filepaths used for potential file upload
   let answer = undefined;
   if (!params.answerId) {
@@ -38,15 +46,28 @@ export async function handleUpsertAnswer(params: handleUpsertAnswerParams) {
       content: params.content,
       id: params.answerId,
       documentUrls: params.filePaths,
+      questionId: params.questionId,
     });
   }
   if (answer.length === 0 || answer[0] === undefined) {
     throw new Error("DB didnt return object for upsert answer operation");
   }
   answer = answer[0];
-  if (params.pathToRevalidate) revalidatePath(params.pathToRevalidate, "page");
+  if (pathToRevalidate) revalidatePath(pathToRevalidate, "page");
 
   return answer.id;
+}
+
+export async function handleCantAnswer(
+  params: handleCantAnswerType,
+  pathToRevalidate?: string,
+) {
+  await api.answer.update({
+    id: params.answerId,
+    questionId: params.questionId,
+    cantAnswer: params.cantAnswer,
+  });
+  if (pathToRevalidate) revalidatePath(pathToRevalidate, "page");
 }
 
 export async function handleDeleteFile(

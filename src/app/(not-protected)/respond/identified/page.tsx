@@ -13,6 +13,15 @@ const RespondentIdentifiedPage = async () => {
   const survey = await api.survey.findById({ id: respondentUser.surveyId });
   const originator = survey.user;
 
+  const mappedMetadataQuestions = metadataQuestions.map((mq) => {
+    const answer = mq.metadataAnswer.find(
+      (ma) => ma.createdById === respondentUser.respondentUserId,
+    );
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { metadataAnswer: _, ...rest } = mq;
+    return { ...rest, answer };
+  });
+
   return (
     <div className="flex h-full w-full flex-col justify-center space-y-4 pb-10 pt-10 ">
       <div className="relative flex  w-2/5 flex-col self-center rounded-md border bg-white p-4 pb-10">
@@ -24,9 +33,9 @@ const RespondentIdentifiedPage = async () => {
           </p>
         </div>
         <MetadataAnswerForm
-          metadataQuestions={metadataQuestions}
-          surveyUuid={survey.uuid}
-          respondent={respondentUser}
+          metadataQuestions={mappedMetadataQuestions}
+          surveyId={survey.id}
+          respondentUserId={respondentUser.respondentUserId}
           handleSubmitMetadataAnswer={handleSubmitMetadataAnswer}
         />
       </div>

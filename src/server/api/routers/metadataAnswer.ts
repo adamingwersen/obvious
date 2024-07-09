@@ -1,14 +1,17 @@
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
 import { schema } from "@/server/db";
-import { metadataAnswerInsertSchema } from "@/server/db/schema";
+import {
+  conflictUpdateSetAllColumns,
+  metadataAnswerInsertSchema,
+} from "@/server/db/schema";
 import { z } from "zod";
 
 const metadataAnswerCreateSchema = metadataAnswerInsertSchema.pick({
+  id: true,
   surveyId: true,
   metadataQuestionId: true,
   createdById: true,
   response: true,
-  metadataType: true,
 });
 
 const metadataAnswerCreateManySchema = z.array(metadataAnswerCreateSchema);
@@ -31,7 +34,12 @@ export const metadataAnswerRouter = createTRPCRouter({
       );
       if (!isCreatedByIdsEqual)
         throw new Error("Multiple respondent IDs in input");
-
-      return ctx.db.insert(schema.metadataAnswer).values(input);
+      return ctx.db
+        .insert(schema.metadataAnswer)
+        .values(input)
+        .onConflictDoUpdate({
+          target: schema.metadataAnswer.id,
+          set: conflictUpdateSetAllColumns(schema.metadataAnswer),
+        });
     }),
 });
