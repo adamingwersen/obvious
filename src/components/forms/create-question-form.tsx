@@ -123,7 +123,7 @@ const CreateQuestionForm = ({
                   {tags.datapoint}
                 </Badge>
               )}
-              {tags.dataType && tags.dataType.xbrlDataType != "None" && (
+              {tags.dataType && tags.dataType.xbrlDataType !== "None" && (
                 <Badge className="whitespace-nowrap bg-sand-200">
                   {tags.dataType.displayName}
                   {tags.dataType.unit ? ` : ${tags.dataType.unit}` : ""}
