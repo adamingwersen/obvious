@@ -1,4 +1,3 @@
-import CopyToClipboardButton from "@/components/core/copy-to-clipboard-button";
 import ShareForm from "@/components/forms/share-form";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -41,13 +40,7 @@ const SharingPage = async ({ params }: { params: { surveyUuid: string } }) => {
         <div className="flex justify-center pt-5">
           <Separator />
         </div>
-        <div className="flex flex-col items-center justify-center">
-          <p className="py-5 text-xl font-extralight">Copy link</p>
-          <CopyToClipboardButton
-            text={`respond/${params.surveyUuid}`}
-            url={`${process.env.BASE_URL}/respond/${params.surveyUuid}`}
-          />
-        </div>
+
         <div className="absolute bottom-6 right-6">
           <Link href="/survey">
             <Button variant="default" className="gap-2">

@@ -14,8 +14,8 @@ const ValidateSurveyPage = async ({
   const questions = survey.questions;
 
   return (
-    <div className="flex h-full flex-col space-y-4 pt-10">
-      <div className="relative h-full w-4/5 items-center self-center rounded-md border p-4 md:w-3/5">
+    <div className="flex h-full flex-col space-y-4">
+      <div className="relative h-full w-4/5 items-center self-center rounded-md border p-4 lg:w-3/5">
         <ValidateQuestions
           questions={questions}
           handleDeleteQuestion={handleDeleteQuestionById}

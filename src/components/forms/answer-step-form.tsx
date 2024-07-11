@@ -417,7 +417,7 @@ const AnswerStepForm = ({
               )}
               {esrsDataType !== undefined && (
                 <>
-                  {esrsDataType.xbrlDataType != "None" && (
+                  {esrsDataType.xbrlDataType !== "None" && (
                     <Badge className="whitespace-nowrap bg-sand-200">
                       Requested response type: {esrsDataType.displayName}
                     </Badge>

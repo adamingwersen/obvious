@@ -27,7 +27,6 @@ const ViewAnswers = ({
   respondents,
 }: ViewAnswersProps) => {
   const [openElements, setOpenElements] = useState<string[]>([]);
-  console.log(questions);
   const respondentLookup: Record<number, UserModel> = respondents.reduce(
     (acc, res) => {
       acc[res.id] = res;

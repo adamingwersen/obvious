@@ -9,7 +9,10 @@ const ConfigureSurveyLayout = async ({
 }) => {
   const survey = await api.survey.findByUuid({ uuid: params.surveyUuid });
   return (
-    <div className="flex h-full w-full flex-col items-stretch justify-center">
+    <div
+      id="surveyuuid-layout"
+      className="flex h-full w-full flex-col items-stretch justify-center"
+    >
       <h1 className="flex self-center text-center">{survey.title}</h1>
       {children}
     </div>

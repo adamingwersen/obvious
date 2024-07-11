@@ -19,8 +19,7 @@ export const handleSubmitMetadataAnswer = async (
       response: x.value,
     } as MetadataAnswerModel;
   });
-  console.log("newData", newData);
-  const metadataAnswers = await api.metadataAnswer.createMany(newData);
-  if (!metadataAnswers) throw new Error("Whoops. That went wrong");
+
+  await api.metadataAnswer.createMany(newData);
   revalidatePath("/respond/identified", "page");
 };

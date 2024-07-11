@@ -10,6 +10,7 @@ import {
   formSchema,
   formSchemaWithPasswordRequirements,
 } from "@/components/forms/schemas/email-auth";
+import { useRouter } from "next/navigation";
 
 type AuthType = "login" | "signup";
 
@@ -23,7 +24,7 @@ export default function EmailAuthForm({
   onAuthSubmit,
 }: EmailAuthFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-
+  const router = useRouter();
   const form = useForm<AuthFormFields>({
     resolver: zodResolver(
       authType === "login" ? formSchema : formSchemaWithPasswordRequirements,
@@ -34,6 +35,11 @@ export default function EmailAuthForm({
     const { email, password } = data;
     setIsLoading(true);
     await onAuthSubmit(email, password);
+    if (authType === "login") {
+      router.push("/home");
+    } else {
+      router.push("/auth/confirm");
+    }
     setIsLoading(false);
   };
 
@@ -47,14 +53,28 @@ export default function EmailAuthForm({
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormFieldInput type="email" placeholder="Email" {...field} />
+            <FormFieldInput
+              type="email"
+              autoComplete="username"
+              placeholder="Email"
+              {...field}
+              // @ts-expect-error Removes an error in the console
+              ref={null}
+            />
           )}
         />
         <FormField
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormFieldInput type="password" placeholder="Password" {...field} />
+            <FormFieldInput
+              autoComplete="current-password"
+              type="password"
+              placeholder="Password"
+              {...field}
+              // @ts-expect-error Removes an error in the console
+              ref={null}
+            />
           )}
         />
 

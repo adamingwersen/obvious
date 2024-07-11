@@ -15,6 +15,7 @@ export const handleCreateManyRespondentsAndSendEmails = async (
   data: ShareFormFields,
   surveyUuid: string,
 ) => {
+  if (data.emails.length === 0) return;
   //create users
   const newUsers = await api.user.createManyByEmail(data.emails);
 
@@ -27,7 +28,7 @@ export const handleCreateManyRespondentsAndSendEmails = async (
     return { respondentUserId: respondentUserId, surveyId: sameSurveyId };
   });
   await api.surveyRespondent.createMany(payload);
-  // const emailList = newUsers.map((u) => u.email);
+
   await handleSendManyInviteEmailsWithResend(newUsers, surveyUuid, surveyId);
   revalidatePath(`/(protected)/survey/[surveyUuid]/sharing`, "page");
 };
@@ -56,6 +57,8 @@ const generateMagicLinkAsAdmin = async (email: string, surveyUuid: string) => {
       redirectTo: `/respond`,
     },
   });
+  if (error) throw new Error("Unable to generate link");
+
   const accessToken = data.properties?.hashed_token;
   const expiresIn = 3600;
   const expiresAt = Math.floor((Date.now() + expiresIn) / 1000);
@@ -101,7 +104,7 @@ const handleSendManyInviteEmailsWithResend = async (
         const actionLink = data.action_link;
         const accessToken = data.access_token;
         try {
-          const { data, error } = await resend.emails.send({
+          await resend.emails.send({
             from: "Adam from Obvious <adam@obvious.earth>",
             to: user.email,
             subject:

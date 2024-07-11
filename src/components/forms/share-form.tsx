@@ -72,9 +72,15 @@ const ShareForm = ({
     userId: number | undefined,
     surveyId: number,
   ) => {
-    remove(index);
+    if (fields.length === 1) {
+      // Dont remove last field, but reset the current one
+      form.setValue(`emails.${index}.email`, "");
+      form.setValue(`emails.${index}.userId`, undefined);
+    } else {
+      remove(index);
+    }
 
-    if (!userId) throw new Error("No user id");
+    if (!userId) return; // empty or "not-created user" field
     await handleDeleteRespondent(userId, surveyId);
     toast({
       title: "Removed email from list",
@@ -88,6 +94,14 @@ const ShareForm = ({
     const newEmails = values.emails.filter(
       (email) => !existingEmails.includes(email.email),
     );
+    if (newEmails.length === 0) {
+      toast({
+        title: "No new emails",
+        description:
+          "No new emails were added. Resend by removing and adding again.",
+      });
+      return;
+    }
     await handleCreateManyRespondentsAndSendEmails(
       { emails: newEmails },
       surveyUuid,

@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import AnswerStepForm from "@/components/forms/answer-step-form";
 import { type QuestionWithRespondentAnswer } from "@/types/question";
 import { Progress } from "../ui/progress";
-import { answer } from "@/server/db/schema";
 import Spinner from "../ui/spinner";
 
 type AnswerStepperProps = {

@@ -19,9 +19,10 @@ const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
     <div className="flex w-full flex-row">
       <div className="relative mx-auto h-[100vh] w-1/2">
         <Image
-          src="/backdrop-1-1x.png"
+          src="/backdrop-1-2x.png"
+          fill={true}
+          sizes="50vw"
           alt="Outer Image"
-          layout="fill"
           placeholder="blur"
           className="object-cover"
           blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM0MrD7DwAC3QGhainANwAAAABJRU5ErkJggg=="

@@ -22,7 +22,7 @@ const RespondPage = async () => {
 
   return (
     <div className="flex h-full w-full flex-col justify-center space-y-4 pb-10 pt-10 ">
-      <div className="relative flex h-5/6 w-4/5 flex-col self-center bg-white p-4 lg:w-3/5">
+      <div className="relative flex h-5/6 w-4/5 flex-col self-center bg-white p-4 sm:w-3/5">
         <div className="flex h-fit w-full flex-col items-center justify-center gap-6 self-center bg-lilla-700 py-8">
           <div className="px-4 font-light text-white">
             <b>

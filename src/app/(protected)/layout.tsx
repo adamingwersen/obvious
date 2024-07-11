@@ -15,7 +15,7 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <div className=" flex h-[100vh] flex-col">
       <Navbar user={user} />
-      <div className="flex h-full w-full flex-row items-stretch justify-start p-6">
+      <div className="flex-grow p-6" style={{ height: "calc(100vh - 4rem)" }}>
         {children}
       </div>
     </div>

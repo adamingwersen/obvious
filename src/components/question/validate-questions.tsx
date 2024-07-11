@@ -16,9 +16,10 @@ import { useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
 import { Trash } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Separator } from "../ui/separator";
 import Spinner from "../ui/spinner";
+import { Badge } from "../ui/badge";
+import { getEsrsDataType } from "@/types/esrs/esrs-data";
 
 type ValidateQuestionsProps = {
   questions: QuestionModel[];
@@ -33,7 +34,9 @@ const ValidateQuestions = ({
   handleDeleteQuestion,
 }: ValidateQuestionsProps) => {
   const [loadingFiles, setLoadingFiles] = useState<Record<number, boolean>>({});
-
+  const esrsDataTypes = questions.map((q) => {
+    return getEsrsDataType(q.dataType, q.dataUnit);
+  });
   const [dialogQuestionId, setDialogQuestionID] = useState<number>();
   const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
 
@@ -67,35 +70,64 @@ const ValidateQuestions = ({
   };
 
   return (
-    <div>
-      <h1 className="p-2">Validate your survey</h1>
-      <ScrollArea className="h-full w-full rounded-md border">
+    <div className="h-full">
+      <h1 className="p-2 font-extralight">Validate your survey</h1>
+      <ScrollArea className="h-5/6 w-full rounded-md border">
         {questions.map((q, index) => (
           <>
-            <div
-              key={q.id}
-              className={cn(
-                "flex items-center justify-between px-2",
-                index === 0 && "pt-1",
-              )}
-            >
-              <div className="w-2/3">
-                <p className="text-lg">{q.title}</p>
-                <p key={q.id} className="text-xs">
-                  {q.content}
-                </p>
+            <div key={q.id} className="flex flex-row gap-2 p-2">
+              <div className="flex w-6/12 flex-col gap-1">
+                <p className="font-extralight">{q.title}</p>
+                <p className="text-xs">{q.content}</p>
               </div>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={async () => await onDeleteQuestion(q.id, index)}
-              >
-                {loadingFiles[index] ? (
-                  <Spinner className="size-4"></Spinner>
-                ) : (
-                  <Trash size={14}></Trash>
+              <div className="flex w-5/12 flex-row flex-wrap gap-2 self-center">
+                {q.topicTag && (
+                  <div>
+                    <Badge className="whitespace-nowrap bg-nightsky-700">
+                      {q.topicTag}
+                    </Badge>
+                  </div>
                 )}
-              </Button>
+                {q.disclosureRequirementTag && (
+                  <div>
+                    <Badge className="whitespace-nowrap bg-nightsky-500">
+                      {q.disclosureRequirementTag}
+                    </Badge>
+                  </div>
+                )}
+                {q.datapointTag && (
+                  <div>
+                    <Badge className="whitespace-nowrap bg-aquamarine-400">
+                      {q.datapointTag}
+                    </Badge>
+                  </div>
+                )}
+                {esrsDataTypes[index] !== undefined && (
+                  <div>
+                    {esrsDataTypes[index]?.xbrlDataType !== "None" && (
+                      <Badge className="whitespace-nowrap bg-sand-200">
+                        {esrsDataTypes[index]?.displayName}
+                        {esrsDataTypes[index]?.unit
+                          ? ` : ${esrsDataTypes[index]?.unit}`
+                          : ""}
+                      </Badge>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="flex w-1/12 items-center justify-center">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={async () => await onDeleteQuestion(q.id, index)}
+                >
+                  {loadingFiles[index] ? (
+                    <Spinner className="size-4"></Spinner>
+                  ) : (
+                    <Trash size={14}></Trash>
+                  )}
+                </Button>
+              </div>
             </div>
             <Separator className="my-2" />
           </>
