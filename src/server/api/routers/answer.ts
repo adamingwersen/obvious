@@ -83,6 +83,16 @@ export const answerRouter = createTRPCRouter({
       });
     }),
 
+  findMany: procedures.protected.query(async ({ ctx }) => {
+    const authUserId = ctx.user.id;
+    const user = await ctx.db.query.user.findFirst({
+      where: eq(schema.user.authId, authUserId),
+    });
+    if (!user) throw new Error("No user found");
+    const answers = await ctx.db.query.answer.findMany();
+    return answers;
+  }),
+
   deleteByQuestionId: procedures.protected
     .input(deleteByQuestionIdSchema)
     .mutation(async ({ ctx, input }) => {
