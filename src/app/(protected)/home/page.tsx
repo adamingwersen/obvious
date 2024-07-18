@@ -2,7 +2,12 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { api } from "@/trpc/server";
 import * as _ from "lodash";
 import moment from "moment";
-import { ResponsesBarChart, SurveyCreatedBarChart } from "./charts";
+import {
+  ResponsesChart,
+  SurveyCreatedChart,
+  TranslationsGeneratedChart,
+  DocumentsUploadedChart,
+} from "./charts";
 
 const HomePage = async () => {
   // Surveys
@@ -44,17 +49,47 @@ const HomePage = async () => {
     ),
   );
 
+  // Translations
+  const translationData = await api.translation.findMany();
+  const createdWeekName = (item) =>
+    `Week ${moment(item.createdAt, "YYYY-MM-DD").format("WW")}`;
+  const translationCountData = Object.entries(
+    _.countBy(translationData, createdWeekName),
+  ).map(([key, value]) => ({
+    week: key,
+    count: value,
+  }));
+
+  // Documents uploaded
+  const answerData = await api.answer.findMany();
+  const answerCountData = Object.entries(
+    _.countBy(answerData, createdWeekName),
+  ).map(([key, value]) => ({
+    week: key,
+    count: value,
+  }));
+
   return (
     <div className="flex h-full w-full flex-col items-center justify-start space-y-6">
       <h1>Dashboard</h1>
       <div className="flex flex-row gap-10">
         <Card>
-          <CardHeader>Surveys Created</CardHeader>
-          <SurveyCreatedBarChart data={countData} />
+          <CardHeader>Respondent Behaviour</CardHeader>
+          <ResponsesChart data={responsesData} />
         </Card>
         <Card>
-          <CardHeader>Respondent Behaviour</CardHeader>
-          <ResponsesBarChart data={responsesData} />
+          <CardHeader>Surveys Created</CardHeader>
+          <SurveyCreatedChart data={countData} />
+        </Card>
+      </div>
+      <div className="flex flex-row gap-10">
+        <Card>
+          <CardHeader>Translations Generated</CardHeader>
+          <TranslationsGeneratedChart data={translationCountData} />
+        </Card>
+        <Card>
+          <CardHeader>Documents Uploaded</CardHeader>
+          <DocumentsUploadedChart data={answerCountData} />
         </Card>
       </div>
     </div>

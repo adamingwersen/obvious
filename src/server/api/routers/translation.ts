@@ -79,6 +79,18 @@ export const translationRouter = createTRPCRouter({
       return translations;
     }),
 
+  findMany: procedures.protected.query(async ({ ctx }) => {
+    const authUserId = ctx.user.id;
+    const user = await ctx.db.query.user.findFirst({
+      where: eq(schema.user.authId, authUserId),
+    });
+    if (!user) throw new Error("No user found");
+    const translations = await ctx.db.query.translation.findMany({
+      where: and(eq(schema.translation.createdById, user.id)),
+    });
+    return translations;
+  }),
+
   findManyByQuestionIdsWithJwt: procedures.jwtProtected
     .input(translationFindManyByQuestionIdSchema)
     .query(async ({ ctx, input }) => {
