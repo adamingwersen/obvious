@@ -19,7 +19,7 @@ import Link from "next/link";
 const navItems = [
   { label: "Home", href: "/home" },
   { label: "Surveys", href: "/survey" },
-  { label: "Settings", href: "#" },
+  { label: "Settings", href: "/settings" },
 ] as const;
 
 type NavbarProps = {

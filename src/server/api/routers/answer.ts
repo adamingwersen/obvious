@@ -68,23 +68,6 @@ export const answerRouter = createTRPCRouter({
         .returning();
     }),
 
-  findManyByQuestionIdsForUser: procedures.protected
-    .input(findUserAnswersForQuestionsSchema)
-    .mutation(async ({ ctx, input }) => {
-      const authUserId = ctx.user.id;
-      const user = await ctx.db.query.user.findFirst({
-        where: eq(schema.user.authId, authUserId),
-      });
-      if (!user) throw new Error("No user found");
-      return ctx.db.query.answer.findMany({
-        where: and(
-          eq(schema.answer.createdById, user.id),
-          inArray(schema.answer.questionId, input.questionIds),
-          isNull(schema.answer.deletedAt),
-        ),
-      });
-    }),
-
   findManyByQuestionIdsForRespondent: procedures.jwtProtected
     .input(findUserAnswersForQuestionsSchema)
     .mutation(async ({ ctx, input }) => {

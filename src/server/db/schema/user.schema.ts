@@ -19,6 +19,7 @@ export const user = pgTable("user", {
   organisationRole: ROLE_TYPES_SCHEMA("organisation_role")
     .notNull()
     .default("USER"),
+  describedRole: varchar("described_role", { length: 256 }).default(""),
   organisationId: integer("organisation_id").references(() => organisation.id),
   uuid: uuid("uuid").notNull().defaultRandom().unique(),
 });

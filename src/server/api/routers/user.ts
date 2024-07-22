@@ -4,12 +4,13 @@ import { userInsertSchema, userSelectSchema } from "@/server/db/schema";
 import { z } from "zod";
 
 const getByEmailSchema = userSelectSchema.pick({ email: true });
-const updateSchema = userInsertSchema
-  .partial({ authId: true, firstName: true, lastName: true, privilege: true })
-  .required({ email: true });
-const updatePrivilegeSchema = userSelectSchema.pick({
+const updateSchema = userInsertSchema.pick({
   id: true,
+  firstName: true,
+  lastName: true,
   privilege: true,
+  describedRole: true,
+  organisationRole: true,
 });
 
 const findManyByIdSchema = z.array(userSelectSchema.pick({ id: true }));
@@ -35,28 +36,26 @@ export const userRouter = createTRPCRouter({
         where: inArray(schema.user.id, ids),
       });
     }),
-  updateByEmail: procedures.protected
+
+  update: procedures.protected
     .input(updateSchema)
     .mutation(async ({ ctx, input }) => {
-      return ctx.db
+      const userId = ctx.user.id;
+      if (!userId) throw new Error("User not logged in?");
+      return await ctx.db
         .update(schema.user)
-        .set({
-          authId: input.authId,
-          firstName: input.firstName,
-          lastName: input.lastName,
-          privilege: input.privilege,
-        })
-        .where(eq(schema.user.email, input.email))
-        .returning();
+        .set(input)
+        .where(eq(schema.user.authId, userId));
     }),
-  updatePrivilege: procedures.protected
-    .input(updatePrivilegeSchema)
-    .mutation(async ({ ctx, input }) => {
-      return ctx.db
-        .update(schema.user)
-        .set({ privilege: input.privilege })
-        .where(eq(schema.user.id, input.id));
-    }),
+
+  getUserWithOrg: procedures.protected.query(async ({ ctx }) => {
+    const user = await ctx.db.query.user.findFirst({
+      where: eq(schema.user.authId, ctx.user.id),
+      with: { organisation: true },
+    });
+    return user;
+  }),
+
   create: procedures.protected
     .input(userInsertSchema)
     .mutation(async ({ ctx, input }) => {
@@ -65,6 +64,7 @@ export const userRouter = createTRPCRouter({
         .values({ ...input })
         .returning({ newUserId: schema.user.id });
     }),
+
   createManyByEmail: procedures.protected
     .input(createManyByEmailSchema)
     .mutation(async ({ ctx, input }) => {

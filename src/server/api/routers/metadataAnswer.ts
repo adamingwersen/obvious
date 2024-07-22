@@ -25,7 +25,7 @@ export const metadataAnswerRouter = createTRPCRouter({
       return ctx.db.insert(schema.metadataAnswer).values({ ...input });
     }),
 
-  createMany: procedures.public
+  createMany: procedures.jwtProtected
     .input(metadataAnswerCreateManySchema)
     .mutation(async ({ ctx, input }) => {
       if (input.length === 0) throw new Error("No answers in input");
