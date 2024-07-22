@@ -10,7 +10,7 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/auth"); // TODO: This should be DBUser not auth user
+  // if (!user) redirect("/auth"); // TODO: This should be DBUser not auth user
 
   return (
     <div className=" flex h-[100vh] flex-col">
