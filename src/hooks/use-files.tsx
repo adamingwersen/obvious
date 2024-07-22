@@ -33,6 +33,14 @@ type ServerActionProviderProps = {
   downloadFile: ((fileName: string, answerId: number) => Promise<void>) | null;
 };
 
+const invalidCharPattern = /[^0-9a-zA-Z!\-_\.\*'()\(\)]+/g;
+
+// Function to find invalid characters in the input string
+function findInvalidCharacters(key: string): string[] {
+  const invalidChars = key.match(invalidCharPattern);
+  return invalidChars ? invalidChars : [];
+}
+
 export const FileActionsProvider: React.FC<ServerActionProviderProps> = ({
   children,
   pathToRevalidate,
@@ -41,6 +49,15 @@ export const FileActionsProvider: React.FC<ServerActionProviderProps> = ({
   addFileToAnswer,
 }) => {
   const uploadFile = async (params: UploadFileParams) => {
+    const invalids = findInvalidCharacters(params.fileName);
+    if (invalids.length > 0) {
+      params.onError(new Error(`Invalid file name:${invalids.join(",")}`));
+      return;
+    }
+    if (params.file.size === 0) {
+      params.onError(new Error("Empty file"));
+      return;
+    }
     try {
       await uploadFileToSupabase({
         fileName: params.fileName,

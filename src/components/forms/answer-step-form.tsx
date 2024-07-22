@@ -264,6 +264,16 @@ const AnswerStepForm = ({
       toast({ title: "File type not supported" });
     } else if (errMsg.includes("response code: 413")) {
       toast({ title: "File too big, maximum size is 50mb" });
+    } else if (errMsg.includes("Invalid file name")) {
+      const msgs = errMsg.split(":");
+      toast({
+        title: msgs[0],
+        description: `Invalid characters in name: ${msgs[1]}`,
+      });
+    } else if (errMsg.includes("Empty file")) {
+      toast({
+        title: "You cannot upload empty files",
+      });
     } else {
       toast({ title: "Something went wrong uploading file" });
       console.error(error);
