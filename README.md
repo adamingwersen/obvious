@@ -13,19 +13,19 @@
   - [x] Add description
   - [x] Add dueAt Date
   - [x] Router-based back button
-  - [ ] Add keywords (maybe from ESRS json file)
-- [ ] Answers:
-  - [ ] Routing pattern for answers?
-  - [ ] Display Q -> Receive answer
-  - [ ] Translate Q/A
-  - [ ] Forward Survey instance
-- [ ] Email + Signup + Login flows (user setup)
-- [ ] survey/.../create/page.tsx
-  - [ ] Add some polish
+  - [x] Add keywords (maybe from ESRS json file)
+- [x] Answers:
+  - [x] Routing pattern for answers?
+  - [x] Display Q -> Receive answer
+  - [x] Translate Q/A
+  - [x] Forward Survey instance
+- [x] Email + Signup + Login flows (user setup)
+- [x] survey/.../create/page.tsx
+  - [x] Add some polish
   - [ ] Stop empty surveys from allowing "finish"
-- [ ] survey/.../validate/page.tsx
-  - [ ] Show all survey questions in nice format
-  - [ ] Order questions?
+- [x] survey/.../validate/page.tsx
+  - [x] Show all survey questions in nice format
+  - [x] Order questions?
   - [ ] How should 'sharing' work?
     - [ ] By copy link & send to email address
 - [ ] dashboard/page.tsx
