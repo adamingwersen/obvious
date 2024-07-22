@@ -93,7 +93,9 @@ const Navbar = ({ user }: NavbarProps) => {
             <DropdownMenuLabel>My account</DropdownMenuLabel>
             <DropdownMenuItem>{user.email}</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/settings">Settings</Link>
+            </DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()}>
