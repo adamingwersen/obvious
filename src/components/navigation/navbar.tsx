@@ -19,7 +19,7 @@ import Link from "next/link";
 const navItems = [
   { label: "Home", href: "/home" },
   { label: "Surveys", href: "/survey" },
-  { label: "Settings", href: "/settings" },
+  { label: "Settings", href: "#" },
 ] as const;
 
 type NavbarProps = {
@@ -93,7 +93,9 @@ const Navbar = ({ user }: NavbarProps) => {
             <DropdownMenuLabel>My account</DropdownMenuLabel>
             <DropdownMenuItem>{user.email}</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/settings">Settings</Link>
+            </DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()}>
