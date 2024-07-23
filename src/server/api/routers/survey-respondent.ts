@@ -1,5 +1,5 @@
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
-import { and, eq, schema } from "@/server/db";
+import { and, eq, inArray, schema } from "@/server/db";
 import {
   surveyRespondentInsertSchema,
   surveyRespondentSelectSchema,
@@ -10,6 +10,8 @@ const surveyRespondentCreateSchema = surveyRespondentInsertSchema.pick({
   surveyId: true,
   respondentUserId: true,
 });
+
+const findManyBySurveyIdSchema = z.array(z.number().nonnegative());
 
 const surveyRespondentUpsertAccessTokenSchema =
   surveyRespondentInsertSchema.pick({
@@ -177,5 +179,15 @@ export const surveyRespondentRouter = createTRPCRouter({
             ),
           ),
         );
+    }),
+
+  findManyForSurveys: procedures.protected
+    .input(findManyBySurveyIdSchema)
+    .query(async ({ ctx, input }) => {
+      const relatedRespondents =
+        await ctx.db.query.surveyToRespondentUser.findMany({
+          where: inArray(schema.surveyToRespondentUser.surveyId, input),
+        });
+      return relatedRespondents;
     }),
 });

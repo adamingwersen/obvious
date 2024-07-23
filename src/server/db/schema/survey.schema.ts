@@ -17,12 +17,16 @@ import {
 } from "@/server/db/schema/question.schema";
 import { SURVEY_STATUS_SCHEMA } from "@/server/db/schema/enums";
 import { surveyToRespondentUser } from "./survey-respondent.schema";
+import { organisation } from "./organisation.schema";
 
 export const survey = pgTable("survey", {
   ...defaultRows,
   createdById: integer("created_by_id")
     .notNull()
     .references(() => user.id),
+  organisationId: integer("organisation_id")
+    .notNull()
+    .references(() => organisation.id),
   title: varchar("title", { length: 256 }).notNull(),
   uuid: uuid("uuid").notNull().defaultRandom().unique(),
   parentInstanceId: integer("parent_instance_id"),
