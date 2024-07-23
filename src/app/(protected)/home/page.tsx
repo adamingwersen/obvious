@@ -30,12 +30,14 @@ const HomePage = async () => {
   const surveyIds = surveyData.map((x) => x.id);
   const respondentData =
     await api.surveyRespondent.findManyForSurveys(surveyIds);
+
   const invitedCountData = Object.entries(
     _.countBy(respondentData, createdMonthName),
   ).map(([key, value]) => ({
     month: key,
     invitedCount: value,
   }));
+
   const seenMonthName = (item: SurveyRespondentModel) =>
     moment(item.respondentFirstSeenAt, "YYYY-MM-DD").format("MMMM");
   const seenCountData = Object.entries(
