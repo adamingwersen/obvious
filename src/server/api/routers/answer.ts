@@ -83,15 +83,29 @@ export const answerRouter = createTRPCRouter({
       });
     }),
 
-  findMany: procedures.protected.query(async ({ ctx }) => {
-    const authUserId = ctx.user.id;
-    const user = await ctx.db.query.user.findFirst({
-      where: eq(schema.user.authId, authUserId),
-    });
-    if (!user) throw new Error("No user found");
-    const answers = await ctx.db.query.answer.findMany();
-    return answers;
-  }),
+  findManyForSurveys: procedures.protected
+    .input(z.array(z.number().nonnegative()))
+    .query(async ({ ctx, input }) => {
+      const questionsForSurveys = await ctx.db.query.question.findMany({
+        where: inArray(schema.question.surveyId, input),
+      });
+      const qIds = questionsForSurveys.map((x) => x.id);
+
+      const surveyIdLookup = questionsForSurveys.reduce(
+        (acc, x) => {
+          acc[x.id] = x.surveyId;
+          return acc;
+        },
+        {} as Record<number, number>,
+      );
+      const answers = await ctx.db.query.answer.findMany({
+        where: inArray(schema.answer.questionId, qIds),
+      });
+      const answersWithSurveyIds = answers.map((a) => {
+        return { ...a, surveyId: surveyIdLookup[a.questionId] };
+      });
+      return answersWithSurveyIds;
+    }),
 
   deleteByQuestionId: procedures.protected
     .input(deleteByQuestionIdSchema)

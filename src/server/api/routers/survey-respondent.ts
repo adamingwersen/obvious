@@ -1,5 +1,5 @@
 import { createTRPCRouter, procedures } from "@/server/api/trpc";
-import { and, eq, schema } from "@/server/db";
+import { and, eq, inArray, schema } from "@/server/db";
 import {
   surveyRespondentInsertSchema,
   surveyRespondentSelectSchema,
@@ -10,6 +10,8 @@ const surveyRespondentCreateSchema = surveyRespondentInsertSchema.pick({
   surveyId: true,
   respondentUserId: true,
 });
+
+const findManyBySurveyIdSchema = z.array(z.number().nonnegative());
 
 const surveyRespondentUpsertAccessTokenSchema =
   surveyRespondentInsertSchema.pick({
@@ -178,20 +180,14 @@ export const surveyRespondentRouter = createTRPCRouter({
           ),
         );
     }),
-  findMany: procedures.protected.query(async ({ ctx }) => {
-    const authUserId = ctx.user.id;
-    if (!authUserId) throw new Error("User does not exist");
-    const user = await ctx.db.query.user.findFirst({
-      where: eq(schema.user.authId, authUserId),
-    });
-    if (!user) throw new Error("No user found");
 
-    const relatedRespondents =
-      await ctx.db.query.surveyToRespondentUser.findMany({
-        where: and(eq(schema.surveyToRespondentUser.invitedById, user.id)),
-      });
-    if (!relatedRespondents)
-      throw new Error("Originator has no invited respondents");
-    return relatedRespondents;
-  }),
+  findManyForSurveys: procedures.protected
+    .input(findManyBySurveyIdSchema)
+    .query(async ({ ctx, input }) => {
+      const relatedRespondents =
+        await ctx.db.query.surveyToRespondentUser.findMany({
+          where: inArray(schema.surveyToRespondentUser.surveyId, input),
+        });
+      return relatedRespondents;
+    }),
 });

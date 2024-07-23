@@ -144,28 +144,26 @@ export const TranslationsGeneratedChart = (
 };
 
 // Documents Uploaded
-const documentsUploadedConfig = {
+const AnswersOverTimeConfig = {
   count: {
-    label: "Documents uplodaded:",
-    color: "#404389",
+    label: "Answers:",
+    color: "#176992",
   },
 } satisfies ChartConfig;
 
-export type DocumentsUploadedChartType = {
+export type AnswerOverTimeChartType = {
   week: string;
   count: number;
 };
 
-type DocumentsUploadedChartProps = {
-  data: DocumentsUploadedChartType[];
+type AnswerOverTimeChartProps = {
+  data: AnswerOverTimeChartType[];
 };
 
-export const DocumentsUploadedChart = (
-  chartProps: DocumentsUploadedChartProps,
-) => {
+export const AnswerOverTimeChart = (chartProps: AnswerOverTimeChartProps) => {
   return (
     <ChartContainer
-      config={documentsUploadedConfig}
+      config={AnswersOverTimeConfig}
       className="min-h-[300px] w-full pb-3"
     >
       <BarChart accessibilityLayer data={chartProps.data}>
@@ -174,6 +172,45 @@ export const DocumentsUploadedChart = (
           dataKey="week"
           tickLine={false}
           tickMargin={10}
+          axisLine={false}
+        />
+        <ChartTooltip content={<ChartTooltipContent />} />
+        <Bar dataKey="count" fill="var(--color-count)" />
+        <YAxis />
+      </BarChart>
+    </ChartContainer>
+  );
+};
+
+const surveyAnswersConfig = {
+  count: {
+    label: "Survey answers:",
+    color: "#256172",
+  },
+} satisfies ChartConfig;
+
+export type SurveyAnswersChartType = {
+  surveyName: string;
+  count: number;
+};
+
+type SurveyAnswersChartProps = {
+  data: SurveyAnswersChartType[];
+};
+
+export const SurveyAnswersChart = (chartProps: SurveyAnswersChartProps) => {
+  return (
+    <ChartContainer
+      config={surveyAnswersConfig}
+      className="min-h-[300px] w-full pb-3"
+    >
+      <BarChart accessibilityLayer data={chartProps.data}>
+        <CartesianGrid vertical={false} />
+        <XAxis
+          dataKey="surveyName"
+          tick={false}
+          label={"Surveys"}
+          tickLine={false}
           axisLine={false}
         />
         <ChartTooltip content={<ChartTooltipContent />} />

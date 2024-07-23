@@ -32,12 +32,14 @@ export const surveyRouter = createTRPCRouter({
         where: eq(schema.user.authId, authUserId),
       });
       if (!user) throw new Error("No user found");
+      if (!user.organisationId) throw new Error("User has no org");
 
       const newSurveys = await ctx.db
         .insert(schema.survey)
         .values({
           title: input.title,
-          createdById: user?.id,
+          createdById: user.id,
+          organisationId: user.organisationId,
           description: input.description,
           dueAt: input?.dueAt,
         })
@@ -74,23 +76,23 @@ export const surveyRouter = createTRPCRouter({
     });
   }),
 
-  findAllByCurrentUserWithRelations: procedures.protected.query(
-    async ({ ctx }) => {
-      const authUserId = ctx.user.id;
-      const user = await ctx.db.query.user.findFirst({
-        where: eq(schema.user.authId, authUserId),
-      });
-      if (!user) throw new Error("No user found");
+  findAllForUserOrg: procedures.protected.query(async ({ ctx }) => {
+    const authUserId = ctx.user.id;
+    const user = await ctx.db.query.user.findFirst({
+      where: eq(schema.user.authId, authUserId),
+    });
+    if (!user) throw new Error("No user found");
 
-      return ctx.db.query.survey.findMany({
-        where: and(
-          eq(schema.survey.createdById, user.id),
-          isNull(schema.survey.deletedAt),
-        ),
-        with: { questions: true, user: true },
-      });
-    },
-  ),
+    if (!user.organisationId) throw new Error("User doesn't have org?");
+
+    return await ctx.db.query.survey.findMany({
+      where: and(
+        eq(schema.survey.organisationId, user.organisationId),
+        isNull(schema.survey.deletedAt),
+      ),
+      with: { questions: true, user: true },
+    });
+  }),
 
   findByUuidWithRespondents: procedures.protected
     .input(surveyFindByUuidSchema)
