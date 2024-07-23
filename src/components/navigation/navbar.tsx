@@ -2,6 +2,14 @@
 import { signOut } from "@/app/auth/actions";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -12,9 +20,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { type User } from "@supabase/supabase-js";
-import { CircleUser, Menu, Search } from "lucide-react";
+import { CircleUser, LinkIcon, Menu, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useToast } from "@/components/ui/use-toast";
 
 const navItems = [
   { label: "Home", href: "/home" },
@@ -27,6 +36,8 @@ type NavbarProps = {
 };
 
 const Navbar = ({ user }: NavbarProps) => {
+  const { toast } = useToast();
+
   const NavLinks = navItems.map((navItem) => (
     <Link
       key={navItem.label}
@@ -82,27 +93,61 @@ const Navbar = ({ user }: NavbarProps) => {
             />
           </div>
         </form>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="secondary" size="icon" className="rounded-full">
-              <CircleUser className="h-5 w-5" />
-              <span className="sr-only">Toggle user menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My account</DropdownMenuLabel>
-            <DropdownMenuItem>{user.email}</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Link href="/settings">Settings</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut()}>
-              Logout
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Dialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" size="icon" className="rounded-full">
+                <CircleUser className="h-5 w-5" />
+                <span className="sr-only">Toggle user menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My account</DropdownMenuLabel>
+              <DropdownMenuItem>{user.email}</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link href="/settings">Settings</Link>
+              </DropdownMenuItem>
+
+              <DialogTrigger asChild>
+                <DropdownMenuItem>Contact</DropdownMenuItem>
+              </DialogTrigger>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => signOut()}>
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Contact</DialogTitle>
+              {/* <DialogDescription>
+                Contact us at info@obvious.earth
+              </DialogDescription> */}
+            </DialogHeader>
+            <div className="flex flex-col gap-3 text-center">
+              <p className="text-center text-gray-500">Contact us here</p>
+              <a href="mailto:info@obvious.earth">info@obvious.earth</a>
+              <DialogClose asChild>
+                <Button
+                  variant="default"
+                  className="gap-2"
+                  type="submit"
+                  onClick={async () => {
+                    await navigator.clipboard.writeText("info@obvious.earth");
+                    toast({
+                      title: "Copied email to clipboard",
+                      duration: 2000,
+                    });
+                  }}
+                >
+                  Copy email
+                  <LinkIcon className="size-4" />
+                </Button>
+              </DialogClose>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </header>
   );
