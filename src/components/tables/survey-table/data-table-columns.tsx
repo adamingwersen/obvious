@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -22,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { handleRenameSurveyName } from "@/server/actions/survey/actions";
 
 import { type SurveyWithRelationsModel } from "@/server/db/schema";
 import { type ColumnDef } from "@tanstack/react-table";
@@ -127,7 +129,15 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const surveyName = row.original.title;
+      const onSubmit = async (surveyId: number) => {
+        // Super duper hacky oldschool way of doing this but wcyd
+        const newNameInput = document.getElementById(
+          "new-survey-name",
+        ) as HTMLInputElement;
+        if (!newNameInput) return;
+        const newName = newNameInput.value;
+        await handleRenameSurveyName(surveyId, newName, "/(protected)/survey");
+      };
       return (
         <Dialog>
           <DropdownMenu>
@@ -186,12 +196,17 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
               <Label htmlFor="new-survey-name">New name</Label>
               <Input
                 id="new-survey-name"
-                defaultValue={surveyName}
+                defaultValue={row.original.title}
                 className="col-span-2 h-8"
               />
             </div>
+
             <DialogFooter>
-              <Button type="submit">Save changes</Button>
+              <DialogClose asChild>
+                <Button onClick={() => onSubmit(row.original.id)}>
+                  Save changes
+                </Button>
+              </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>

@@ -121,9 +121,6 @@ const Navbar = ({ user }: NavbarProps) => {
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Contact</DialogTitle>
-              {/* <DialogDescription>
-                Contact us at info@obvious.earth
-              </DialogDescription> */}
             </DialogHeader>
             <div className="flex flex-col gap-3 text-center">
               <p className="text-center text-gray-500">Contact us here</p>
