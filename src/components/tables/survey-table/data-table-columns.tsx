@@ -118,12 +118,29 @@ export const DataTableColumns: ColumnDef<SurveyWithRelationsModel>[] = [
       return <div className="flex">{dueAtDateString}</div>;
     },
   },
+
   {
     accessorKey: "createdAt",
-    header: "Created date",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Created date
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
-      const createdDate = row.original.createdAt;
-      return <div className="flex">{createdDate.toDateString()}</div>;
+      const createdAtDate = row.original.createdAt;
+      const createdAtDateString = createdAtDate
+        ? createdAtDate.toDateString()
+        : "Not set";
+      if (createdAtDateString === "Not set") {
+        return <Badge variant="red">{createdAtDateString}</Badge>;
+      }
+      return <div className="flex">{createdAtDateString}</div>;
     },
   },
   {
