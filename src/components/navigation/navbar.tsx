@@ -28,6 +28,7 @@ import { useToast } from "@/components/ui/use-toast";
 const navItems = [
   { label: "Home", href: "/home" },
   { label: "Surveys", href: "/survey" },
+  { label: "Documents", href: "/documents" },
   { label: "Settings", href: "/settings" },
 ] as const;
 
